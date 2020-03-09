@@ -94,11 +94,11 @@ Hotkey, IfWinActive
 
 ;ListHotkeys
 
-; Throw in an extra return just for good measure
+; Add an extra return for good measure here but may not be best position ?
 return
 
 ; ModWinS = Pass through Window & s key and Hook to test / pass web: clipboard
-~#s:: ; note lowercase only
+~#s:: ; note lowercase only, can work outside canvas to include find box
 if ModWinS = true ; note if false or clip empty then return
 {
   gosub GetClip
@@ -116,31 +116,30 @@ if ModWinS = true ; note if false or clip empty then return
 return
 
 
-~LButton:: ; ModSlct = Modify Single Click a word and alter to allow multiword selection
-IfWinActive, ahk_class SUMATRA_PDF_FRAME 
+~LButton::
+; ModSlct = Modify Single Click a word and alter to allow multi-word selection or
+; ModLeft = Modify Left Click = hold right key down (Needs a right click to release)
+MouseGetPos,,,, MouseWin
+;confine actions to Canvas
+If MouseWin != SUMATRA_PDF_CANVAS1
+   return ; Outside SumatraPDF Canvas
 {
   if ModSlct = true ; note initially false by default, change to = true in plus.ini 
      {
-     ; msgbox ModSlct1 %ModSlct% ; for debugging only
+     ; msgbox ModSlctTrue %MouseWin% %ModSlct%; for debugging only
      Click down
      }
-  ;else
-     ; msgbox ModSlct2 %ModSlct% ; for debugging only
   if ModLeft = true ; note initially false by default, change to = true in plus.ini 
      {
-     ; msgbox ModLeft1 %ModLeft% ; for debugging only
+     ; msgbox ModLeftTrue %MouseWin% %ModLeft% ; for debugging only
      Click {esc}
-     Click down Right ; hold right key down (needs another right click to release)
-     }
-  else
-     {
-     ; msgbox ModLeft2 %ModLeft% ; for debugging only
-     return
+     Click down Right
      }
 }
-return ; outside SumatraPDF
-msgbox Left Button Error, I should never be here
+; msgbox Still in canvas
 return
+msgbox Left Button Error, I should never be here
+
 
 ; lets hook Alt + i to get current filename details (reserved for future use)
 !i::
