@@ -1,16 +1,21 @@
 # SumatraPDF-Plus
-AutoHotKey Script to HotFix user requested enhancements
+AutoHotKey Scripts to HotFix user requested enhancements to SumatraPDF (see below)
 
-A collection of temporary fixes to provide some Feature Requests from
+A collection of temporary fixes to provide some Feature Requests from either
 
 SumatraPDF issues https://github.com/sumatrapdfreader/sumatrapdf/issues
-or Forum https://forum.sumatrapdfreader.org/
 
-As / If / When any are implimented in official / pre-releases they may be removed here.
+or the User Forum https://forum.sumatrapdfreader.org/
+
+As / If / When any features are implimented in official / pre-releases they may be removed here.
 
 Requirements
 ------------
-Needs a copy of AutoHotKeyU32[or U64].exe to be renamed as plus.exe in same folder.
+Expects to be run at the same time as SumatraPDF from https://www.sumatrapdfreader.org/free-pdf-reader.html
+
+Expects (later will need) to be in a subdirectory named \plus in the folder with SumatraPDF-settings.txt
+
+Needs a copy of AutoHotKeyU32[or U64].exe to be renamed as plus.exe in same \plus subfolder.
 
 Get the latest copy from https://autohotkey.com/download/ahk.zip
 
