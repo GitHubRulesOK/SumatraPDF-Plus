@@ -21,4 +21,5 @@ get the latest copy from https://autohotkey.com/download/ahk.zip
    +  Reassign Double Click from single to multi word selection (Click & Drag)
    +  Reassign Single Click temporarily from Left to Right (Click & Drag Page)
    
-      Caution This will block above multi-word selection, Right click to stop
+      Caution This may block above multi-word selection, Right click to stop
+   +  Reassign Right Click to call All commands on tablets (without two tap exit) for fullscreen mode
