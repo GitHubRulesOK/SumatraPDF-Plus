@@ -23,7 +23,7 @@ Get the latest copy from https://autohotkey.com/download/ahk.zip
 --------------------
    +  CTRL [& SHIFT] 4 = Web Lookup / Search
    +  CTRL [& SHIFT] 5 = Translate / Including Text to Speech
-   +  (part done) Reassign some hotkeys
+   +  (part done) Optionally reassign some hotkeys / shortcuts
    +  Reassign Double Click from single to multi word selection (Click & Drag)
    +  Reassign Single Click temporarily from Left to Right (Click & Drag Page)
    
