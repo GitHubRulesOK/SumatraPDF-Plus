@@ -9,7 +9,7 @@ or Forum https://forum.sumatrapdfreader.org/
 As / If / When any are implimented in official / pre-releases they may be removed here.
 
 Requirements
-
+------------
 Needs a copy of AutoHotKeyU32[or U64].exe to be renamed as plus.exe in same folder.
 
 Get the latest copy from https://autohotkey.com/download/ahk.zip
