@@ -1,4 +1,4 @@
-;v+2020-03-09T00,0 beta; Please do not edit this line, it for version checking.
+;v+2020-03-10T00,0 ; Please do not edit this line, it for version checking.
 ; lines starting with ; are comments
 ; This file is plus.ahk An AutoHotKey script to add extra functionality to
 ; Sumatra PDF viewer. This file should be placed in a subfolder (\plus) below
