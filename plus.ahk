@@ -43,6 +43,7 @@
 ;      Caution This will block above multi-word selection, Right click to stop
 ;              TO DO perhaps improve above to only work whilst mouse held down
 ;              however, that might be tricky for tablet usage.
+;   +  Reassign Right Click to Alt for commands on tablets without two tap exit
 ;   -  (Work in Progress not included) Modify toolbar icon actions per forum
 ;   -  (Work in Progress not included) Add extra toolbar icons
 ;   -  (Work in Progress not included) OCR with TTS
@@ -80,6 +81,7 @@ IniRead, RunArg4, plus.ini, RunAppS, RunArg4 , https://duckduckgo.com/?q=
 IniRead, ModWinS, plus.ini, ToggleS, ModWinS , false ; failsafe for a bad entry is false
 IniRead, ModSlct, plus.ini, ToggleS, ModSlct , false ; failsafe is Double Click one word
 IniRead, ModLeft, plus.ini, ToggleS, ModLeft , false ; failsafe for swap Left to Right
+IniRead, AltExit, plus.ini, ToggleS, AltExit , false ; failsafe for swap Right to Alt
 
 ; Try to confine actions to SumatraPDF note this does not always confine mouse
 ;Hotkey, "IfWinActive", "ahk_exe SumatraPDF.exe"
@@ -126,20 +128,40 @@ If MouseWin != SUMATRA_PDF_CANVAS1
 {
   if ModSlct = true ; note initially false by default, change to = true in plus.ini 
      {
-     ; msgbox ModSlctTrue %MouseWin% %ModSlct%; for debugging only
+      msgbox ModSlctTrue %MouseWin% %ModSlct%; for debugging only
      Click down
      }
   if ModLeft = true ; note initially false by default, change to = true in plus.ini 
      {
-     ; msgbox ModLeftTrue %MouseWin% %ModLeft% ; for debugging only
+      msgbox ModLeftTrue %MouseWin% %ModLeft% ; for debugging only
      Click {esc}
      Click down Right
      }
 }
-; msgbox Still in canvas
+; msgbox Still in canvas %MouseWin%
 return
 msgbox Left Button Error, I should never be here
 
+; Some tablet users complain they can not double tap to exit full-screen mode !
+; and my touch pad does not have that function enabled so we need another means
+; the best option is Mod Right Mouse context to call ALT which has all commands
+~RButton::
+MouseGetPos,,,, MouseWin
+;confine actions to Canvas
+If MouseWin != SUMATRA_PDF_CANVAS1
+   return ; Outside SumatraPDF Canvas
+else
+{
+  if AltExit = true ; note initially false by default, change to = true in plus.ini 
+     {
+     Click, Right, Up ; attempts to reset state is it needed if we esc ?
+     SendInput {Esc}
+     SendInput {Alt}
+     }
+}
+; msgbox Still in canvas %MouseWin%
+return
+msgbox Right Button Error, I should never be here
 
 ; lets hook Alt + i to get current filename details (reserved for future use)
 !i::
