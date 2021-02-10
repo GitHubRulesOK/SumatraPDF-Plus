@@ -44,9 +44,9 @@
 ;              TO DO perhaps improve above to only work whilst mouse held down
 ;              however, that might be tricky for tablet usage.
 ;   +  Reassign Right Click to Alt for commands on tablets without two tap exit
-;   -  (Work in Progress not included) Modify toolbar icon actions per forum
-;   -  (Work in Progress not included) Add extra toolbar icons
-;   -  (Work in Progress not included) OCR with TTS
+;   -  (Rotate is now done) Modify toolbar icon actions per forum to forward/back
+;   -  (Work in Progress changed methods) Add extra toolbar icons - svg NOT bmp
+;   -  (Work in Progress not included) OCR with TTS using newer mupdf engine
 ; More ?
 ;
 ; Avoid making changes here. ALL/MOST user configuration values are in plus.ini
