@@ -1,6 +1,13 @@
 # SumatraPDF-Plus
-AutoHotKey Scripts to HotFix user requested enhancements to SumatraPDF (see below)
+AutoHotKey and Other Scripts to HotFix user requested enhancements to SumatraPDF (see below) \
+It is my personal compendium so decide which bits you do not require and delete accordingly.
 
+Be aware due to the unusual uses some scripts employ they may raise "False Positives" in \
+Anti-Virus scanners, you can read the contents as Open Source plain text before download \
+And normally if you download a script as .txt you can then rename to a run time extension.
+
+Purpose 
+------- 
 A collection of temporary fixes to provide some Feature Requests from either
 
 SumatraPDF issues https://github.com/sumatrapdfreader/sumatrapdf/issues
