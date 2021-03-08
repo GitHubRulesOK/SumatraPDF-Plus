@@ -36,3 +36,6 @@ Get the latest copy from https://autohotkey.com/download/ahk.zip
    
       Caution This may block above multi-word selection, Right click to stop
    +  Reassign Right Click to call All commands on tablets (without two tap exit) for fullscreen mode
+
+2021
+Slowly migrating some updated "Addins" from https://github.com/GitHubRulesOK/MyNotes/tree/master/AppNotes/SumatraPDF/Addins
