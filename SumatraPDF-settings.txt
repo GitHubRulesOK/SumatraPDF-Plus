@@ -1,0 +1,135 @@
+﻿# For documentation, see https://www.sumatrapdfreader.org/settings/settings3-6.html
+
+CheckForUpdates = true
+CustomScreenDPI = 0
+DefaultDisplayMode = automatic
+DefaultZoom = 100
+EnableTeXEnhancements = false
+EscToExit = false
+FullPathInTitle = false
+LazyLoading = true
+MainWindowBackground = #80fff200
+NoHomeTab = false
+ReloadModifiedDocuments = true
+RememberOpenedFiles = false
+RememberStatePerDocument = false
+RestoreSession = true
+ReuseInstance = true
+ShowMenubar = true
+ShowToolbar = true
+ShowFavorites = false
+ShowToc = true
+ShowLinks = false
+ShowStartPage = true
+SidebarDx = 195
+SmoothScroll = false
+TabWidth = 300
+Theme = Light
+TocDy = 532
+ToolbarSize = 18
+TreeFontName = automatic
+TreeFontSize = 0
+UIFontSize = 0
+UseSysColors = false
+UseTabs = true
+ZoomLevels = 
+ZoomIncrement = 0
+
+FixedPageUI [
+	TextColor = #000000
+	BackgroundColor = #ffffff
+	SelectionColor = #f5fc0c
+	WindowMargin = 2 4 2 4
+	PageSpacing = 4 4
+	InvertColors = false
+	HideScrollbars = false
+]
+
+EBookUI [
+	FontSize = 0
+	LayoutDx = 0
+	LayoutDy = 0
+	IgnoreDocumentCSS = false
+]
+
+ComicBookUI [
+	WindowMargin = 0 0 0 0
+	PageSpacing = 4 4
+	CbxMangaMode = false
+]
+
+ChmUI [
+	UseFixedPageUI = false
+]
+
+Annotations [
+	HighlightColor = #ffff00
+	UnderlineColor = #00ff00
+	SquigglyColor = #ff00ff
+	StrikeOutColor = #ff0000
+	FreeTextColor = 
+	FreeTextSize = 12
+	FreeTextBorderWidth = 1
+	TextIconColor = 
+	TextIconType = 
+	DefaultAuthor = 
+]
+
+ExternalViewers [
+	[
+		CommandLine = "C:\Program Files\Microsoft\Edge\Application\msedge.exe" --no-upsell --app="%1#page=%p"
+		Name = Edge-it
+		Filter = *.pdf
+		Key = W
+	]
+	[
+		CommandLine = "C:\Users\K\AppData\Local\SumatraPDF\plus\exportpng.cmd" "%1" page=1-N
+		Name = Export all pages to Png
+		Filter = *.*
+		Key = P
+	]
+]
+
+ForwardSearch [
+	HighlightOffset = 0
+	HighlightWidth = 15
+	HighlightColor = #6581ff
+	HighlightPermanent = false
+]
+
+PrinterDefaults [
+	PrintScale = shrink
+]
+
+SelectionHandlers [
+]
+
+Shortcuts [
+	[
+		Cmd = CmdToggleMangaMode
+		Key = M
+		ToolbarText = Manga
+	]
+	[
+		Cmd = Scan.Cmd
+		Key = W
+	]
+]
+
+Themes [
+]
+
+# You're not expected to change those manually
+UiLanguage = en
+WindowState = 1
+WindowPos = 62 276 1083 657
+FileStates [
+	[
+	]
+]
+SessionData [
+]
+TimeOfLastUpdateCheck = 0 0
+OpenCountWeek = 722
+
+# Settings below are not recognized by the current version
