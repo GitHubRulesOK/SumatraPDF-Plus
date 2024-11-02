@@ -1,4 +1,4 @@
-@Mode 60,17 & Color 9F & Title SumatraPDF addin ExportPng [.eXt2.png(s)] v'24-11-02--09
+@Mode 60,17 & Color 9F & Title SumatraPDF addin ExportPng [.eXt2.png(s)] v'24-11-02--08
 @echo off & SetLocal EnableDelayedExpansion & pushd %~dp0 & goto MAIN
 Do not delete the above two lines since they are needed to prepare this script.
 
@@ -9,7 +9,6 @@ Do not delete the above two lines since they are needed to prepare this script.
  improve file handling for "filenames with spaces" 
  * simplify to mutool be in this folder or vise versa
  v'24-11-02--08 added mutool download link
- v'24-11-02--09 adapted for SumatraPDF\plus
 
  Read Me 1st (you can strip out most of these comments in your working copy)
  Note: Later lines that start with :LETTERS are branches that need to be kept BUT
@@ -24,7 +23,7 @@ Do not delete the above two lines since they are needed to prepare this script.
  But I give no guarantees, as on occasion MuTool may attempt to fix a bad file.
  TODO use a temporary copy and delete once done.
 
-  Current MuPDF tools are available from https://www.mupdf.com/downloads/index.html but using legacy (older)
+  Current MuPDF tools are available from https://www.mupdf.com/downloads/index.html
   https://mupdf.com/downloads/archive/mupdf-1.20.0-windows-tesseract.zip (recommended as last known 32 bit version)
 
 Methodology
@@ -95,7 +94,7 @@ End of readme / notes
 : file which was set at start then you may need to adjust both here and later
 : TL;DR this test should not be needed but for those users that don't RTFM
 
-if "%addins%"=="" set "addins=%~dp0.."
+if "%addins%"=="" set "addins=%~dp0"
 if not exist "%addins%mupdf-1.20.0-windows-tesseract\mutool.exe" echo: & echo  Either MuTool.exe or this file are not in correct location & goto :mutool
 if not exist "%~f1" echo: & echo "%~dpn1%~x1" & echo  Appears NOT to exist as a valid file & goto HELP
 
@@ -155,9 +154,10 @@ echo:
 :
 "%addins%mupdf-1.20.0-windows-tesseract\mutool.exe" draw -r 96 -o "%~dpn1-Page-%%4d.png" "%~f1" "%pages%"
 echo:
+echo Done & dir /b "%~dpn1-Page-*.png"
 : pause
-: Optional, you can comment, change or delete timeout if not wanted (currently 5 seconds)
-timeout /t 5
+: Optional, you can comment, change or delete timeout if not wanted (currently 10 seconds)
+timeout /t 10
 
 :eof
 exit /b
