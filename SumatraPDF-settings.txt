@@ -88,6 +88,12 @@ ExternalViewers [
 		Filter = *.*
 		Key = P
 	]
+	[
+		CommandLine = "C:\Users\K\AppData\Local\SumatraPDF\plus\AddBookmark.cmd" "%1" %p
+		Name = &Bookmark this PDF page
+		Filter = *.pdf
+		Key = B
+	]
 ]
 
 ForwardSearch [
@@ -122,9 +128,20 @@ Themes [
 # You're not expected to change those manually
 UiLanguage = en
 WindowState = 1
-WindowPos = 62 276 1083 657
+WindowPos = 638 179 1037 775
 FileStates [
 	[
+		FilePath = C:\Users\K\Desktop\Apps\pdf\cpdf\marks1.pdf
+		Favorites [
+			[
+				Name = 可以添加或编辑书签吗
+				PageNo = 3
+			]
+		]
+		IsPinned = false
+		IsMissing = false
+		OpenCount = 0
+		UseDefaultState = true
 	]
 ]
 SessionData [
