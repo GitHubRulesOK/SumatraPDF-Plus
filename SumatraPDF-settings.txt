@@ -116,10 +116,6 @@ Shortcuts [
 		Key = M
 		ToolbarText = Manga
 	]
-	[
-		Cmd = Scan.Cmd
-		Key = W
-	]
 ]
 
 Themes [
@@ -130,19 +126,6 @@ UiLanguage = en
 WindowState = 1
 WindowPos = 638 179 1037 775
 FileStates [
-	[
-		FilePath = C:\Users\K\Desktop\Apps\pdf\cpdf\marks1.pdf
-		Favorites [
-			[
-				Name = 可以添加或编辑书签吗
-				PageNo = 3
-			]
-		]
-		IsPinned = false
-		IsMissing = false
-		OpenCount = 0
-		UseDefaultState = true
-	]
 ]
 SessionData [
 ]
