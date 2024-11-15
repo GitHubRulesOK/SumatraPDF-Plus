@@ -1,4 +1,4 @@
-@echo off&Mode 35,3&Color 3F
+@echo off&Mode 35,3&Color 3F&Title TTS-sampler v2024-11-15-01
 REM see IMPORTANT  note below
 goto MAIN
 
