@@ -1,4 +1,4 @@
-@Mode 60,17 & Color 9F & Title SumatraPDF addin ExportPng [.eXt2.png(s)] v'24-11-02--08
+@Mode 60,17 & Color 9F & Title SumatraPDF addin ExportTxt [.eXt2.Txt(s)] v'25-01-20--10
 @echo off & SetLocal EnableDelayedExpansion & pushd %~dp0 & goto MAIN
 Do not delete the above two lines since they are needed to prepare this script.
 
@@ -9,12 +9,13 @@ Do not delete the above two lines since they are needed to prepare this script.
  improve file handling for "filenames with spaces" 
  * simplify to mutool be in this folder or vise versa
  v'24-11-02--08 added mutool download link
+ v'24-11-22--09 changed %addins% to %Plus% and mutool folder to more generic %Plus%mupdf also increase DPI to 200
 
  Read Me 1st (you can strip out most of these comments in your working copy)
  Note: Later lines that start with :LETTERS are branches that need to be kept BUT
  any Later lines that start with : And a space, are inline comments that may be REMoved
 
- SumatraPDF script to EXPORT file page(s) as PNG using MuTools whilst viewing.
+ SumatraPDF script to EXPORT file page(s) as TXT using MuTools whilst viewing.
  TODO Optional use of current related GhostScript to allow for other formats.
  TODO Allow for use when -p password is required
  TODO allow for -R angle or -h -w (scaling)
@@ -29,10 +30,10 @@ Do not delete the above two lines since they are needed to prepare this script.
 Methodology
 
  This script pases the current FileName and PageRange to MuPDF\MuTool.exe
- ONLY .PNG OUTput is offered (NO Jpg, but others are possible, Read the Manual)
+ ONLY .TXT OUTput is offered (NO Stext or ePub, but others are possible, Read the Manual)
  Input of many types including ePub or (o)xps and GIF/JPG/TIFF are allowed but
  no guarantee they will all be processed. Intended as an addin to SumatraPDF, but...
- When installed in the correct addins location you can right click this file and "SendTo
+ When installed in the correct Plus location you can right click this file and "SendTo
  Desktop as shortcut" where you can ALSO use it for drag and drop (max=ONE file)
 
  CAUTION due to reflow differences, ePub and FB2 page numbers and appearance may
@@ -41,23 +42,23 @@ Methodology
 
 Presumptions (letter case should not matter, but relative positions do)
 
-1) THIS FILE (ExportPng.CMD) is located in same folder with Mutool.exe in the same folder
-2) there is an %addins% location stored OR set in the users Environment Variables
+1) THIS FILE (ExportTxt.CMD) is located in same folder with Mutool.exe in the same folder
+2) there is an %Plus% location stored OR set in the users Environment Variables
  
- A reminder about %addins% (skip this section if you have already added other "addins")
+ A reminder about %Plus% (skip this section if you have already added other "addins")
  This cmd script is intended to be stored in a folder relative to SumatraPDF-settings.txt
  However when run, that location can be different for every user. Thus in order that multiple
- "addins" can be found together they are stored in subfolders of ...\SumatraPDF\Addins\.
- When run, the system needs to know where the addins folder is, so we need to SET a
- system-wide environment variable e.g.  SET "addins=D:\location of\SumatraPDF\addins\"
+ "addins" can be found together they are stored in subfolders of ...\SumatraPDF\Plus\.
+ When run, the system needs to know where the Plus folder is, so we need to SET a
+ system-wide environment variable e.g.  SET "Plus=D:\location of\SumatraPDF\Plus\"
  There is no need to add " " marks but it needs to be SET PRIOR to starting SumatraPDF.
  For many "portableapps" that function may be done as part of their start-up mechanism.
  The simplest way to set user env settings in a static system is to start Edit Env...
  and accept "Edit Environment variables for your account" where you can use Edit > New
- Variable name: (key in) addins
- Variable value: (key in or SAFER is browse directory) e.g. c:\myapps\sumatrapdf\addins\
+ Variable name: (key in) Plus
+ Variable value: (key in or SAFER is browse directory) e.g. c:\myapps\sumatrapdf\Plus\
  Once done don't forget to select OK
- For a USB start-up batch file use something like SET "addins=%~d0Apps\sumatrapdf\addins\"
+ For a USB start-up batch file use something like SET "Plus=%~d0Apps\sumatrapdf\Plus\"
 
 3) A recent copy of mutool.exe must be in same folder
     Note that there are additional files supplied in both of the 2 latest windows zip
@@ -69,13 +70,14 @@ Presumptions (letter case should not matter, but relative positions do)
     %LOCALAPPDATA%\SumatraPDF\ or A:\PORTABLE\ folder SHOULD be ok,
     for multi-user you would need to change addins to a common fixed location.
 
-6) An entry in advanced SumatraPDF-settings.txt is needed as similar to this
+6) An entry in advanced SumatraPDF-settings.txt is needed as similar to this for 3.6 pre-release
 
 ExternalViewers [
 	[
-		CommandLine = "C:\Users\K\AppData\Local\SumatraPDF\Plus\ExportPng.cmd" "%1" page=%p
-		Name = Save current page &Graphics to PNG 
+		CommandLine = "C:\Users\K\AppData\Local\SumatraPDF\Plus\ExportTxt.cmd" "%1" page=%p
+		Name = Extract page &text
 		Filter = *.*
+                Key = t
 	]
 ]
 
@@ -94,13 +96,13 @@ End of readme / notes
 : file which was set at start then you may need to adjust both here and later
 : TL;DR this test should not be needed but for those users that don't RTFM
 
-if "%addins%"=="" set "addins=%~dp0"
-if not exist "%addins%mupdf-1.20.0-windows-tesseract\mutool.exe" echo: & echo  Either MuTool.exe or this file are not in correct location & goto :mutool
+if "%plus%"=="" set "plus=%~dp0"
+if not exist "%plus%mupdf\mutool.exe" echo: & echo  Either MuTool.exe or this file are not in correct location & goto :mutool
 if not exist "%~f1" echo: & echo "%~dpn1%~x1" & echo  Appears NOT to exist as a valid file & goto HELP
 
 : IF you wish to add or restrict input to only certain extensions then edit the file
-: extensions in the next line. NOTE .bmp, .jpg and .png are NOT multi-page
-for %%X in (bmp,cbz,epub,fb2,gif,jpg,oxps,pdf,png,tif,tiff,xps,zip) do IF /I .%%X.==%~x1. goto ALLOWED
+: extensions in the next line.
+for %%X in (epub,fb2,oxps,pdf,xps) do IF /I .%%X.==%~x1. goto ALLOWED
 echo  %~x1 Appears to be unacceptable & goto HELP
 
 :ALLOWED
@@ -152,7 +154,7 @@ echo:
 : IMPORTANT default for png images output is highly recommended as -r 96
 : BUT, if intended use is for OCR later, then it should be higher e.g. -r 300
 :
-"%addins%mupdf-1.20.0-windows-tesseract\mutool.exe" draw -r 96 -o "%~dpn1-Page-%%4d.png" "%~f1" "%pages%"
+"%Plus%mupdf\mutool.exe" draw -r 200 -o "%~dpn1-Page-%%4d.png" "%~f1" "%pages%"
 echo:
 echo Done & dir /b "%~dpn1-Page-*.png"
 : pause
@@ -160,10 +162,14 @@ echo Done & dir /b "%~dpn1-Page-*.png"
 timeout /t 10
 
 :eof
+popd
 exit /b
 
 :Download Dependencies
-:Mutool 32bit 1.20 is at mupdf-1.20.0-windows-tesseract
+echo on
+: Mutool 32bit 1.20 is at mupdf-1.20.0-windows-tesseract we use this because last universal 32&64bit
 curl -O https://mupdf.com/downloads/archive/mupdf-1.20.0-windows-tesseract.zip
-so 
 tar -m -xf mupdf-1.20.0-windows-tesseract.zip
+ren mupdf-1.20.0-windows-tesseract mupdf
+echo Dependencies Downloaded and unpacked. Please run again. 
+pause
