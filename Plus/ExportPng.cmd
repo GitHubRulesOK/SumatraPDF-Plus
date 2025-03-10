@@ -1,4 +1,4 @@
-@Mode 60,17 & Color 9F & Title SumatraPDF addin ExportTxt [.eXt2.Txt(s)] v'25-01-20--10
+@Mode 60,17 & Color 9F & Title SumatraPDF addin Export-as-PNG [PDF 2 PNG(s)] v'25-03-03--11
 @echo off & SetLocal EnableDelayedExpansion & pushd %~dp0 & goto MAIN
 Do not delete the above two lines since they are needed to prepare this script.
 
@@ -10,6 +10,7 @@ Do not delete the above two lines since they are needed to prepare this script.
  * simplify to mutool be in this folder or vise versa
  v'24-11-02--08 added mutool download link
  v'24-11-22--09 changed %addins% to %Plus% and mutool folder to more generic %Plus%mupdf also increase DPI to 200
+ v'25-03-03--11 Minor edits
 
  Read Me 1st (you can strip out most of these comments in your working copy)
  Note: Later lines that start with :LETTERS are branches that need to be kept BUT
@@ -30,19 +31,18 @@ Do not delete the above two lines since they are needed to prepare this script.
 Methodology
 
  This script pases the current FileName and PageRange to MuPDF\MuTool.exe
- ONLY .TXT OUTput is offered (NO Stext or ePub, but others are possible, Read the Manual)
- Input of many types including ePub or (o)xps and GIF/JPG/TIFF are allowed but
+ ONLY .PNG OUTput is offered (but others are possible, Read the Manual)
+ Input of many types including ePub or (o)xps and GIF/JPG/TIFF may be possible but
  no guarantee they will all be processed. Intended as an addin to SumatraPDF, but...
  When installed in the correct Plus location you can right click this file and "SendTo
  Desktop as shortcut" where you can ALSO use it for drag and drop (max=ONE file)
 
  CAUTION due to reflow differences, ePub and FB2 page numbers and appearance may
- vary wildly from MuPDF compared to those in SumatraPDF. To get a better sync (but 
- output will never be the same) you can vary font size / name in SumatraPDF-settings.txt.
+ vary wildly from MuPDF compared to those in SumatraPDF. 
 
 Presumptions (letter case should not matter, but relative positions do)
 
-1) THIS FILE (ExportTxt.CMD) is located in same folder with Mutool.exe in the same folder
+1) THIS FILE (ExportPng.CMD) is located in plus folder with Mutool in the mupdf sub-folder
 2) there is an %Plus% location stored OR set in the users Environment Variables
  
  A reminder about %Plus% (skip this section if you have already added other "addins")
@@ -60,7 +60,7 @@ Presumptions (letter case should not matter, but relative positions do)
  Once done don't forget to select OK
  For a USB start-up batch file use something like SET "Plus=%~d0Apps\sumatrapdf\Plus\"
 
-3) A recent copy of mutool.exe must be in same folder
+3) A recent copy of mutool.exe must be in a sub-folder
     Note that there are additional files supplied in both of the 2 latest windows zip
     files from the download links above. However, you should ONLY need one, mutool.exe
 
@@ -74,9 +74,9 @@ Presumptions (letter case should not matter, but relative positions do)
 
 ExternalViewers [
 	[
-		CommandLine = "C:\Users\K\AppData\Local\SumatraPDF\Plus\ExportTxt.cmd" "%1" page=%p
-		Name = Extract page &text
-		Filter = *.*
+		CommandLine = "C:\Users\K\AppData\Local\SumatraPDF\Plus\ExportPng.cmd" "%1" page=%p
+		Name = Extrac&t pages as PNG
+		Filter = *.pdf
                 Key = t
 	]
 ]
