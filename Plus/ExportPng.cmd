@@ -1,4 +1,4 @@
-@Mode 60,17 & Color 9F & Title SumatraPDF addin Export-as-PNG [PDF 2 PNG(s)] v'25-03-03--11
+@Mode 60,17 & Color 9F & Title SumatraPDF addin Export-as-PNG [PDF 2 PNG(s)] v'25-07-07--12
 @echo off & SetLocal EnableDelayedExpansion & pushd %~dp0 & goto MAIN
 Do not delete the above two lines since they are needed to prepare this script.
 
@@ -11,6 +11,7 @@ Do not delete the above two lines since they are needed to prepare this script.
  v'24-11-02--08 added mutool download link
  v'24-11-22--09 changed %addins% to %Plus% and mutool folder to more generic %Plus%mupdf also increase DPI to 200
  v'25-03-03--11 Minor edits
+ v'25-07-07--12 Fixed a fail if curl is redirected without -L 
 
  Read Me 1st (you can strip out most of these comments in your working copy)
  Note: Later lines that start with :LETTERS are branches that need to be kept BUT
@@ -168,7 +169,7 @@ exit /b
 :Download Dependencies
 echo on
 : Mutool 32bit 1.20 is at mupdf-1.20.0-windows-tesseract we use this because last universal 32&64bit
-curl -O https://mupdf.com/downloads/archive/mupdf-1.20.0-windows-tesseract.zip
+curl -L -O https://mupdf.com/downloads/archive/mupdf-1.20.0-windows-tesseract.zip
 tar -m -xf mupdf-1.20.0-windows-tesseract.zip
 ren mupdf-1.20.0-windows-tesseract mupdf
 echo Dependencies Downloaded and unpacked. Please run again. 
