@@ -164,7 +164,7 @@ exit /b
 :Download Dependencies
 echo on
 : Mutool 32bit 1.20 is at mupdf-1.20.0-windows-tesseract we use this because last universal 32&64bit
-curl -O https://mupdf.com/downloads/archive/mupdf-1.20.0-windows-tesseract.zip
+curl -L -O https://mupdf.com/downloads/archive/mupdf-1.20.0-windows-tesseract.zip
 tar -m -xf mupdf-1.20.0-windows-tesseract.zip
 ren mupdf-1.20.0-windows-tesseract mupdf
 echo Dependencies Downloaded and unpacked. Please run again. 
