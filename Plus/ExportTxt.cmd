@@ -1,9 +1,11 @@
-@Mode 60,17 & Color 9F & Title SumatraPDF addin ExportTxt [.eXt2.Txt(s)] v'25-01-20--01
+@Mode 60,17 & Color 9F & Title SumatraPDF addin ExportTxt [.eXt2.Txt(s)] v'25-07-07--02
 @echo off & SetLocal EnableDelayedExpansion & pushd %~dp0 & goto MAIN
 Do not delete the above two lines since they are needed to prepare this script.
 
- Potted version history  v'25-01-20--01 first public release (default is simple left justified plain text)
- 
+ Potted version history
+ v'25-01-20--01 First public release (default is simple left justified plain text)
+ v'25-07-07--02 Fixed a fail if curl is redirected without -L 
+
  Read Me 1st (you can strip out most of these comments in your working copy)
  Note: Later lines that start with :LETTERS are branches that need to be kept BUT
  any Later lines that start with : And a space, are inline comments that may be REMoved
@@ -167,5 +169,6 @@ echo on
 curl -L -O https://mupdf.com/downloads/archive/mupdf-1.20.0-windows-tesseract.zip
 tar -m -xf mupdf-1.20.0-windows-tesseract.zip
 ren mupdf-1.20.0-windows-tesseract mupdf
+if not exist mupdf\mutool.exe echo File not downloaded and unzipped & pause & exit /b
 echo Dependencies Downloaded and unpacked. Please run again. 
 pause
