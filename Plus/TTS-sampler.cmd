@@ -1,5 +1,5 @@
-@echo off&Mode 35,3&Color 3F&Title TTS-sampler v2024-11-15-01
-REM see IMPORTANT  note below
+@echo off&Mode 35,3&Color 3F&Title TTS-sampler v2025-13-07-02
+REM see IMPORTANT  notes below
 goto MAIN
 
 This is not intended as a fully working application but a SAMPLE
@@ -28,12 +28,15 @@ ExternalViewers [
 
 :MAIN
 REM set your choice of X2T and TTS.exe here and edit options in later lines
-REM IMPORTANT change the following line for your own instalation
+REM IMPORTANT change the following lines for your own instalation
 
-set "plus=C:\Users\K\AppData\Local\SumatraPDF\Plus"
+REM IMPORTANT if you see the Balabolka message Error: OLE error 8004503A
+REM it usually means a voice was not found or assigned ! default here is -n Zira
 
-set "X2T=%plus%\blb2txt\blb2txt.exe"
-set "TTS=%plus%\balcon\balcon.exe"
+set "plus=%~dp0"
+
+set "X2T=%plus%blb2txt\blb2txt.exe"
+set "TTS=%plus%balcon\balcon.exe"
 if not exist "%X2T%" goto dependencies
 
 REM delete any prior run
@@ -44,7 +47,7 @@ echo Extracting text for TexT 2 Speech
 
 echo To kill audio Text To Speech output
 echo Close this window, using  X  above.
-"%TTS%" -f "%temp%\Balcon-TTS.txt"
+"%TTS%" -n Zira -f "%temp%\Balcon-TTS.txt"
 pause >nul
 exit /b
 
