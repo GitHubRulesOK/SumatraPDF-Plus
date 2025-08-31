@@ -3,7 +3,7 @@ goto MAIN
 
 :README.txt
 This CMD file compiles embedded C# code to switch SumatraPDF toggle to Off (False).
-It is set for a standard SumatraPDF.exe using %appdata%. Adjust paths accordingly.
+It is set for a standard SumatraPDF.exe using %localappdata%. Adjust paths accordingly.
 First run compiles the .cs file into .exe. For subsequent runs execute the tool itself.
 
 It is more a Proof of concept as SumatraPDF has many related command line options, however, no
@@ -44,3 +44,4 @@ class InvertOn {
         Console.WriteLine("InvertColors updated to off.");
     }
 }
+
