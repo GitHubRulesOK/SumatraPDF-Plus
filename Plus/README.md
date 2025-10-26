@@ -8,4 +8,4 @@ Some may depend on other resources and may need an online connection to fetch 3r
 Navigator
 ---
 This is a complex beast compared to the others and you need to edit the Config.ini to see its potential
-![Navigator Image](../../../MyNotes/images/navigator.png)
+![Navigator Image](https://github.com/GitHubRulesOK/MyNotes/raw/master/images/navigator.png)
