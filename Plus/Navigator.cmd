@@ -5,7 +5,7 @@ goto MAIN
 
 The first run will write this filename.cs file for compiling which "should" be converted into this filname.exe
 Recommened filename for this command is Navigator it should be placed in a SUBfolder of folder containing SumatraPDF.
-Once you have the built exe thare is no need to run this source.cmd again but keep it for desired adjustments.
+Once you have the built exe there is no need to run this source.cmd again but keep it for desired adjustments.
 
 :NOTES END
 :MAIN
@@ -691,6 +691,7 @@ private void ApplyTreeViewDirection()
     Application.Run(new NavigatorForm());
   }
 }
+
 
 
 
