@@ -1,8 +1,8 @@
-@echo off & set "Title=My %~n0" & set set "Version=2025.10.28.001"
+@echo off & set "Title=My %~n0" & set "Version=2025.10.28.002"
 Title %Title% %Version%
 goto MAIN
 :README NOTES
-
+Not designed to be compiled on Windows 7 (10 or 11 are OK) it does function but may need minor edits 
 The first run will write this filename.cs file for compiling which "should" be converted into this filname.exe
 Recommened filename for this command is Navigator it should be placed in a SUBfolder of folder containing SumatraPDF.
 Once you have the built exe there is no need to run this source.cmd again but keep it for desired adjustments.
@@ -691,6 +691,7 @@ private void ApplyTreeViewDirection()
     Application.Run(new NavigatorForm());
   }
 }
+
 
 
 
