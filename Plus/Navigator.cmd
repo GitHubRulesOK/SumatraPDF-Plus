@@ -1,8 +1,8 @@
-@echo off & set "Title=My %~n0" & set "Version=2025.10.28.002"
+@echo off & set "Title=My %~n0" & set "Version=2025.10.30.003"
 Title %Title% %Version%
 goto MAIN
 :README NOTES
-Not designed to be compiled on Windows 7 (10 or 11 are OK) it does function but may need minor edits 
+Not designed to be compiled on Windows 7 (10 or 11 are OK) it does function with netFramework 4 but may need minor edits 
 The first run will write this filename.cs file for compiling which "should" be converted into this filname.exe
 Recommened filename for this command is Navigator it should be placed in a SUBfolder of folder containing SumatraPDF.
 Once you have the built exe there is no need to run this source.cmd again but keep it for desired adjustments.
@@ -69,11 +69,11 @@ class NavigatorForm : Form
     var layout = new TableLayoutPanel { Dock = DockStyle.Fill, RowCount = 2, ColumnCount = 1 };
     layout.RowStyles.Add(new RowStyle(SizeType.Absolute, 50)); layout.RowStyles.Add(new RowStyle(SizeType.Percent, 100));
     buttonPanel = new FlowLayoutPanel { Dock = DockStyle.Fill };
-    buttonPanel.Controls.Add(MakeButton("🔄", "Reload", (s, e) => ReloadIni()));
-    buttonPanel.Controls.Add(MakeButton("➖", "Collapse", (s, e) => treeView.CollapseAll()));
-    buttonPanel.Controls.Add(MakeButton("➕", "Expand", (s, e) => treeView.ExpandAll()));
-    buttonPanel.Controls.Add(MakeButton("🌓", "Mode", (s, e) => ToggleTheme()));
-    buttonPanel.Controls.Add(MakeButton("❓", "Help", (s, e) => OpenHelp()));
+    buttonPanel.Controls.Add(MakeButton("@", "Reload", (s, e) => ReloadIni()));
+    buttonPanel.Controls.Add(MakeButton("<-", "Collapse", (s, e) => treeView.CollapseAll()));
+    buttonPanel.Controls.Add(MakeButton("->", "Expand", (s, e) => treeView.ExpandAll()));
+    buttonPanel.Controls.Add(MakeButton("▀▄", "Mode", (s, e) => ToggleTheme()));
+    buttonPanel.Controls.Add(MakeButton("?", "Help", (s, e) => OpenHelp()));
     treeView = new TreeView { Dock = DockStyle.Fill, DrawMode = TreeViewDrawMode.OwnerDrawText };
     treeView.DrawNode += TreeView_DrawNode; treeView.MouseDown += TreeView_MouseDown; treeView.MouseMove += TreeView_MouseMove;
     treeView.Indent = 8;
@@ -691,6 +691,7 @@ private void ApplyTreeViewDirection()
     Application.Run(new NavigatorForm());
   }
 }
+
 
 
 
