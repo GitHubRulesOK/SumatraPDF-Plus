@@ -1,0 +1,29 @@
+<html>
+<head>
+<HTA:APPLICATION
+  ID="Web2PDF" SCROLL="no" SINGLEINSTANCE="yes" SHOWINTASKBAR="no" WINDOWSTATE="normal" MAXIMIZEBUTTON="yes" MINIMIZEBUTTON="yes" SYSMENU="yes"
+/>
+<script language="VBScript">
+window.resizeTo 425, 200
+window.moveTo 200, 300
+Sub ConvertAndView
+  Dim url, pdf, shell, cmd
+  url = document.getElementById("url").value
+  If Len(url) = 0 Then MsgBox "Please enter a URL": Exit Sub
+  pdf = document.getElementById("pdf").value
+  If Len(pdf) = 0 Then MsgBox "Please enter a file.pdf": Exit Sub
+
+  Set shell = CreateObject("WScript.Shell")
+  cmd = "cmd.exe /c start msedge --headless=new --log-level=3 --user-data-dir=""%tmp%\temp"" --no-pdf-header-footer --generate-pdf-document-outline --print-to-pdf=""" & pdf & """ """ & url & """ >nul && timeout 3 >nul && ..\sumatrapdf.exe """ & pdf & """"
+  shell.Run cmd, 0, False
+  window.close
+End Sub
+</script>
+</head>
+<body>
+  <label>Enter URL to view as PDF:</label><br>
+  <input type="text" id="url" size="60" value="https://example.com"><br>
+  <input type="text" id="pdf" size="60" value="c:\users\public\example.pdf"><br><br>
+  <button onclick="ConvertAndView">View</button>
+</body>
+</html>
