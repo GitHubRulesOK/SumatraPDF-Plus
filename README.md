@@ -44,3 +44,15 @@ Slowly migrating some updated "Addins" from https://github.com/GitHubRulesOK/MyN
 Multiple additions and updates.
 Printerinfo is based on https://github.com/JensBejer/PrinterInformation/blob/main/PrinterInformation/PrinterInformation.
 This version is a self compiling cmd file for use on Windows 10+
+Typical output
+```
+PrinterInfo.exe -papers fax
+Paper definitions for the printer 'Fax' on 'F28B5B59-DF9B-4':
+Paper Name                    Kind   Size in*in   Size mm*mm
+Letter                         (1) (8.50x11.00) (215.90x279.40)
+Letter Small                   (2) (8.50x11.00) (215.90x279.40)
+Legal                          (5) (8.50x14.00) (215.90x355.60)
+Statement                      (6) (5.50x8.50) (139.70x215.90)
+Executive                      (7) (7.25x10.50) (184.15x266.70)
+A4                             (9) (8.27x11.69) (210.06x296.93)
+```
