@@ -1,7 +1,8 @@
-@echo off &Title PrinterInfo C# Compile file, Version 2025-11-20-02
+@echo off &Title PrinterInfo C# Compile file, Version 2025-11-20-03
 goto MAIN
 :README NOTES
-Open Sourced from https://github.com/JensBejer/PrinterInformation/blob/main/PrinterInformation/PrinterInformation.
+Open Sourced from https://github.com/JensBejer/PrinterInformation/blob/main/PrinterInformation.
+License Boost Software License - Version 1.0 - August 17th, 2003
 
 This CMD file is designed to produce a Windows.net Native CSharp script for providing some basic printer information
 The primary reason is to allow finding printer name and paperkind for use with SumatraPDF.
@@ -10,8 +11,7 @@ The first run will write this filename.cs file for compiling which "should" be c
 Recommened filename for this command is PrinterInfo
 Once you have the PrinterInfo.exe there is no need to run this source.cmd again but keep for adjustments.
 
-Example use > PrinterInfo.cmd generates PiCs2PDF.exe then run that same name again should show usage help.
-
+Example use > PrinterInfo.cmd generates PrinterInfo.exe then run that same name again should show usage help.
 :NOTES END
 :MAIN
 REM IMPORTANT THESE FOLLOWING LINES ARE CRITICAL TO FUNCTION exporting and compiling "C# Code" to PrinterInfo.exe
