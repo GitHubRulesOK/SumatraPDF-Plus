@@ -1,9 +1,9 @@
 # SumatraPDF-Plus
-AutoHotKey and Other Scripts to HotFix user requested enhancements to SumatraPDF (see below) \
+AutoHotKey and Other Scripts to HotFix user requested enhancements to SumatraPDF (see below)  
 It is my personal compendium so decide which bits you do not require and delete accordingly.
 
-Be aware due to the unusual uses some scripts employ they may raise "False Positives" in \
-Anti-Virus scanners, you can read the contents as Open Source plain text before download \
+Be aware due to the unusual uses some scripts employ they may raise "False Positives" in 
+Anti-Virus scanners, you can read the contents as Open Source plain text before download 
 And normally if you download a script as .txt you can then rename to a run time extension.
 
 Purpose 
@@ -39,3 +39,8 @@ Get the latest copy from https://autohotkey.com/download/ahk.zip
 
 2021
 Slowly migrating some updated "Addins" from https://github.com/GitHubRulesOK/MyNotes/tree/master/AppNotes/SumatraPDF/Addins
+
+2025  
+Multiple additions and updates.
+Printerinfo is based on https://github.com/JensBejer/PrinterInformation/blob/main/PrinterInformation/PrinterInformation.
+This version is a self compiling cmd file for use on Windows 10+
