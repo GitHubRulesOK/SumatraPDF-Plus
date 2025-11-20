@@ -22,7 +22,7 @@ if not exist "%csc%" echo cannot find "%csc%" & pause & exit /b
 REM IMPORTANT the line number must be equal to the line containing :MORE-CS
 set "MOREline#=32"
 more +%moreLine#% "%~dpnx0" >"%~dpn0.cs"
-"%csc%" "%~dpn0.cs" >nul
+"%csc%" /platform:x86 "%~dpn0.cs" >nul
 if exist "%~dpn0.exe" echo built "%~dpn0.cs"&echo   and "%~dpn0.exe"
 @color 9F&timeout -1|set /p="Hello %userprofile:~9%, you may press any key to proceed..."&color
 "%~dpn0.exe"
