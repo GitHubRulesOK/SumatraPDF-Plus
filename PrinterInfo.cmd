@@ -145,7 +145,7 @@ namespace PrinterInformation
                 {
                     Console.WriteLine(string.Format("Paper source (bin) definitions for the printer '{0}' on '{1}':",
                         printerName, Environment.MachineName));
-                    Console.WriteLine("Paper Source Name         Kind");
+                    Console.WriteLine("Paper Source Name              Kind");
 
                     foreach (PaperSource papersource in pd.PrinterSettings.PaperSources)
                     {
