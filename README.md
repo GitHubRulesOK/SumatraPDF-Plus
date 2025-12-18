@@ -1,5 +1,5 @@
 # SumatraPDF-Plus
-AutoHotKey and Other Scripts to HotFix user requested enhancements to SumatraPDF (see below)  
+Scripts to HotFix user requested enhancements to SumatraPDF (see below)  
 It is my personal compendium so decide which bits you do not require and delete accordingly.
 
 Be aware due to the unusual uses some scripts employ they may raise "False Positives" in 
@@ -16,7 +16,7 @@ or the User Forum https://forum.sumatrapdfreader.org/
 
 As / If / When any features are implimented in official / pre-releases they may be removed here.
 
-Requirements
+Requirements for the older AutoHotKey (.AHK file). Many Others have their own requirements listed in their code.
 ------------
 Expects to be run at the same time as SumatraPDF from https://www.sumatrapdfreader.org/free-pdf-reader.html
 
