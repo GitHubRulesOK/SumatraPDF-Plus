@@ -9,3 +9,4 @@ Files
 - MoveEdge.ico is the embedded resource  
 - MoveEdge.png is just an illustration in use  
 - MoveEdge - Example.Lnk is just one example of usage (you can use as a template)  
+![MoveEdge Image](https://github.com/GitHubRulesOK/SumatraPDF-Plus/blob/master/Plus/MoveEdge/MoveEdge.png)
