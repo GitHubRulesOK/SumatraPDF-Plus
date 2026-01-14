@@ -6,6 +6,15 @@ Be aware due to the unusual uses some scripts employ they may raise "False Posit
 Anti-Virus scanners, you can read the contents as Open Source plain text before download 
 And normally if you download a script as .txt you can then rename to a run time extension.
 
+Intended structur is Top level folder with SumatraPDF.exe and friends (A portable version)
+Then a middle level of scripts and a lower level of folders with dependencies
+
+<img width="673" height="287" alt="image" src="https://github.com/user-attachments/assets/dea66771-b7cb-436f-b0d5-d0a7b2545179" />
+
+
+
+
+
 Purpose 
 ------- 
 A collection of temporary fixes to provide some Feature Requests from either
