@@ -1,9 +1,9 @@
-// reportAnnots.js
-// Usage: mutool run reportAnnots.js "input.pdf"
-//    OR: mutool run reportAnnots.js "input.pdf" --lines
+// ReportAnnots.js
+// Usage: mutool run ReportAnnots.js "input.pdf"
+//    OR: mutool run ReportAnnots.js "input.pdf" --lines
 // output report filename: will be "input-annots.txt"
 if (scriptArgs.length < 1) {
-    print("\nUsage: mutool run reportAnnots.js input.pdf [--lines]\n");
+    print("\nUsage: mutool run ReportAnnots.js input.pdf [--lines]\n");
     quit();
 }
 var inname = scriptArgs[0];
@@ -11,9 +11,6 @@ var doc = Document.openDocument(inname);
 var minified = scriptArgs.indexOf("--lines") >= 0;
 var outname = inname.replace(/\.pdf$/i, "") + "-annots.txt";
 var out = new Buffer();
-
-//function padR(str, width) { str = String(str); while (str.length < width) str += " "; return str; }
-//function padR(str, width) { if (str == null) str = ""; else { try { str = str.toString(); } catch (e) { str = String(str); } if (str[0] == "(" && str[str.length - 1] == ")") str = str.substring(1, str.length - 1); } while (str.length < width) str += " "; return str; }
 
 function padR(str, width) {
     // Preserve literal null
@@ -26,16 +23,13 @@ function padR(str, width) {
         } catch (e) {
             str = String(str);
         }
-
         // Remove PDF-style parentheses only when present
         if (str[0] === "(" && str[str.length - 1] === ")")
             str = str.substring(1, str.length - 1);
     }
-
     // Pad to fixed width
     while (str.length < width)
         str += " ";
-
     return str;
 }
 
@@ -72,3 +66,4 @@ for (var i = 0; i < doc.countPages(); i++) {
 }
 out.save(outname);
 print("Annotation report written to: " + outname);
+
