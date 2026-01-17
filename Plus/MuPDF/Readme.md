@@ -29,3 +29,4 @@ page=1 author=WDAGUtilityAccount     modified=D:20260116215925Z      subtype=/Fr
 ...
 ```
 The script can be easily modified to exclude certain types or alter layout.
+You may be suprised that there are "popout" entries added by certain /Types and if you want too exclude those simply remove the `//` at start of the line `//          if (annotObj.get("Subtype") == "Popup") continue;` which means bypass reporting that type.
