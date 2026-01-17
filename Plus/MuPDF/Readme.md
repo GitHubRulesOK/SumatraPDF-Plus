@@ -12,7 +12,7 @@ it cannot be "stealth" as it will retain the now empty `/Annots[]` tag in the pa
 endobj
 ```
 ### mutool run ReportAnnots.js input.pdf  [--lines]
-Will produce a file--annots.txt listing of this format or as single --lines
+Will produce a filename-annots.txt listing of this format or as single --lines
 ```
 Page: 1
 Author: WDAGUtilityAccount    
