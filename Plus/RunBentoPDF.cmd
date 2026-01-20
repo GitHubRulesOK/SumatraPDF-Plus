@@ -1,6 +1,6 @@
 rem @echo off
-REM point to the current testing BentoPDF SAAS location
-set "SAAS=C:\Users\WDAGUtilityAccount\Downloads\dist-1.16.0"
+REM point to the current BentoPDF SAAS location
+set "SAAS=%cd%\BentoPDF"
 set "Server=miniserve.exe"
 REM this must be less than 25 characters
 set "TaskName=miniserve"
@@ -36,3 +36,4 @@ REM  This is as close as we can currently get for drag and drop into the server 
 rem if exist "%~1\*.*" Explorer "%~1"
 
 pause
+
