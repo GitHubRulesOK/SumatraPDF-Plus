@@ -8,7 +8,7 @@ Some may depend on other resources and may need an online connection to fetch 3r
 Bookmarks
 ---
 There are 3 files here related to PDF bookmarks.
-AddBookmark simply appends a single bookmark without adjusting location and for multiple additions consider the use of BentoPDF. However for Aoto-Bookmarking use Tracker Xchange editor.  
+AddBookmark simply appends a single bookmark without adjusting location and for multiple additions consider the use of BentoPDF. However for Auto-Bookmarking use Tracker Xchange editor.  
 The other 2 files List-Bookmarks and Add-Bookmarks are for bulk export and import thus easy reordering or bulk editing. When wishing to set ALL levels it may be worth altering them first automaticallly with coherent cpdf before export to avoid a lot of find and replace.
 
 **JPG2PDF**
