@@ -13,7 +13,7 @@ The other 2 files List-Bookmarks and Add-Bookmarks are for bulk export and impor
 
 **JPG2PDF**
 ---
-This is now to be retired as replaced by PiCs2PDF which accepts multiple PDF compatible types.
+This is now to be retired as replaced by PiCs2PDF (see below) which accepts multiple PDF compatible types.
 
 Navigator
 ---
