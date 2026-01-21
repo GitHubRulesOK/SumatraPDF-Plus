@@ -1,4 +1,4 @@
-@Mode 60,17 & Color 9F & Title SumatraPDF addin Export Bookmarks [via cpdf] v'26-01-21--04
+@Mode 60,17 & Color 9F & Title SumatraPDF Import Bookmarks [via cpdf] v'26-01-21--01
 @echo off & SetLocal EnableDelayedExpansion & pushd %~dp0 & goto MAIN
 Do not delete the above two lines since they are needed to prepare this script.
 
@@ -10,31 +10,31 @@ This file is based on placed in a Plus folder below where SumatraPDF-settings.tx
 for example
 C:\Users\Your name\AppData\Local\SumatraPDF\SumatraPDF-settings.txt
 
-C:\Users\Your name\AppData\Local\SumatraPDF\Plus\List-Bookmarks.cmd
+C:\Users\Your name\AppData\Local\SumatraPDF\Plus\Add-Bookmarks.cmd
 
-Only on first run it needs internet access to download recent cpdf.exe
+Only on first run it may need internet access to download recent cpdf.exe
 
 To RUN either drag and drop a PDF file on this CMD or in SumatraPDF Advanced options add it to 
 
 
 ExternalViewers [
 	[
-		CommandLine = "C:\Users\ PUT your user name here \AppData\Local\SumatraPDF\plus\List-Bookmarks.cmd" "%1" 
-		Name = Export all &Bookmarks for this PDF as filename.bkm
+		CommandLine = "C:\Users\ PUT your user name here \AppData\Local\SumatraPDF\plus\Add-Bookmarks.cmd" "%1" 
+		Name = Import all &Bookmarks for this PDF as filename.bkm
 		Filter = *.pdf
-		Key = B
+		Key = +
 	]
 ]
 
 :MAIN
-if not exist "%~dpn1.pdf" goto help
+if not exist "%~dpn1-pdf.bkm" goto help
 
 set "cpdf=%~dp0cpdf\cpdf.exe"
 if not exist "%cpdf%" goto :dependencies
 
-rem export existing bookmarks to filename folder
-"%cpdf%" -list-bookmarks -utf8 "%~dpn1.pdf" 2>nul 1>"%~dpn1-pdf.bkm"
-
+rem import existing bookmarks from filename folder
+"%cpdf%" -add-bookmarks "%~dpn1-pdf.bkm" "%~dpn1.pdf" -o "%~dpn1-bookmarked.pdf"
+dir /b "%~dpn1-bookmarked.pdf" & pause
 REM clean-up
 :eof
 exit /b
@@ -47,5 +47,5 @@ cd ..
 pause &exit /b
 
 :help
-echo needs input filename.pdf 
+echo needs input filename.pdf that has an adjacent filename-pdf.bkm
 pause
