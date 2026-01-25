@@ -51,7 +51,7 @@ Slowly migrating some updated "Addins" from https://github.com/GitHubRulesOK/MyN
 
 2025  
 Multiple additions and updates.
-Printerinfo is based on https://github.com/JensBejer/PrinterInformation/blob/main/PrinterInformation/PrinterInformation.
+Printerinfo is based on https://github.com/JensBejer/PrinterInformation/blob/main/PrinterInformation.
 This version is a self compiling cmd file for use on Windows 10+
 Typical output
 ```
