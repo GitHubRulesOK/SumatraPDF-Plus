@@ -11,8 +11,8 @@ it cannot be "stealth" as it will retain the now empty `/Annots[]` tag in the pa
 <</Type/Page/MediaBox[0 0 595 842]/Rotate 0/Resources 7 0 R/Contents 8 0 R/Parent 2 0 R/Annots[]>>
 endobj
 ```
-### mutool run ReportAnnots.js input.pdf  [--lines]
-Will produce a filename-annots.txt listing of this format or as single --lines
+### mutool run ReportAnnots.js input.pdf 
+Will produce a filename-annots.txt listing of this -b option format or as default single lines
 ```
 Page: 1
 Author: WDAGUtilityAccount    
@@ -29,4 +29,5 @@ page=1 author=WDAGUtilityAccount     modified=D:20260116215925Z      subtype=/Fr
 ...
 ```
 The script can be easily modified to exclude certain types or alter layout.
-You may be suprised that there are "popout" entries added by certain /Types and if you want too exclude those simply remove the `//` at start of the line `//          if (annotObj.get("Subtype") == "Popup") continue;` which means bypass reporting that type.
+You may be suprised that there are "popout" entries added by certain /Types and if you want to include those simply remove the `//` at start of the line `//          if (annotObj.get("Subtype") == "Popup") continue;` which means bypass reporting that type.
+the dafault is a silent console but -c option is added to use with redirection etc. To stop file write you cam easily comment that line.
