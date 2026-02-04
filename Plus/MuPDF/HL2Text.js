@@ -1,7 +1,7 @@
 // PDF extract text under HighLight Selections for MuPDf 1.27 Version 2026-02-01 
 // Usage: mutool run HL2txt.js input.pdf
 if (scriptArgs.length < 1) {
-  print("Usage: mutool run highlight-extract-linear.js input.pdf"); quit();
+  print("Usage: mutool run HL2txt.js input.pdf"); quit();
 }
 var doc = Document.openDocument(scriptArgs[0]);
 for (var p = 0; p < doc.countPages(); p++) {
@@ -52,3 +52,4 @@ for (var p = 0; p < doc.countPages(); p++) {
     print("ANNOT " + ai + " " + subtype + ": " + txt);
   }
 }
+
