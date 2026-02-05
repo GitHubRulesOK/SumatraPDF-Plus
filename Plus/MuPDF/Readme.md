@@ -39,3 +39,34 @@ Extract text under PDF HighLight HLZone2TXT.js Works with MuPDF 1.27 Improved ve
 -o writes an output filename: will be "input-annots.txt" unless specified  
 -s is for no console stream (pointless without -o)  
 
+### mutool run SeekAndHL.js [-a=HLmode] [-c=RRGGBBAA] [-f=N] [-i] [-l=N] [-n] -s="text" [-t | -t="custom"] [-q] file.pdf
+
+Add PDF highlight annotations over matching text. Works with MuPDF 1.27 Improved version
+ -a=             Default=HL (Highlight, Squiggly, StrikeOut, Underline)
+ -c=RRGGBBAA     highlight colour (default FFFF00FF) AA=Highlight Opacity (FF=100% for lines or HL 50% Blend)
+ -f=# / -l=#     first/last page numbers, same # = one page
+ -i              case-insensitive searching
+ -n              count-only mode (no save, no annotations)
+ -s="find text"  Required literal quoted search string (supports spaces) may not always match seen plain text (Not full UTF)
+ -t              embed above search string into annotation
+ -t="text"       embed a custom text comment
+ -q              quite
+
+Note: UL/SQ/ST annotations are full opacity yet may appear faint with light colours. E.g. default Yellow 1 pt may look invisible.
+
+To use for just find a match (no write a file) use either  `mutool run SeekAndHL.js -n -s"phrase" file.pdf` OR `mutool run SeekAndHL.js -i -n -s"phrase" file.pdf`
+Example from a mixed source describing MuPDF and mupdf over 2 pages
+```
+>mutool run seekandhl.js -i -n -s="Mupdf" SO79283524.pdf
+Page 1: 8 matches
+Page 2: 3 matches
+Total matches: 11
+>mutool run seekandhl.js -n -s="mupdf" SO79283524.pdf
+Page 1: 6 matches
+Page 2: 2 matches
+Total matches: 8
+>mutool run seekandhl.js  -n -s="MuPDF" SO79283524.pdf
+Page 1: 2 matches
+Page 2: 1 matches
+Total matches: 3
+```
