@@ -34,8 +34,8 @@ the dafault is a silent console but -c option is added to use with redirection e
 
 ### mutool run HL2Text.js [-f=N] [-l=N] [-o|-o=filename.txt] [-s] file.pdf
 
-Extract text under PDF HighLight HLZone2TXT.js Works with MuPDF 1.27 Improved version
-
--o writes an output filename: will be "input-annots.txt" unless specified
--f= to -l= are page ##'s and -s is for no console stream (pointless without -o)
+Extract text under PDF HighLight HLZone2TXT.js Works with MuPDF 1.27 Improved version  
+-f= to -l= are page ##'s  
+-o writes an output filename: will be "input-annots.txt" unless specified  
+-s is for no console stream (pointless without -o)  
 
