@@ -85,10 +85,9 @@ var totalMatches = 0;
 for (var p = startIndex; p <= endIndex; p++) {
     var page = doc.loadPage(p); var sText = page.toStructuredText(); var searchKey = searchStr; var matches = [];
 if (ignoreCase) {
-    // MuPDF 1.27 supports case-insensitive search via second argument = true
-    matches = sText.search(searchStr.toLowerCase(), true) || [];
+    matches = sText.search(searchStr, StructuredText.SEARCH_IGNORE_CASE) || [];
 } else {
-    matches = sText.search(searchStr) || [];
+    matches = sText.search(searchStr, StructuredText.SEARCH_EXACT) || [];
 }
     totalMatches += matches.length;
     if (!silent) print("Page " + (p+1) + ": " + matches.length + " matches");
