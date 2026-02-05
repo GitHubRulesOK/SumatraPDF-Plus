@@ -11,7 +11,7 @@ it cannot be "stealth" as it will retain the now empty `/Annots[]` tag in the pa
 <</Type/Page/MediaBox[0 0 595 842]/Rotate 0/Resources 7 0 R/Contents 8 0 R/Parent 2 0 R/Annots[]>>
 endobj
 ```
-### mutool run ReportAnnots.js input.pdf 
+### mutool run ReportAnnots.js [-f=N] [-l=N] input.pdf 
 Will produce a filename-annots.txt listing of this -b option format or as default single lines
 ```
 Page: 1
@@ -31,3 +31,11 @@ page=1 author=WDAGUtilityAccount     modified=D:20260116215925Z      subtype=/Fr
 The script can be easily modified to exclude certain types or alter layout.
 You may be suprised that there are "popout" entries added by certain /Types and if you want to include those simply remove the `//` at start of the line `//          if (annotObj.get("Subtype") == "Popup") continue;` which means bypass reporting that type.
 the dafault is a silent console but -c option is added to use with redirection etc. To stop file write you can easily comment that line.
+
+### mutool run HL2Text.js [-f=N] [-l=N] [-o|-o=filename.txt] [-s] file.pdf
+
+Extract text under PDF HighLight HLZone2TXT.js Works with MuPDF 1.27 Improved version
+
+-o writes an output filename: will be "input-annots.txt" unless specified
+-f= to -l= are page ##'s and -s is for no console stream (pointless without -o)
+
