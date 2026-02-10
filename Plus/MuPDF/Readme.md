@@ -3,16 +3,17 @@ The programmable editing is acheived by calling `MuTool RUN script.js [...] [...
 
 The following scripts are simple proof of concepts you can enhance as desired.
 
-### mutool run DelPdfAnnots.js input.pdf [output.pdf]
-Will blindly attempt to remove all annot types (for finer control you would need to target by type)
-it cannot be "stealth" as it will retain the now empty `/Annots[]` tag in the page dictionary for example:
+### delAnnots.js Redundant replaced by Annots.js -m=delAnnots [options] ... file.pdf
+mutool run DelPdfAnnots.js input.pdf [output.pdf]
+Blindly attempted to remove all annot types (for finer control annots.js targets by type and or pages)
+They cannot be "stealth" as they may retain the now empty `/Annots[]` tag in the page dictionary for example:
 ```
 9 0 obj
 <</Type/Page/MediaBox[0 0 595 842]/Rotate 0/Resources 7 0 R/Contents 8 0 R/Parent 2 0 R/Annots[]>>
 endobj
 ```
-### mutool run ReportAnnots.js [-b] [-c]  [-f=N] [-l=N] input.pdf 
-Will produce a filename-annots.txt listing of this -b option format or without -b as default single lines
+### reportAnnots Redundant replaced by Annots.js default is -m=report [options] ... file.pdf
+Produced a filename-annots.txt listing of this -b option format or without -b as default single lines
 ```
 Page: 1
 Author: WDAGUtilityAccount    
@@ -71,3 +72,5 @@ Page 1: 2 matches
 Page 2: 1 matches
 Total matches: 3
 ```
+### mutool run Annots.js still a work in progress (not all functions active) but for now replaces Report and delete Annots or Links
+
