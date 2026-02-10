@@ -3,7 +3,7 @@ The programmable editing is acheived by calling `MuTool RUN script.js [...] [...
 
 The following scripts are simple proof of concepts you can enhance as desired.
 
-### delAnnots.js Redundant replaced by Annots.js -m=delAnnots [options] ... file.pdf
+### DelPdfAnnots.js Redundant replaced by Annots.js -m=delAnnots [options] ... file.pdf
 mutool run DelPdfAnnots.js input.pdf [output.pdf]
 Blindly attempted to remove all annot types (for finer control annots.js targets by type and or pages)
 They cannot be "stealth" as they may retain the now empty `/Annots[]` tag in the page dictionary for example:
