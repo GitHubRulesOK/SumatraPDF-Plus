@@ -12,7 +12,7 @@ They cannot be "stealth" as they may retain the now empty `/Annots[]` tag in the
 <</Type/Page/MediaBox[0 0 595 842]/Rotate 0/Resources 7 0 R/Contents 8 0 R/Parent 2 0 R/Annots[]>>
 endobj
 ```
-### reportAnnots Redundant replaced by Annots.js default is -m=report [options] ... file.pdf
+### reportAnnots.js Redundant replaced by Annots.js default is -m=report [options] ... file.pdf
 Produced a filename-annots.txt listing of this -b option format or without -b as default single lines
 ```
 Page: 1
