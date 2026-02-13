@@ -8,7 +8,7 @@ see defaults below for use of switches
 // --- Argument parsing ---
 var mode = "report"; var annotSubtype = "Highlight"; var blockMode = false; var verbose = false; var colorHex = "FFFF00FF";
 var flateSave = false; var decomSave = false; var outname = null; var reportFile = null; var firstPage = 1; var lastPage = null;
-var noSave = false; var outname = null; var silent = false; var reportFile = null; var searchStr = null; var ignoreCase = false; var totalMatches = 0;
+var noSave = false; var silent = false; var searchStr = null; var ignoreCase = false; var totalMatches = 0;
 var pokeGiven = false; var pokeText = null; var inname = null; var countOnly = false; var pageSpec = null; var pageFilter = null; var pdfDirty = false;
 for (var i = 0; i < scriptArgs.length; i++) {
   var arg = scriptArgs[i];
@@ -339,3 +339,4 @@ if (!noSave && pdfDirty) {
 }
 
 if (verbose) print("at final close")
+
