@@ -34,12 +34,11 @@ You may be suprised that there are "popout" entries added by certain /Types and 
 **the dafault is a silent console but -c option is added** to use with redirection etc. 
 To stop file write you can easily comment out the filewrite line e.g. `//out.write(line);` and delete the last 2 lines.
 
-### mutool run HL2Text.js [-f=N] [-l=N] [-o|-o=filename.txt] [-s] file.pdf
+### HL2Text.js Redundant replaced by Annots.js -m=HL2TXT [options] ... file.pdf
 
 Extract text under PDF HighLight HLZone2TXT.js Works with MuPDF 1.27 Improved version  
 -f= to -l= are page ##'s  
 -o writes an output filename: will be input "FileName-annots.txt" unless specified with -o="..." 
--s is for no console stream (pointless without -o)  
 
 ### mutool run SeekAndHL.js [-a=HLmode] [-c=RRGGBBAA] [-f=N] [-i] [-l=N] [-n] -s="text" [-t | -t="custom"] [-q] file.pdf
 
