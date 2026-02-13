@@ -162,21 +162,6 @@ if (verbose) print("DEBUG: pageFilter = " + pageFilter);
    PREP DEFAULT
    MODE = Report 
 ----------------*/
-function forEachPage(doc, fn) {
-    var n = doc.countPages();
-    for (var i = 0; i < n; i++) {
-        var page = doc.loadPage(i);
-        if (!page) continue;
-        fn(page, i + 1);   // pg = 1‑based
-    }
-}
-function subtypeMatches(obj, filter) {
-    if (!filter) return true;
-    var st = obj.get('Subtype');
-    if (!st) return false;
-    st = String(st).replace(/^\//, "").toLowerCase();
-    return st === filter.toLowerCase();
-}
 function runReportMode(doc, pageFilter, verbose) {
     var total = 0;
     forEachPage(doc, function(page, pg) {
@@ -352,4 +337,5 @@ if (!noSave && pdfDirty) {
         print("Save failed: " + e);
     }
 }
+
 if (verbose) print("at final close")
