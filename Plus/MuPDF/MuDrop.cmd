@@ -96,11 +96,12 @@ exit /b
 
 :FETCH
 CHOICE /C YN /N /M "Would you like to download MuTool 32 bit v1.27 portable copy... Press Y for Yes, N for No."
-set "mutool="
 if errorlevel 2 (echo Please edit this script to your location of MuTool.exe. & pause )
 if not errorlevel 1 exit
+set "mutool="
 curl -LO https://github.com/GitHubRulesOK/SumatraPDF-Plus/releases/download/x32Utilities/mutool.exe
 if exist mutool.exe (for %%F in ("mutool.exe") do set "Size=%%~zF")
 if %size% LSS 44000000 (echo Unexpected size Mutool 1.27+ should be over 42 MBytes! &&DEL mutool.exe && goto EOF)
 set "mutool=%~dp0mutool.exe"
 exit /b
+
