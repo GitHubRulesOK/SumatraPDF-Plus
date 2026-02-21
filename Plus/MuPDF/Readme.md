@@ -7,7 +7,7 @@ First a word about MuDrop
 MuPDF Tools (and MuRaster, MuDraw etc.) are sometimes desired as a known function or even swapable functions for "SendTo", "Drag and Drop". This can be helped by using a single cmd that alters based on parameters or mode request or has a default.  
 
 Say for example, you want all pages rotated 90 clockwise or delete a range of annotations. Then you would just set those actions inside MuDrop and file SendTo or a Desktop or SumatraPDF "Shortcut" would be set for that action.  
-By default it will check the **last item** on command line is a dropped **filename** or a named fill from a shortcut. The templacte can be any cmd name it just one of my several DoDrop.cmd templates.  
+By default it will check the **last item** on command line is a dropped **filename** or a named file from a shortcut. The template can be any cmd name it just one of my several DoDrop.cmd templates.  
 NOTE: if you set it for your own Mutool 1.27+ you can delete the version check and fetch command making it faster to start.
 
 Current demo is to show info for a range of pages and if you dont know how many use 1-1000 it will use the range as 1-last (when testing it is better use 1-9 then 10-19 etc. as output is sent to console).
