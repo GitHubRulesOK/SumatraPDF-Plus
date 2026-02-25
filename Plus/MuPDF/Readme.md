@@ -10,7 +10,8 @@ Say for example, you want all pages rotated 90 clockwise or delete a range of an
 By default it will check the **last item** on command line is a dropped **filename** or a named file from a shortcut. The template can be any cmd name it just one of my several DoDrop.cmd templates.  
 NOTE: if you set it for your own Mutool 1.27+ you can delete the version check and fetch command making it faster to start.
 
-Current demo is to show info for a range of pages and if you dont know how many use 1-1000 it will use the range as 1-last (when testing it is better use 1-9 then 10-19 etc. as output is sent to console).
+Current demo is to show info for a range of pages and if you dont know how many use 1-N it will use the range as 1-last (when testing it is better use 1-9 then 10-19 etc. as output is sent to console).
+![MuDrop-debug-report Image](https://github.com/GitHubRulesOK/SumatraPDF-Plus/blob/master/Plus/MuPDF/MuDrop-debug-report.png)  
 
 ### DelPdfAnnots.js Redundant replaced by Annots.js -m=delAnnots [options] ... file.pdf
 mutool run DelPdfAnnots.js input.pdf [output.pdf]
