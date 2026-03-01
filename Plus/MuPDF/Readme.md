@@ -1,16 +1,19 @@
 Mutool is the command line core build of MuPDF Utilities.
 The programmable editing is acheived by calling `MuTool RUN script.js [...] [...]`
 
-The following scripts are simple proof of concepts you can enhance as desired.
+The following scripts are simple proof of concepts you can enhance as desired. 
+
 First a word about MuDrop
 ### MuDrop 
 MuPDF Tools (and MuRaster, MuDraw etc.) are sometimes desired as a known function or even swapable functions for "SendTo", "Drag and Drop". This can be helped by using a single cmd that alters based on parameters or mode request or has a default.  
 
 Say for example, you want all pages rotated 90 clockwise or delete a range of annotations. Then you would just set those actions inside MuDrop and file SendTo or a Desktop or SumatraPDF "Shortcut" would be set for that action.  
-By default it will check the **last item** on command line is a dropped **filename** or a named file from a shortcut. The template can be any cmd name it just one of my several DoDrop.cmd templates.  
+
+By default MuDrop will check the **last item** on a command line is a dropped **filename** or a named file from a shortcut. The template can be any cmd name it just one of my several DoDrop.cmd templates.   
+
 NOTE: if you set it for your own Mutool 1.27+ you can delete the version check and fetch command making it faster to start.
 
-Current demo is to show info for a range of pages and if you dont know how many use 1-N it will use the range as 1-last (when testing it is better use 1-9 then 10-19 etc. as output is sent to console).
+Current demo is to show info for a range of pages and if you dont know how many use 1-N it will use the range as 1-last (when testing it is better use 1-9 then 10-19 etc. as output is sent to console).  
 ![MuDrop-debug-report Image](https://github.com/GitHubRulesOK/SumatraPDF-Plus/blob/master/Plus/MuPDF/MuDrop-debug-report.png)  
 
 ### DelPdfAnnots.js Redundant replaced by Annots.js -m=delAnnots [options] ... file.pdf
@@ -22,8 +25,8 @@ They cannot be "stealth" as they may retain the now empty `/Annots[]` tag in the
 <</Type/Page/MediaBox[0 0 595 842]/Rotate 0/Resources 7 0 R/Contents 8 0 R/Parent 2 0 R/Annots[]>>
 endobj
 ```
-### reportAnnots.js Redundant replaced by Annots.js default is -m=report [options] ... file.pdf
-Produced a filename-annots.txt listing of this -b option format or without -b as default single lines
+### reportAnnots.js Redundant replaced by List-Annots.js default is "As Lines" [options] file.pdf  
+Produces a filename-List.txt listing of all /Annot entries (-b option is Block Mode with mutiple lines per object)
 ```
 Page: 1
 Author: WDAGUtilityAccount    
@@ -39,10 +42,19 @@ OR
 page=1 author=WDAGUtilityAccount     modified=D:20260116215925Z      subtype=/FreeText  rect=[128.48616 460.0332 329.48616 561.0332] contents=This is a text...
 ...
 ```
-The script can be easily modified to exclude certain types or alter layout.
-You may be suprised that there are "popout" entries added by certain /Types and if you want to include those simply remove the `//` at start of the line `//          if (annotObj.get("Subtype") == "Popup") continue;` which means bypass reporting that type.
-**the dafault is a silent console but -c option is added** to use with redirection etc. 
-To stop file write you can easily comment out the filewrite line e.g. `//out.write(line);` and delete the last 2 lines.
+The script can be easily modified to just one subtype or alter layout.
+You may be suprised that there are "popout" entries added by certain /Types  
+
+Usage: mutool run links.js [switches] <file.pdf>
+Switches:
+  -b                  Block mode
+  -d                  Debug output
+  -p=r,a,n-g,e        Process page range. Accepts odd or even (No -p= is All)
+  -q                  Quieter
+  -r="Reportfile.ext" (Default is inputfile-list.txt)
+  -v                  More verbose information
+
+
 
 ### HL2Text.js Redundant replaced by Annots.js -m=HL2TXT [options] ... file.pdf
 
