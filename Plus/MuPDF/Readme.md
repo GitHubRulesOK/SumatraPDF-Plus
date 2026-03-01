@@ -28,6 +28,8 @@ endobj
 ### reportAnnots.js Redundant replaced by List-Annots.js default is "As Lines" [options] file.pdf  
 Produces a filename-List.txt listing of all /Annot entries (-b option is Block Mode with mutiple lines per object)
 
+![MuDrop-debug-report Image](https://github.com/GitHubRulesOK/SumatraPDF-Plus/blob/master/Plus/MuPDF/MuDrop-List-Annots.png)  
+
 The script can be easily modified to just one subtype or alter layout.
 You may be suprised that there are "popout" entries added by certain /Types  
 ```
