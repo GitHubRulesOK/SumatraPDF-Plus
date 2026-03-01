@@ -28,7 +28,6 @@ endobj
 ### reportAnnots.js Redundant replaced by List-Annots.js default is "As Lines" [options] file.pdf  
 Produces a filename-List.txt listing of all /Annot entries (-b option is Block Mode with mutiple lines per object)
 
-```
 The script can be easily modified to just one subtype or alter layout.
 You may be suprised that there are "popout" entries added by certain /Types  
 ```
