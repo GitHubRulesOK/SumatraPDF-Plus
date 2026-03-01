@@ -27,33 +27,20 @@ endobj
 ```
 ### reportAnnots.js Redundant replaced by List-Annots.js default is "As Lines" [options] file.pdf  
 Produces a filename-List.txt listing of all /Annot entries (-b option is Block Mode with mutiple lines per object)
-```
-Page: 1
-Author: WDAGUtilityAccount    
-Modified: D:20260116215925Z     
-Subtype: /FreeText 
-Rect: [128.48616 460.0332 329.48616 561.0332]
-Contents: This is a text...
-----------------------------------------
-...
-```
-OR
-```
-page=1 author=WDAGUtilityAccount     modified=D:20260116215925Z      subtype=/FreeText  rect=[128.48616 460.0332 329.48616 561.0332] contents=This is a text...
-...
+
 ```
 The script can be easily modified to just one subtype or alter layout.
 You may be suprised that there are "popout" entries added by certain /Types  
-
-Usage: mutool run links.js [switches] <file.pdf>
-Switches:
-  -b                  Block mode
-  -d                  Debug output
+```
+Usage: mutool run List-Annots.js [switches] <file.pdf>  
+Switches:  
+  -b                  Block mode  
+  -d                  Debug output  
   -p=r,a,n-g,e        Process page range. Accepts odd or even (No -p= is All)
   -q                  Quieter
   -r="Reportfile.ext" (Default is inputfile-list.txt)
   -v                  More verbose information
-
+```
 
 
 ### HL2Text.js Redundant replaced by Annots.js -m=HL2TXT [options] ... file.pdf
