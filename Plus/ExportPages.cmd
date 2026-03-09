@@ -38,7 +38,7 @@ set "PAGES="
 :NEED_PAGES
 set "REGEX=^(all|reverse|odd|even|portrait|landscape|end|~[0-9]+|~(?:end|odd|even|all)|[0-9]+|[0-9]+[-~](?:[0-9]+|~[0-9]+|end|odd|even|all|~(?:end|odd|even|all)))(,(all|reverse|odd|even|portrait|landscape|end|~[0-9]+|~(?:end|odd|even|all)|[0-9]+|[0-9]+[-~](?:[0-9]+|~[0-9]+|end|odd|even|all|~(?:end|odd|even|all))))*$"
 
-CALL :BUILD_MSGBOX "CPDF PAGE ranges (e.g. 1,3-5odd,end There are many others): current end = !PAGECOUNT!" "Page Range from !IN!" "Invalid input. Use only digits, commas, hyphens, tilde, and keywords per the manual."
+CALL :BUILD_MSGBOX "CPDF PAGE ranges (e.g. 1,3-5odd,end There are many others): current end = !PAGECOUNT!" "Page Range from %~nx1" "Invalid input. Use only digits, commas, hyphens, tilde, and keywords per the manual."
 CALL :ASKPAGES
 if "!REPLY!"=="UserAbort" goto :EOF
 if "!PAGES!"=="" goto NEED_PAGES
@@ -88,3 +88,4 @@ if "!REPLY!"=="UserAbort" exit /b
 set "PAGES=!REPLY!"
 if "!PAGES!"=="" goto ASKPAGES
 exit /b
+
