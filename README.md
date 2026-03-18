@@ -12,7 +12,18 @@ Then a middle level of scripts and a lower level of folders with dependencies
 <img width="673" height="287" alt="image" src="https://github.com/user-attachments/assets/dea66771-b7cb-436f-b0d5-d0a7b2545179" />
 
 
-Some simply interact with Windows Functions like open the current file in Edge perhaps for Dual file review
+Some simply interact with Windows Functions like open the current file in Edge (Perhaps for "Dual" file review or add inking?)  
+You can assign it to a single "Key", so here it opens the file on the left when I press the `T` key.
+```
+ExternalViewers [
+	[
+		CommandLine = c:\windows\system32\cmd.exe /r start="msedge.exe" --app="%1#page=%p"
+		Name = Edge-i&t
+		Filter = *.pdf
+		Key = t
+	]
+]
+```
 ![Edge-It Image](https://github.com/GitHubRulesOK/SumatraPDF-Plus/blob/master/Edge-It.png)
 
 Purpose 
