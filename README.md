@@ -30,11 +30,19 @@ Purpose
 ------- 
 A collection of temporary fixes to provide some Feature Requests from either
 
-SumatraPDF issues https://github.com/sumatrapdfreader/sumatrapdf/issues
+SumatraPDF issues https://github.com/sumatrapdfreader/sumatrapdf/issues  
+or the User Forum https://forum.sumatrapdfreader.org/  
+As / If / When any features are implimented in official / pre-releases they may be removed here.  
 
-or the User Forum https://forum.sumatrapdfreader.org/
-
-As / If / When any features are implimented in official / pre-releases they may be removed here.
+There are several ways to add scripts to SumatraPDF but the easiest is via simple CMD files in a subfolder.
+```
+	[
+		CommandLine = ".\plus\exportpng.cmd" "%1" page=1-N
+		Name = Export all pages to &Png
+		Filter = *.*
+		Key = P
+	]
+```
 
 Requirements for the older AutoHotKey (.AHK file). Many Others have their own requirements listed in their code.
 ------------
