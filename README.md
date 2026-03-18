@@ -43,32 +43,13 @@ There are several ways to add scripts to SumatraPDF but the easiest is via simpl
 		Key = P
 	]
 ```
-
-Requirements for the older AutoHotKey (.AHK file). Many Others have their own requirements listed in their code.
-------------
-Expects to be run at the same time as SumatraPDF from https://www.sumatrapdfreader.org/free-pdf-reader.html
-
-Expects (later will need) to be in a subdirectory named \plus in the folder with SumatraPDF-settings.txt
-
-Needs a copy of AutoHotKeyU32[or U64].exe to be renamed as plus.exe in same \plus subfolder.
-
-Get the latest copy from https://autohotkey.com/download/ahk.zip
+THe older scripted needs are now likely found in 3.6+ so most older ones removed.
 
  Plus Functions list
 --------------------
-   +  CTRL [& SHIFT] 4 = Web Lookup / Search
-   +  CTRL [& SHIFT] 5 = Translate / Including Text to Speech
-   +  (part done) Optionally reassign some hotkeys / shortcuts
-   +  Reassign Double Click from single to multi word selection (Click & Drag)
-   +  Reassign Single Click temporarily from Left to Right (Click & Drag Page)
-   
-      Caution This may block above multi-word selection, Right click to stop
-   +  Reassign Right Click to call All commands on tablets (without two tap exit) for fullscreen mode
-
-2021
-Slowly migrating some updated "Addins" from https://github.com/GitHubRulesOK/MyNotes/tree/master/AppNotes/SumatraPDF/Addins
-
-2025  
+2021-2025
+Slowly migrated some updated "Addins" from https://github.com/GitHubRulesOK/MyNotes/tree/master/AppNotes/SumatraPDF/Addins
+2025 /2026 
 Multiple additions and updates.
 Printerinfo is based on [https://github.com JensBejer PrinterInformation](https://github.com/JensBejer/PrinterInformation).
 This version is a self compiling cmd file for use on Windows 10+
@@ -84,3 +65,4 @@ Statement                      (6) (5.50x8.50) (139.70x215.90)
 Executive                      (7) (7.25x10.50) (184.15x266.70)
 A4                             (9) (8.27x11.69) (210.06x296.93)
 ```
+See the Plus folder for surrent offerings as this top level is only shows those related to portable settings.
