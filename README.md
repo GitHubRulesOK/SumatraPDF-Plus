@@ -12,8 +12,8 @@ Then a middle level of scripts and a lower level of folders with dependencies
 <img width="673" height="287" alt="image" src="https://github.com/user-attachments/assets/dea66771-b7cb-436f-b0d5-d0a7b2545179" />
 
 
-
-
+Some simply interact with Windows Functions like open the current file in Edge perhaps for Dual file review
+![Edge-It Image](https://github.com/GitHubRulesOK/SumatraPDF-Plus/blob/master/Edge-It.png)
 
 Purpose 
 ------- 
