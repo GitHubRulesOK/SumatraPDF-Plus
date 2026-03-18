@@ -24,7 +24,7 @@ ExternalViewers [
 	]
 ]
 ```
-
+![Edge-It.png Image](https://github.com/GitHubRulesOK/SumatraPDF-Plus/blob/master/Edge-It.png)
 
 Purpose 
 ------- 
