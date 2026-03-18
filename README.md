@@ -6,11 +6,10 @@ Be aware due to the unusual uses some scripts employ they may raise "False Posit
 Anti-Virus scanners, you can read the contents as Open Source plain text before download 
 And normally if you download a script as .txt you can then rename to a run time extension.
 
-Intended structure is This Top level folder with SumatraPDF.exe and friends (A portable version)
-Then a middle level of scripts and a lower level of folders with dependencies
+Intended structure is This Top level folder with SumatraPDF.exe and friends (A portable version of 3.6.1 or 3.7 pre-release is recommended)
+Then a middle level of scripts and a lower level of folders with dependencies.
 
 <img width="673" height="287" alt="image" src="https://github.com/user-attachments/assets/dea66771-b7cb-436f-b0d5-d0a7b2545179" />
-
 
 Some simply interact with Windows Functions like open the current file in Edge (Perhaps for "Dual" file review or add inking?)  
 You can assign it to a single "Key", so here it opens the file on the left when I press the `T` key.
@@ -34,7 +33,8 @@ SumatraPDF issues https://github.com/sumatrapdfreader/sumatrapdf/issues
 or the User Forum https://forum.sumatrapdfreader.org/  
 As / If / When any features are implimented in official / pre-releases they may be removed here.  
 
-There are several ways to add scripts to SumatraPDF but the easiest is via simple CMD files in a subfolder.
+See the Plus folder for current offerings as this top level is only shows those related to portable settings.  
+There are several ways to add scripts to SumatraPDF but the easiest is via simple CMD files in a subfolder.  
 ```
 	[
 		CommandLine = ".\plus\exportpng.cmd" "%1" page=1-N
@@ -43,14 +43,18 @@ There are several ways to add scripts to SumatraPDF but the easiest is via simpl
 		Key = P
 	]
 ```
-THe older scripted needs are now likely found in 3.6+ so most older ones removed.
+THe older scripted needs are now likely found in 3.6+ so most older ones have been removed.
 
  Plus Functions list
 --------------------
 2021-2025
 Slowly migrated some updated "Addins" from https://github.com/GitHubRulesOK/MyNotes/tree/master/AppNotes/SumatraPDF/Addins
 2025 /2026 
-Multiple additions and updates.
+Multiple additions and updates. This foldr has those related to SumatraPDF.exe command line or its settings.txt file.
+the plus folder contains those generally called imternally.  
+
+
+
 Printerinfo is based on [https://github.com JensBejer PrinterInformation](https://github.com/JensBejer/PrinterInformation).
 This version is a self compiling cmd file for use on Windows 10+
 Typical output
@@ -65,4 +69,4 @@ Statement                      (6) (5.50x8.50) (139.70x215.90)
 Executive                      (7) (7.25x10.50) (184.15x266.70)
 A4                             (9) (8.27x11.69) (210.06x296.93)
 ```
-See the Plus folder for surrent offerings as this top level is only shows those related to portable settings.
+
