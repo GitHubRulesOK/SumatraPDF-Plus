@@ -1,4 +1,4 @@
-@Mode 60,17 & Color 9F & Title SumatraPDF addin Export-as-PNG [PDF 2 PNG(s)] v'25-07-07--12
+@Mode 60,17 & Color 9F & Title SumatraPDF addin Export-as-PNG [PDF 2 PNG(s)] v'26-03-18--13
 @echo off & SetLocal EnableDelayedExpansion & pushd %~dp0 & goto MAIN
 Do not delete the above two lines since they are needed to prepare this script.
 
@@ -9,9 +9,10 @@ Do not delete the above two lines since they are needed to prepare this script.
  improve file handling for "filenames with spaces" 
  * simplify to mutool be in this folder or vise versa
  v'24-11-02--08 added mutool download link
- v'24-11-22--09 changed %addins% to %Plus% and mutool folder to more generic %Plus%mupdf also increase DPI to 200
+ v'24-11-22--09 changed %addins% to %Plus% and mutool folder to more generic %Plus%MuPDF also increase DPI to 200
  v'25-03-03--11 Minor edits
  v'25-07-07--12 Fixed a fail if curl is redirected without -L 
+ v'26-03-18--13 Fixed a fail in unpacking (provided new download) 
 
  Read Me 1st (you can strip out most of these comments in your working copy)
  Note: Later lines that start with :LETTERS are branches that need to be kept BUT
@@ -28,6 +29,7 @@ Do not delete the above two lines since they are needed to prepare this script.
 
   Current MuPDF tools are available from https://www.mupdf.com/downloads/index.html
   https://mupdf.com/downloads/archive/mupdf-1.20.0-windows-tesseract.zip (recommended as last known 32 bit version)
+  however have since updated to 2026 as https://github.com/GitHubRulesOK/SumatraPDF-Plus/releases/download/x32Utilities/mutool.exe
 
 Methodology
 
@@ -43,7 +45,7 @@ Methodology
 
 Presumptions (letter case should not matter, but relative positions do)
 
-1) THIS FILE (ExportPng.CMD) is located in plus folder with Mutool in the mupdf sub-folder
+1) THIS FILE (ExportPng.CMD) is located in plus folder with Mutool in the MuPDF sub-folder
 2) there is an %Plus% location stored OR set in the users Environment Variables
  
  A reminder about %Plus% (skip this section if you have already added other "addins")
@@ -71,7 +73,7 @@ Presumptions (letter case should not matter, but relative positions do)
     %LOCALAPPDATA%\SumatraPDF\ or A:\PORTABLE\ folder SHOULD be ok,
     for multi-user you would need to change addins to a common fixed location.
 
-6) An entry in advanced SumatraPDF-settings.txt is needed as similar to this for 3.6 pre-release
+6) An entry in advanced SumatraPDF-settings.txt is needed as similar to this for 3.6
 
 ExternalViewers [
 	[
@@ -98,7 +100,7 @@ End of readme / notes
 : TL;DR this test should not be needed but for those users that don't RTFM
 
 if "%plus%"=="" set "plus=%~dp0"
-if not exist "%plus%mupdf\mutool.exe" echo: & echo  Either MuTool.exe or this file are not in correct location & goto :mutool
+if not exist "%plus%MuPDF\mutool.exe" echo: & echo  Either MuTool.exe or this file are not in correct location & goto :Download
 if not exist "%~f1" echo: & echo "%~dpn1%~x1" & echo  Appears NOT to exist as a valid file & goto HELP
 
 : IF you wish to add or restrict input to only certain extensions then edit the file
@@ -155,7 +157,7 @@ echo:
 : IMPORTANT default for png images output is highly recommended as -r 96
 : BUT, if intended use is for OCR later, then it should be higher e.g. -r 300
 :
-"%Plus%mupdf\mutool.exe" draw -r 200 -o "%~dpn1-Page-%%4d.png" "%~f1" "%pages%"
+"%Plus%MuPDF\mutool.exe" draw -r 200 -o "%~dpn1-Page-%%4d.png" "%~f1" "%pages%"
 echo:
 echo Done & dir /b "%~dpn1-Page-*.png"
 : pause
@@ -166,11 +168,12 @@ timeout /t 10
 popd
 exit /b
 
-:Download Dependencies
-echo on
-: Mutool 32bit 1.20 is at mupdf-1.20.0-windows-tesseract we use this because last universal 32&64bit
-curl -L -O https://mupdf.com/downloads/archive/mupdf-1.20.0-windows-tesseract.zip
-tar -m -xf mupdf-1.20.0-windows-tesseract.zip
-ren mupdf-1.20.0-windows-tesseract mupdf
+:Download
+cd "%Plus%MuPDF"
+curl -L -O https://github.com/GitHubRulesOK/SumatraPDF-Plus/releases/download/x32Utilities/mutool.exe
+curl -L -O https://raw.githubusercontent.com/GitHubRulesOK/SumatraPDF-Plus/refs/heads/master/Plus/MuPDF/32bitDependencies.zip
+tar -xf 32bitDependencies.zip
 echo Dependencies Downloaded and unpacked. Please run again. 
 pause
+popd
+exit /b
