@@ -57,7 +57,8 @@ PicColo###.hta
 A range of small coloured instruments :-)
 Some preset the settings colors and some act on selections.  
 
-PicColo.hta now allows for mode 3 (the newest for SumatraPDF 3.6.1+) https://github.com/GitHubRulesOK/SumatraPDF-Plus/blob/master/PicColo361.hta  
+PicColo.hta now allows for mode 3 (the newest for SumatraPDF 3.6.1+)  
+https://github.com/GitHubRulesOK/SumatraPDF-Plus/blob/master/PicColo.hta  
 Works by select an area, press a key, and on pick a colour it is then highlighted etc.
 ![PicColo361 Image](https://github.com/GitHubRulesOK/SumatraPDF-Plus/blob/master/Plus/PicColo361.png)  
 There are many ways to set the color related commands (apart from area highlight selection), so you can use duplicated copies for several different actions.  
