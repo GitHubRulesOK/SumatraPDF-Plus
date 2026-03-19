@@ -71,7 +71,7 @@ ExternalViewers [
 		Key = h
 	]
 	[
-		CommandLine = "C:\...\PDF\SumatraPDF\17629\PicColo350.hta"
+		CommandLine = "C:\...\PDF\SumatraPDF\17629\PicColo330.hta"
 ...
     [
 ]
