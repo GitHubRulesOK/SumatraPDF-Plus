@@ -84,10 +84,10 @@ The earliest was PicColo330.hta for SumatraPDF 3.3+. This was more limited as it
 		Filter = *.pdf
 	]
 ```
-In 3.4 and later you could use a key to call it and change more than just "HighlightColor" e.g. "UnderlineColor" by edit copies of the HTA to change different keyword values.
+In 3.5 and later you could use a key to call it and change more than just "HighlightColor" e.g. "UnderlineColor" by edit copies of the HTA to change different keyword values.
 ```
 	[
-		CommandLine = "C:\Users\  path to \SumatraPDF\3.4\PicColo330.hta"
+		CommandLine = "C:\Users\  path to \SumatraPDF\3.5\PicColo330.hta"
 		Name = PicColo (Set the &HL colour)
 		Filter = *.pdf
         Key = h
