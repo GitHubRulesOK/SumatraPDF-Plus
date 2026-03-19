@@ -57,29 +57,29 @@ PicColo###.hta
 A range of small coloured instruments :-)
 Some preset the settings colors and some act on selections.  
 
-PicColo361 is the newest for SumatraPDF 3.6.1+ https://github.com/GitHubRulesOK/SumatraPDF-Plus/blob/master/PicColo361.hta  
+PicColo.hta now allows for mode 3 (the newest for SumatraPDF 3.6.1+) https://github.com/GitHubRulesOK/SumatraPDF-Plus/blob/master/PicColo361.hta  
 Works by select an area, press a key, and on pick a colour it is then highlighted etc.
 ![PicColo361 Image](https://github.com/GitHubRulesOK/SumatraPDF-Plus/blob/master/Plus/PicColo361.png)  
 There are many ways to set the color related commands (apart from area highlight selection), so you can use duplicated copies for several different actions.  
-To assign to a key and menu add to ExternalViewers a call, like this (using your own foldername).  
+To assign to a key and menu add to ExternalViewers a call, like this (using your own folder\filename).  
 ```
 ExternalViewers [
 	[
-		CommandLine = "C:\...\SumatraPDF\17629\PicColo361.hta"
+		CommandLine = "C:\...\SumatraPDF\17629\PicColo3.hta"
 		Name = PicColo (Pick a &HL colour)
 		Filter = *.pdf
 		Key = h
 	]
 	[
-		CommandLine = "C:\...\PDF\SumatraPDF\17629\PicColo330.hta"
+		CommandLine = "C:\...\PDF\SumatraPDF\17629\PicColo2.hta"
 ...
     [
 ]
 ```
-The earliest was PicColo330.hta for SumatraPDF 3.3+. This was more limited as it could only SET the HL colour in adjoining SumatraPDF-settings.txt file. So it is called via File Menu to use before a batch of highlights as there was no "hot key" then.
+The earliest PicColo.hta was for SumatraPDF 3.3+. This MODE 1 is more limited as it could only SET the HL colour in the adjoining SumatraPDF-settings.txt file. So it is called via File Menu to use before a batch of highlights as there was no "hot key" then.
 ```
 	[
-		CommandLine = "C:\Users\  path to \SumatraPDF\3.3\PicColo330.hta"
+		CommandLine = "C:\Users\  path to \SumatraPDF\3.3\PicColo1.hta"
 		Name = PicColo (Set the &HL colour)
 		Filter = *.pdf
 	]
@@ -87,13 +87,13 @@ The earliest was PicColo330.hta for SumatraPDF 3.3+. This was more limited as it
 In 3.6 and later you can use a key to call it and change more than just "HighlightColor" e.g. "UnderlineColor" by edit copies of the HTA to change different keyword values.
 ```
 	[
-		CommandLine = "C:\Users\  path to \SumatraPDF\3.6\PicColo330.hta"
+		CommandLine = "C:\Users\  path to \SumatraPDF\3.5\PicColo2.hta"
 		Name = PicColo (Set the &HL colour)
 		Filter = *.pdf
         Key = h
 	]
 ```
-In 3.4.6 you could use it to change "TextIconColor" and in 3.5 "StrikeOutColor"  or  "SquigglyColor" and is still useful in 3.6+ for set annotation values such as "FreeTextSize"
+In 3.4.6 you could use it to change "TextIconColor" and in 3.5 "StrikeOutColor"  or  "SquigglyColor" and could be adapted for 3.6+ for set annotation values such as "FreeTextSize"
 
 Printerinfo is based on [https://github.com JensBejer PrinterInformation](https://github.com/JensBejer/PrinterInformation).
 This version is a self compiling cmd file for use on Windows 10+
