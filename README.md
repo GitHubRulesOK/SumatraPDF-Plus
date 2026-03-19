@@ -76,7 +76,14 @@ ExternalViewers [
     [
 ]
 ```
-
+The earliest was PicColo330.hta for SumatraPDF 3.3+. This was more limited as it could only SET the HL colour in adjoining SumatraPDF-settings.txt file. So it is used via File Menu used before a batch of highlights as there was no "hot key" then.
+```
+	[
+		CommandLine = "C:\Users\  path to \SumatraPDF\3.3\PicColo330.hta"
+		Name = PicColo (Set the &HL colour)
+		Filter = *.pdf
+	]
+```
 
 Printerinfo is based on [https://github.com JensBejer PrinterInformation](https://github.com/JensBejer/PrinterInformation).
 This version is a self compiling cmd file for use on Windows 10+
