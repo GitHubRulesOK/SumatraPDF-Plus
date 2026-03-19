@@ -15,23 +15,7 @@ RememberOpenedFiles = false
 RememberStatePerDocument = false
 RestoreSession = true
 ReuseInstance = true
-ShowMenubar = true
-ShowToolbar = true
-ShowFavorites = false
-ShowToc = true
-ShowLinks = false
-ShowStartPage = true
-SidebarDx = 195
-SmoothScroll = false
-TabWidth = 300
-Theme = Light
-TocDy = 532
-ToolbarSize = 18
-TreeFontName = automatic
-TreeFontSize = 0
-UIFontSize = 0
-UseSysColors = false
-UseTabs = true
+...
 ZoomLevels = 
 ZoomIncrement = 0
 
@@ -63,33 +47,26 @@ ChmUI [
 ]
 
 Annotations [
-	HighlightColor = #ffff00
-	UnderlineColor = #00ff00
-	SquigglyColor = #ff00ff
-	StrikeOutColor = #ff0000
-	FreeTextColor = 
-	FreeTextSize = 12
-	FreeTextBorderWidth = 1
-	TextIconColor = 
-	TextIconType = 
-	DefaultAuthor = 
+	HighlightColor = #80ffff00
+...
+	DefaultAuthor = (none)
 ]
 
 ExternalViewers [
 	[
-		CommandLine = "C:\Program Files\Microsoft\Edge\Application\msedge.exe" --no-upsell --app="%1#page=%p"
+		CommandLine = "C:\Program Files\Microsoft\Edge\Application\msedge.exe"  --app="%1#page=%p"
 		Name = Edge-it
 		Filter = *.pdf
 		Key = W
 	]
 	[
-		CommandLine = "C:\Users\K\AppData\Local\SumatraPDF\plus\exportpng.cmd" "%1" page=1-N
+		CommandLine = "C:\Users\ MyApps \SumatraPDF\plus\exportpng.cmd" "%1" page=1-N
 		Name = Export all pages to Png
 		Filter = *.*
 		Key = P
 	]
 	[
-		CommandLine = "C:\Users\K\AppData\Local\SumatraPDF\plus\AddBookmark.cmd" "%1" %p
+		CommandLine = "C:\Users\ MyApps \SumatraPDF\plus\AddBookmark.cmd" "%1" %p
 		Name = &Bookmark this PDF page
 		Filter = *.pdf
 		Key = B
@@ -97,14 +74,11 @@ ExternalViewers [
 ]
 
 ForwardSearch [
-	HighlightOffset = 0
-	HighlightWidth = 15
-	HighlightColor = #6581ff
-	HighlightPermanent = false
+...
 ]
 
 PrinterDefaults [
-	PrintScale = shrink
+	PrintScale = none
 ]
 
 SelectionHandlers [
@@ -121,15 +95,6 @@ Shortcuts [
 Themes [
 ]
 
-# You're not expected to change those manually
-UiLanguage = en
-WindowState = 1
-WindowPos = 638 179 1037 775
-FileStates [
-]
-SessionData [
-]
-TimeOfLastUpdateCheck = 0 0
-OpenCountWeek = 722
-
+# You're not expected to change these manually
+...
 # Settings below are not recognized by the current version
