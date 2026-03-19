@@ -50,7 +50,7 @@ THe older scripted needs are now likely found in 3.6+ so most older ones have be
 2021-2025
 Slowly migrated some updated "Addins" from https://github.com/GitHubRulesOK/MyNotes/tree/master/AppNotes/SumatraPDF/Addins
 2025 /2026 
-Multiple additions and updates. This folder has those related to SumatraPDF.exe command line or its settings.txt file, the plus folder contains those generally called imternally.  
+Multiple additions and updates. This folder has those related to SumatraPDF.exe command line or its settings.txt file, the plus folder contains those generally called internally.  
 
 PicColo###.hta
 ---
