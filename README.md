@@ -50,9 +50,32 @@ THe older scripted needs are now likely found in 3.6+ so most older ones have be
 2021-2025
 Slowly migrated some updated "Addins" from https://github.com/GitHubRulesOK/MyNotes/tree/master/AppNotes/SumatraPDF/Addins
 2025 /2026 
-Multiple additions and updates. This foldr has those related to SumatraPDF.exe command line or its settings.txt file.
-the plus folder contains those generally called imternally.  
+Multiple additions and updates. This folder has those related to SumatraPDF.exe command line or its settings.txt file, the plus folder contains those generally called imternally.  
 
+PicColo###.hta
+---
+A range of small coloured instruments :-)
+Some preset the settings colors and some act on selections.  
+
+PicColo361 is the newest for SumatraPDF 3.6.1+ https://github.com/GitHubRulesOK/SumatraPDF-Plus/blob/master/PicColo361.hta  
+Works by select an area, press a key, and on pick a colour it is then highlighted etc.
+![PicColo361 Image](https://github.com/GitHubRulesOK/SumatraPDF-Plus/blob/master/Plus/PicColo361.png)  
+There are many ways to set the color related commands (apart from area highlight selection), so you can use duplicated copies for several different actions.  
+To assign to a key and menu add to ExternalViewers a call, like this (using your own foldername).  
+```
+ExternalViewers [
+	[
+		CommandLine = "C:\...\SumatraPDF\17629\PicColo361.hta"
+		Name = PicColo (Pick a &HL colour)
+		Filter = *.pdf
+		Key = h
+	]
+	[
+		CommandLine = "C:\...\PDF\SumatraPDF\17629\PicColo350.hta"
+...
+    [
+]
+```
 
 
 Printerinfo is based on [https://github.com JensBejer PrinterInformation](https://github.com/JensBejer/PrinterInformation).
