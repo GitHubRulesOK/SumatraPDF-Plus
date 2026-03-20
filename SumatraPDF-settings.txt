@@ -47,14 +47,14 @@ ChmUI [
 ]
 
 Annotations [
-	HighlightColor = #80ffff00
+	HighlightColor = #80ff00ff
 ...
 	DefaultAuthor = (none)
 ]
 
 ExternalViewers [
 	[
-		CommandLine = "C:\...\SumatraPDF\PicColo361.hta"
+		CommandLine = "C:\...\SumatraPDF\PicColo.hta"
 		Name = PicColo (Pick a &HL colour)
 		Filter = *.pdf
 		Key = h
