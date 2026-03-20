@@ -1,0 +1,85 @@
+<html><head><title>PicColo (Pick a Color)</title><meta http-equiv="X-UA-Compatible" content="IE=edge"><script>
+
+// PicColo version 2026-03-20 corrected for all versions to date
+
+// SET MODE FOR SumatraPDF Version 
+// Note: for mode 1 always use before select Area or Text
+// For mode 2 and 3 select then call it to action
+// "1" = SumatraPDF 3.3 to 3.4 (SET color for highlight key)
+// "2" = SumatraPDF 3.5 to 3.6.0 (SET color + TRIGGER WITH DDE)
+// "3" = SumatraPDF 3.6.1+ (direct DDE with colour value, default is not altered)
+var mode = "2";   // <-- EDIT VERSION MODE HERE
+var targetSection = "Annotations";   // CONFIGURABLE TARGET SECTION name
+var sectionIndex  = 1;               // 1st occurrence of that section
+var targetKey     = "HighlightColor"; // KEY name
+var keyIndex      = 1;               // 1st key inside that section
+var autoClose = true; // Note SumatraPDF will be on top of color picker if kept not closed, so if set false, park outside SumatraPDF Area
+
+function init() {
+    var w = 304, h = 75;
+    window.resizeTo(w, h);
+    var left = (screen.availWidth  - w) / 2;
+    var top  = (screen.availHeight - h) / 2;
+    window.moveTo(left, top);
+}
+// Main function: get colour + optional DDE
+function pick(hex) {
+    var fso   = new ActiveXObject("Scripting.FileSystemObject"); var shell = new ActiveXObject("WScript.Shell");
+    var htaPath = unescape(location.pathname.replace("file:///", "")); htaPath = htaPath.replace(/\//g, "\\");    // HTA folder (same as settings)
+    if (htaPath.charAt(0) === "\\") htaPath = htaPath.substring(1); var folder = fso.GetParentFolderName(htaPath);
+    var exe = '"' + folder.replace(/\\/g, "/") + '/SumatraPDF.exe"';    // Build EXE path (quoted, forward slashes)
+    switch (mode) {
+        case "1":
+            writeSettingsColor(fso, folder, hex);        // MODE 1 - SumatraPDF 3.3.x Only settings-file default colour can be altered
+            break;
+        case "2":
+            writeSettingsColor(fso, folder, hex);        // MODE 2 - SumatraPDF 3.5.0 - 3.6.0 Write settings colour, then DDE highlight
+            shell.Run('cmd.exe /c ' + exe + ' -dde [CmdCreateAnnotHighlight]', 0, false);
+            break;
+        case "3":
+            shell.Run('cmd.exe /c ' + exe + ' -dde [CmdCreateAnnotHighlight ' + hex + ']', 0, false); // MODE 3 - SumatraPDF 3.6.1+ Direct DDE
+            break;
+    }
+    if (autoClose) window.close();
+}
+
+// SUB-module: write colour into SumatraPDF-settings.txt
+function writeSettingsColor(fso, folder, hex) {
+    var settings = fso.BuildPath(folder, "SumatraPDF-settings.txt");
+    if (!fso.FileExists(settings)) {
+        alert("Settings file not found:\n" + settings); return;
+    }
+    var f = fso.OpenTextFile(settings, 1); var lines = f.ReadAll().split(/\r?\n/);
+    f.Close();
+    var out = []; var insideSection = false; var currentSectionCount = 0; var currentKeyCount = 0;
+    for (var i = 0; i < lines.length; i++) {
+        var trimmed = lines[i].trim(); // Detect section even if indented
+        if (trimmed.indexOf(targetSection) === 0) {
+            currentSectionCount++; insideSection = (currentSectionCount === sectionIndex);
+            out.push(lines[i]);
+            continue;
+        }
+        // If inside the correct section, look for the key
+        if (insideSection && trimmed.indexOf(targetKey + " =") === 0) {
+            currentKeyCount++;
+            if (currentKeyCount === keyIndex) {
+                out.push("\t" + targetKey + " = " + hex); // Replace ONLY the target key
+                insideSection = false;                // Stop modifying keys inside this section
+                continue;
+            }
+        }
+        out.push(lines[i]);        // else copy line unchanged
+    }
+    f = fso.OpenTextFile(settings, 2); f.Write(out.join("\r\n")); f.Close();    // Write back the modified file
+}
+</script></head><body onload="init()" style="margin:0;padding:0;overflow:hidden;">
+<div style="display:flex;flex-wrap:wrap;width:290px;height:60px;">
+<div onclick="pick('#ff0000')"    style="width:36px;height:36px;background:#ff0000;cursor:pointer;"></div>
+<div onclick="pick('#00ff00')"    style="width:36px;height:36px;background:#00ff00;cursor:pointer;"></div>
+<div onclick="pick('#800000ff')"  style="width:36px;height:36px;background:#0000ff;cursor:pointer;"></div>
+<div onclick="pick('#ffff00')"    style="width:36px;height:36px;background:#ffff00;cursor:pointer;"></div>
+<div onclick="pick('#ff00ff')"    style="width:36px;height:36px;background:#ff00ff;cursor:pointer;"></div>
+<div onclick="pick('#00ffff')"    style="width:36px;height:36px;background:#00ffff;cursor:pointer;"></div>
+<div onclick="pick('#80000000')"  style="width:36px;height:36px;background:#c0c0c0;cursor:pointer;"></div>
+<div onclick="pick('#ff8000')"    style="width:36px;height:36px;background:#ff8000;border:1px solid #ccc;cursor:pointer;"></div>
+</div></body></html>
