@@ -1,6 +1,6 @@
 <html><head><title>PicColo (Pick UL Color)</title><meta http-equiv="X-UA-Compatible" content="IE=edge"><script>
 
-// PicColo UnderLine version 2026-03-21 corrected for all versions to date 3.4 was earliest
+// PicColo UnderLine version 2026-03-21 v2 corrected again for all versions to date 3.4 was earliest
 
 // SET MODE FOR SumatraPDF Version 
 // Note: for mode 1 always use before select Area or Text
@@ -37,7 +37,7 @@ function pick(hex) {
             shell.Run('cmd.exe /c ' + exe + ' -dde [CmdCreateAnnotUnderline]', 0, false);
             break;
         case "3":
-            shell.Run('cmd.exe /c ' + exe + ' -dde [CmdCreateAnnotUnderline ' + hex + ']', 0, false); // MODE 3 - SumatraPDF 3.6.1+ Direct DDE
+            shell.Run('cmd.exe /c ' + exe + '\" -dde \"[CmdCreateAnnotUnderline ' + hex + ']\"\"', 0, false); // MODE 3 - SumatraPDF 3.6.1+ Direct DDE
             break;
     }
     if (autoClose) window.close();
