@@ -97,6 +97,7 @@ In 3.6 and later you can use a key to call it and change more than just "Highlig
 In 3.4.6 you could use it to change "TextIconColor" and in 3.5 "StrikeOutColor"  or  "SquigglyColor" and could be adapted for 3.6+ for set annotation values such as "FreeTextSize"
 
 SessionSavers  
+---
 ![SessionSavers.png Image](https://github.com/GitHubRulesOK/SumatraPDF-Plus/blob/master/SessionSavers.png)  
 There are 2 variants  
 - One saves the session as at a point in time for backup or replace however you wish it to be used  
@@ -118,7 +119,9 @@ ExternalViewers [
 ```
 
 
-Printerinfo is based on [https://github.com JensBejer PrinterInformation](https://github.com/JensBejer/PrinterInformation).
+Printerinfo
+---
+is based on [https://github.com JensBejer PrinterInformation](https://github.com/JensBejer/PrinterInformation).
 This version is a self compiling cmd file for use on Windows 10+
 Typical output
 ```
