@@ -117,6 +117,10 @@ ExternalViewers [
 	]
 ]
 ```
+Then a shortcut to each folder can be used for starting such as to open the session with all `Dog Grooming` documents
+```
+"C:\Program Files\SumatraPDF\SumatraPDF.exe" -appdata "%userprofile%\Documents\Dog Grooming"
+```
 
 
 Printerinfo
