@@ -5,6 +5,7 @@ exit /b
 After running in windows. This SessionSaver.CMD file becomes SessionSaver.exe
 It is one of 2 methods this one saves files with a date for mixed usage the other
 is SessionSaverDialog which asks for a Folder to be used for -appdata collections.
+
 The idea is to allow saving the current set of open tabs for edit and reuse.
 See the example at https://github.com/sumatrapdfreader/sumatrapdf/issues/43
 
