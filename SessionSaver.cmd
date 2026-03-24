@@ -2,7 +2,9 @@
 C:\Windows\Microsoft.NET\Framework64\v4.0.30319\csc  /platform:x86  /reference:System.IO.Compression.dll /reference:System.IO.Compression.FileSystem.dll "%~0"  
 exit /b
 
-After running in windows. This SessionSaver.CMD file becomes SessionSaver.exe 
+After running in windows. This SessionSaver.CMD file becomes SessionSaver.exe
+It is one of 2 methods this one saves files with a date for mixed usage the other
+is SessionSaverDialog which asks for a Folder to be used for -appdata collections.
 The idea is to allow saving the current set of open tabs for edit and reuse.
 See the example at https://github.com/sumatrapdfreader/sumatrapdf/issues/43
 
