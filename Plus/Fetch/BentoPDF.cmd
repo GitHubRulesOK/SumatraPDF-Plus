@@ -69,13 +69,11 @@ cd /d %target%
 :: Download files
 REM we have a dependency on any miniserver (we thus look for miniserve.exe) so first check
 if not exist miniserve.exe (
-curl -Lo miniserve.exe https://github.com/svenstaro/miniserve/releases/download/v0.32.0/miniserve-0.32.0-i686-pc-windows-msvc.exe
-) else (
-echo Did not find required miniserve.exe & pause & exit /b
+curl -Lo miniserve.exe https://github.com/svenstaro/miniserve/releases/download/v0.33.0/miniserve-0.33.0-i686-pc-windows-msvc.exe
 )
 :: Check server file size
 for %%F in ("miniserve.exe") do set "size=%%~zF"
-if %size% LSS 1979904 (echo Unexpected size miniserve version 0.32+ should be over 1.9 MBytes! && goto end)
+if %size% LSS 1900000 (echo Unexpected size miniserve version 0.30+ should be over 1.8 MBytes! && goto end)
 REM supports -V version so perhaps use that too
 
 set "zip=dist-%latest%.zip"
