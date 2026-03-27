@@ -125,7 +125,7 @@ Then a shortcut to each folder can be used for starting such as to open the sess
 
 Printerinfo
 ---
-is based on [https://github.com JensBejer PrinterInformation](https://github.com/JensBejer/PrinterInformation).
+NOTE this version is based on [https://github.com JensBejer PrinterInformation](https://github.com/JensBejer/PrinterInformation).
 This version is a self compiling cmd file for use on Windows 10+
 Typical output
 ```
@@ -139,4 +139,5 @@ Statement                      (6) (5.50x8.50) (139.70x215.90)
 Executive                      (7) (7.25x10.50) (184.15x266.70)
 A4                             (9) (8.27x11.69) (210.06x296.93)
 ```
+### UPDATE SumatraPDF pre-release 3.7.17807 or later has a new command (CmdListPrinters) with much more details but this is retained as simpler for a quick standalone check.
 
