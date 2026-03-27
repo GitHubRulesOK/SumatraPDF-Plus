@@ -46,9 +46,7 @@ namespace PrinterInformation
                 ShowHelp();
                 return;
             }
-
             string command = args[0].Trim();
-
             if (command.Equals("-help", StringComparison.OrdinalIgnoreCase))
             {
                 ShowHelp();
@@ -89,7 +87,6 @@ namespace PrinterInformation
                 Console.WriteLine("No printers found on this machine.");
                 return;
             }
-
             foreach (string printer in PrinterSettings.InstalledPrinters)
             {
                 Console.WriteLine(printer);
@@ -116,20 +113,17 @@ namespace PrinterInformation
             {
                 PrintDocument pd = new PrintDocument();
                 pd.PrinterSettings.PrinterName = printerName;
-
                 if (!pd.PrinterSettings.IsValid)
                 {
                     Console.WriteLine(string.Format("The printer settings for the printer '{0}' are not valid on '{1}'",
                         printerName, Environment.MachineName));
                     return;
                 }
-
                 if (command.Equals("-papers", StringComparison.OrdinalIgnoreCase))
                 {
                     Console.WriteLine(string.Format("Paper definitions for the printer '{0}' on '{1}':",
                         printerName, Environment.MachineName));
                     Console.WriteLine("Paper Name                     Kind   Size in*in   Size mm*mm");
-
                     foreach (PaperSize papersize in pd.PrinterSettings.PaperSizes)
                     {
                         Console.WriteLine(string.Format("{0,-30} ({1}) ({2:N2} x {3:N2}) ({4:N2} x {5:N2})",
@@ -146,7 +140,6 @@ namespace PrinterInformation
                     Console.WriteLine(string.Format("Paper source (bin) definitions for the printer '{0}' on '{1}':",
                         printerName, Environment.MachineName));
                     Console.WriteLine("Paper Source Name              Kind");
-
                     foreach (PaperSource papersource in pd.PrinterSettings.PaperSources)
                     {
                         Console.WriteLine(string.Format("{0,-30} ({1})", papersource.SourceName, papersource.RawKind));
@@ -167,10 +160,8 @@ namespace PrinterInformation
         {
             Version appVersion = Assembly.GetExecutingAssembly().GetName().Version;
             string appName = Process.GetCurrentProcess().ProcessName;
-
             Console.WriteLine(string.Format("{0} Version {1}, {2}",
                 appName, appVersion, DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff")));
-
             Console.WriteLine(string.Format("\nShow printer information for '{0}':\n", Environment.MachineName));
             Console.WriteLine(string.Format(" {0} -Help                  To get this help text.", appName));
             Console.WriteLine(string.Format(" {0} -Printers              To list all printer names.", appName));
