@@ -11,6 +11,8 @@ It should be run from advanced settings entry pointing to the location of this e
 
 I recommend keep the same Hot Key as it acts then as a Toggle On /Off.
 
+In SumatraPDF ensure the path to the exe is added to Advanced Options ExternalViewers
+
 ExternalViewers [
 	[
 		CommandLine = "C:\Users\your path to\spyglass.exe"
