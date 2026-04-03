@@ -4,7 +4,7 @@ exit /b
 
 On doubleclick, this SpyGlass.CMD file becomes Spyglass.exe
 
-The idea is to adda pointer magnification for use with SumatraPDF External Viewers.
+The idea is to add a pointer magnification for use with SumatraPDF External Viewers.
 See the example at https://github.com/sumatrapdfreader/sumatrapdf/issues/929#issuecomment-4181081913
 
 It should be run from advanced settings entry pointing to the location of this exe.
@@ -13,7 +13,7 @@ I recommend keep the same Hot Key as it acts then as a Toggle On /Off.
 
 ExternalViewers [
 	[
-		CommandLine = "C:\Users\WDAGUtilityAccount\Desktop\Apps\Programming\c#\microscope\spyglass.exe"
+		CommandLine = "C:\Users\your path to\spyglass.exe"
 		Name = &Magnifier
 		Filter = *.*
 		Key = Ctrl + Alt + m
