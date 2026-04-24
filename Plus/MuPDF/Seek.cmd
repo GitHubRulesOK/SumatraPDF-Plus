@@ -4,6 +4,11 @@ REM This is a template command file to use with
 REM https://github.com/GitHubRulesOK/SumatraPDF-Plus/blob/master/Plus/MuPDF/SeekAndHL.js
 REM There are multiple options for the SeekAndHL.js such as auto add comments or page range but for this demo,
 REM below are the minimum and for convenience we will use -i along with !color! because both are unquoted.
+REM the Wordlist is a simple CSV file with as many lines and etries as you desire but for this demo is only 3 columns
+REM "Needle Phrase to find",Hex colour as RRGGBBAA,Case sensitive true or false e.g.
+REM "Bingo",FF800080,false
+REM "Bluey",4080FF80,true
+REM "Aunty Brandy",FF8000FF,false
 
 setlocal enabledelayedexpansion
 for /f "tokens=2 delims=:" %%A in ('chcp') do set "OLDCP=%%A"
