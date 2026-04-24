@@ -9,6 +9,7 @@ REM "Needle Phrase to find",Hex colour as RRGGBBAA,Case sensitive true or false 
 REM "Bingo",FF800080,false
 REM "Bluey",4080FF80,true
 REM "Aunty Brandy",FF8000FF,false
+REM see https://github.com/sumatrapdfreader/sumatrapdf/issues/5578#issuecomment-4313787248
 
 setlocal enabledelayedexpansion
 for /f "tokens=2 delims=:" %%A in ('chcp') do set "OLDCP=%%A"
