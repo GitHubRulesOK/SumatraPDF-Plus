@@ -1,13 +1,14 @@
 /*
- Add PDF highlight annotations over matching text, SeekAndHL can be any name. Works with MuPDF 1.27 Improved version 2026-02-05-v02
+ Add PDF highlight annotations over matching text, SeekAndHL can be any name. Works with MuPDF 1.27 or SumatraPDF 3.7+ Improved version 2026-04-24-v03
 
- Usage: mutool run SeekAndHL.js [-a=HLmode] [-c=RRGGBBAA] [-f=N] [-i] [-l=N] [-n] -s="text" [-t | -t="custom"] [-q] file.pdf
+ Usage: mutool/SumatraPDF run SeekAndHL.js [-a=HLmode] [-c=RRGGBBAA] [-f=N] [-i] [-l=N] [-n] [-r=file.txt] -s="text" [-t | -t="custom"] [-q] file.pdf
 
  -a=             Default=HL (Highlight, Squiggly, StrikeOut, Underline)
  -c=RRGGBBAA     highlight colour (default FFFF00FF) AA=Highlight Opacity (FF=50% Blend)
  -f=# / -l=#     first/last page numbers, same # = one page
  -i              case-insensitive searching
  -n              count-only mode (no save, no annotations)
+ -r=\"file.ext\"   Report File (Default is inputfile-hl.txt)
  -s="find text"  Required literal quoted search string (supports spaces) may not always match seen plain text (Not full UTF)
  -t              embed above search string into annotation
  -t="text"       embed a custom text comment
@@ -17,43 +18,33 @@ Note: UL/SQ/ST annotations are full opacity yet may appear faint with light colo
 
 */
 // --- input handler ---
-var inname = null; var firstPage = 1; var lastPage = null; var searchStr = null; var pokeText = null; var pokeGiven = false;
+var inname = null; var firstPage = 1; var lastPage = null; var searchStr = null; var pokeText = null; var pokeGiven = false;var reportFile = "";
 var colorHex = "FFFF00FF"; var ignoreCase = false; var countOnly = false; var silent = false; var annotType = "Highlight";   // default fallback
 for (var i = 0; i < scriptArgs.length; i++) {
     var a = scriptArgs[i];
-    if (a.indexOf("-f=") === 0) {
-        firstPage = parseInt(a.substring(3), 10);
-    } else if (a.indexOf("-l=") === 0) {
-        lastPage = parseInt(a.substring(3), 10);
-    } else if (a.indexOf("-c=") === 0) {
-        colorHex = a.substring(3).toUpperCase();
-    } else if (a.indexOf("-s=") === 0) {
-        searchStr = a.substring(3);
-    } else if (a.indexOf("-a=") === 0) {
-    var mode = a.substring(3).toLowerCase();
-    if (mode === "hl" || mode === "hi" || mode === "highlight")
-        annotType = "Highlight";
-    else if (mode === "ul" || mode === "un" || mode === "underline")
-        annotType = "Underline";
-    else if (mode === "sq" || mode === "squiggly")
-        annotType = "Squiggly";
-    else if (mode === "st" || mode === "so" || mode === "strikeout")
-        annotType = "StrikeOut";
-    } else if (a === "-s") {
-        searchStr = scriptArgs[++i];
-    } else if (a === "-q") {
-        silent = true;
-    } else if (a.indexOf("-t=") === 0) {
-        pokeText = a.substring(3);
-        pokeGiven = true;
-    } else if (a === "-t") {
-        pokeGiven = true;
-    } else if (a === "-i") {
-        ignoreCase = true;
-    } else if (a === "-n") {
-        countOnly = true;
-    } else if (a[0] !== "-") {
+    if (a[0] !== "-") {
         inname = a;
+        continue;
+    }
+    var key = a.slice(1, 2);
+    var val = a.indexOf("=") > 0 ? a.slice(3) : null;
+    switch (key) {
+        case "a":
+            var mode = val.toLowerCase();
+            if (/^(hl|hi|highlight)$/.test(mode)) annotType = "Highlight";
+            else if (/^(ul|un|underline)$/.test(mode)) annotType = "Underline";
+            else if (/^(sq|squiggly)$/.test(mode)) annotType = "Squiggly";
+            else if (/^(st|so|strikeout)$/.test(mode)) annotType = "StrikeOut";
+            break;
+        case "c": colorHex = val.toUpperCase(); break;
+        case "f": firstPage = parseInt(val, 10); break;
+        case "l": lastPage = parseInt(val, 10); break;
+        case "i": ignoreCase = true; break;
+        case "n": countOnly = true; break;
+        case "q": silent = true; break;
+        case "r": reportFile = val; break;
+        case "s": searchStr = val; break;   // must use = form
+        case "t": pokeGiven = true; if (val !== null) pokeText = val; break;
     }
 }
 if (!inname || !searchStr) { print("Usage: mutool run SeekAndHL.js [-a=HLmode] [-c=RRGGBBAA] [-f=N] [-i] [-l=N] [-n] -s=\"text\" [-t | -t=\"custom\"] [-q] file.pdf"); quit(); }
@@ -75,6 +66,9 @@ function hexToRGBA(hex) {
 }
 var rgba = hexToRGBA(colorHex);
 var doc = Document.openDocument(inname); var total = doc.countPages();
+var txtOut = new Buffer();
+var defaultReportFile = inname.replace(/\.pdf$/i, "") + "-hl.txt";
+
 if (lastPage === null || lastPage > total)
     lastPage = total;
 var startIndex = firstPage - 1; var endIndex   = lastPage - 1;
@@ -90,7 +84,8 @@ if (ignoreCase) {
     matches = sText.search(searchStr, StructuredText.SEARCH_EXACT) || [];
 }
     totalMatches += matches.length;
-    if (!silent) print("Page " + (p+1) + ": " + matches.length + " matches");
+    var out=("Page " + (p+1) + ": " + matches.length + " matches");
+    txtOut.write(out + "\n");if (!silent) print(out);
     if (countOnly) continue;
     for (var i = 0; i < matches.length; i++) {
         var quads = matches[i]; var annot = page.createAnnotation(annotType);
@@ -101,8 +96,11 @@ if (ignoreCase) {
 }
 // --- save or report ---
 if (countOnly) {
-    if (!silent) print("Total matches: " + totalMatches);
+    var out=("Total matches: " + totalMatches);
+    txtOut.write(out + "\n");if (!silent) print(out);
 } else {
     var outname = inname.replace(/\.pdf$/i, "") + "-hl.pdf";
     doc.save(outname); if (!silent) print("Saved annotated PDF as: " + outname);
 }
+var finalReport = reportFile || defaultReportFile;
+txtOut.save(finalReport);
