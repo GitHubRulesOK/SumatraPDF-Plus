@@ -51,7 +51,7 @@ REM Filter only positive hits
 REM we will for Concept not autosave the results but show in SumatraPDF for user to read or save as desired
 echo.
 echo Opening final highlighted PDF...
-start="" "%SumatraPDF%"  -new-window "%TOTAL%" "%WORK%"
+start="" "%SumatraPDF%"  -reuse-instance "%TOTAL%" "%WORK%"
 echo.
 echo Done. Review highlights and save temporary TXT AND / OR PDF files if desired.
 chcp %OLDCP% >nul
