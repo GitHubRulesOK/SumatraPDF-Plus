@@ -1,14 +1,16 @@
 @echo off
+REM VERSION 2 we now use | as seperator in wordlist
 
-REM This is a template command file to use with 
+REMThis is a template command file to use with 
 REM https://github.com/GitHubRulesOK/SumatraPDF-Plus/blob/master/Plus/MuPDF/SeekAndHL.js
 REM There are multiple options for the SeekAndHL.js such as auto add comments or page range but for this demo,
 REM below are the minimum and for convenience we will use -i along with !color! because both are unquoted.
 REM the Wordlist is a simple CSV file with as many lines and entries as you desire but for this demo is only 3 columns
-REM "Needle Phrase to find",Hex colour as RRGGBBAA,Case sensitive true or false e.g.
-REM "Bingo",FF800080,false
-REM "Bluey",4080FF80,true
-REM "Aunty Brandy",FF8000FF,false
+REM use the "wordlist.csv" file with one line per cycle NOTE due to comma problems we now use | as seperator
+REM "Needle Phrase to find"|Hex colour as RRGGBBAA|Case sensitive true or false e.g.
+REM "Bingo"|FF800080|false
+REM "Bluey"|4080FF80|true
+REM "Aunty Brandy"|FF8000FF|false
 REM see https://github.com/sumatrapdfreader/sumatrapdf/issues/5578#issuecomment-4313787248
 
 setlocal enabledelayedexpansion
@@ -32,9 +34,14 @@ set "WORK=%tmp%\work.pdf"
 set "TEXT=%tmp%\work.txt"
 copy /y "%INPUT%" "%WORK%" >nul
 
-REM use the "wordlist.csv" file with one line per cycle
-for /f "usebackq tokens=1,2,3 delims=," %%A in ("wordlist.csv") do (
+REM use the "wordlist.csv" file with one line per cycle NOTE due to comma problems we use | as seperator
+
+REM imortant we disable delayedexpansion at start of loop
+setlocal disabledelayedexpansion
+for /f "usebackq tokens=1,2,3 delims=|" %%A in ("wordlist.csv") do (
     set "TERM=%%~A" & set "COLOR=%%~B" & set "CASE=%%~C"
+REM Now safely re-enable delayed expansion
+    setlocal EnableDelayedExpansion
     echo Highlighting: !TERM!  Color: !COLOR!  CaseSensitive: !CASE!
     echo( >> "%TOTAL%" & echo Term: !TERM! >> "%TOTAL%"
     set "OPTIONS=-c=!COLOR!"
@@ -47,7 +54,12 @@ REM Filter only positive hits
     REM Replace "%WORK%" with the newly highlighted "%tmp%\work-hl.pdf"
     if exist "%tmp%\work-hl.pdf" copy /y "%tmp%\work-hl.pdf" "%WORK%" >nul
     del "%TEXT%" "%tmp%\work-hl.pdf" >nul
+REM Now safely endlocal for next pass
+    endlocal
 )
+REM Now safely endlocal outside the loop
+endlocal
+
 REM we will for Concept not autosave the results but show in SumatraPDF for user to read or save as desired
 echo.
 echo Opening final highlighted PDF...
@@ -56,4 +68,3 @@ echo.
 echo Done. Review highlights and save temporary TXT AND / OR PDF files if desired.
 chcp %OLDCP% >nul
 pause
-
