@@ -1,7 +1,7 @@
 @echo off
 REM VERSION 2 we now use | as seperator in wordlist
 
-REMThis is a template command file to use with 
+REM This is a template command file to use with 
 REM https://github.com/GitHubRulesOK/SumatraPDF-Plus/blob/master/Plus/MuPDF/SeekAndHL.js
 REM There are multiple options for the SeekAndHL.js such as auto add comments or page range but for this demo,
 REM below are the minimum and for convenience we will use -i along with !color! because both are unquoted.
