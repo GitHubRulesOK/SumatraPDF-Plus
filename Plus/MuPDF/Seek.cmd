@@ -25,7 +25,7 @@ goto MAIN
  thus just indicative of the number of matches (phrase count).
 
  MuPDF and thus SumatraPDF may render others but may need prior handling, For example FB2.zip (FBZ) would need to be unpacked
- (TAR -XF) to the simpler file.FB2. Also some others like DjVu need export pages as text to be re-converted to PDF.
+ (TAR -XF) to the simpler file.FB2. Also some others like DjVu need export pages as text (Right Click) to be re-converted to PDF.
 
 :MAIN
 setlocal enabledelayedexpansion
