@@ -1,7 +1,7 @@
 @echo off
 goto MAIN
 
- VERSION 3 we use convert for non-PDF filetypes and Version 2 was changed to use | as seperator in wordlist
+ VERSION 3 we use convert for non-PDF filetypes and Version 2 was changed to use | as seperator in wordlist.
 
  This is a template command file to use with 
  https://github.com/GitHubRulesOK/SumatraPDF-Plus/blob/master/Plus/MuPDF/SeekAndHL.js
@@ -20,9 +20,9 @@ goto MAIN
 
  For demo see https://github.com/sumatrapdfreader/sumatrapdf/issues/5578#issuecomment-4313787248
 
- VERSION 3 includes a list of non PDF formats that can be easily converted, for %%x in (epub fb2 htm html mobi txt xhtml xps) 
- however the PDF pages may not reflect the source page format so beware the page numbers may be not in sync. The txt report
- is thus just indicative of the number of matches (phrase count).
+ VERSION 3 includes a list of non PDF formats that can be easily converted, for %%x in (epub fb2 htm html mobi txt xhtml xps),
+ however the PDF pages may not reflect the source page format so beware the page numbers may be not in sync. The txt report is
+ thus just indicative of the number of matches (phrase count).
 
  MuPDF and thus SumatraPDF may render others but may need prior handling, For example FB2.zip (FBZ) would need to be unpacked
  (TAR -XF) to the simpler file.FB2. Also some others like DjVu need export pages as text to be re-converted to PDF.
