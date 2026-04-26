@@ -1,18 +1,33 @@
 @echo off
-REM VERSION 2 we now use | as seperator in wordlist
+goto MAIN
 
-REM This is a template command file to use with 
-REM https://github.com/GitHubRulesOK/SumatraPDF-Plus/blob/master/Plus/MuPDF/SeekAndHL.js
-REM There are multiple options for the SeekAndHL.js such as auto add comments or page range but for this demo,
-REM below are the minimum and for convenience we will use -i along with !color! because both are unquoted.
-REM the Wordlist is a simple CSV file with as many lines and entries as you desire but for this demo is only 3 columns
-REM use the "wordlist.csv" file with one line per cycle NOTE due to comma problems we now use | as seperator
-REM "Needle Phrase to find"|Hex colour as RRGGBBAA|Case sensitive true or false e.g.
-REM "Bingo"|FF800080|false
-REM "Bluey"|4080FF80|true
-REM "Aunty Brandy"|FF8000FF|false
-REM see https://github.com/sumatrapdfreader/sumatrapdf/issues/5578#issuecomment-4313787248
+ VERSION 3 we use convert for non-PDF filetypes and Version 2 was changed to use | as seperator in wordlist
 
+ This is a template command file to use with 
+ https://github.com/GitHubRulesOK/SumatraPDF-Plus/blob/master/Plus/MuPDF/SeekAndHL.js
+
+ There are multiple options for the SeekAndHL.js such as auto add comments or page range but for this demo,
+ below are the minimum and for convenience we will use -i along with !color! because both are unquoted.
+
+ The Wordlist is a simple CSV file with as many lines and entries as you desire but for this demo is only 3 columns
+ Use the "wordlist.csv" file with one line per cycle
+
+ NOTE due to comma problems we now use | as seperator
+ "Needle Phrase to find"|Hex colour as RRGGBBAA|Case sensitive true or false e.g.
+ "Bingo"|FF800080|false
+ "Bluey"|4080FF80|true
+ "Aunty Brandy"|FF8000FF|false
+
+ For demo see https://github.com/sumatrapdfreader/sumatrapdf/issues/5578#issuecomment-4313787248
+
+ VERSION 3 includes a list of non PDF formats that can be easily converted, for %%x in (epub fb2 htm html mobi txt xhtml xps) 
+ however the PDF pages may not reflect the source page format so beware the page numbers may be not in sync. The txt report
+ is thus just indicative of the number of matches (phrase count).
+
+ MuPDF and thus SumatraPDF may render others but may need prior handling, For example FB2.zip (FBZ) would need to be unpacked
+ (TAR -XF) to the simpler file.FB2. Also some others like DjVu need export pages as text to be re-converted to PDF.
+
+:MAIN
 setlocal enabledelayedexpansion
 for /f "tokens=2 delims=:" %%A in ('chcp') do set "OLDCP=%%A"
 chcp 65001 >nul
@@ -22,22 +37,35 @@ cd /d "%~dp0"
 REM Path to SumatraPDF 3.7+
 set "SumatraPDF=C:\Program Files\SumatraPDF\SumatraPDF.exe"
 if not exist "%SumatraPDF%" echo SumatraPDF path is wrong & pause & exit /b
-if "%~1"=="" echo Usage: Seek.cmd input.pdf & pause & exit /b
-set "INPUT=%~1"
+if "%~1"=="" echo Usage: Seek.cmd inputfile.ext & pause & exit /b
+set "INPUT=%~f1"
+if not exist "%INPUT%" echo Cannot find "%INPUT%"&pause&exit /b
+set "WORK=%tmp%\work.pdf"
+del /f /q "%WORK%" >nul 2>&1
+set "EXT=%~x1"
+REM --- If already PDF, skip conversion ---
+if /i "%EXT%"==".pdf" (
+    echo seeking text in %INPUT%
+    copy /y "%INPUT%" "%WORK%" >nul
+    goto skip
+)
+set "OK="
+for %%x in (epub fb2 htm html mobi txt xhtml xps) do if /i "%EXT%"==".%%x" set "OK=1"
+if not defined OK echo Unsupported file type: %EXT% so Cannot convert your file to PDF.&pause&exit /b
+echo Converting "%~1" to PDF...
+"%SumatraPDF%" convert -o "%WORK%" "%~f1"
+if not exist "%WORK%" echo Cannot convert your file to PDF.&pause&exit /b
 
+:skip
 REM Prepare a "TOTAL" file
 set "TOTAL=%tmp%\totals.txt"
 > "%TOTAL%" echo Results for "%INPUT%":
 
-REM Make working copies for filtering so each run adds to the last
-set "WORK=%tmp%\work.pdf"
-set "TEXT=%tmp%\work.txt"
-copy /y "%INPUT%" "%WORK%" >nul
-
 REM use the "wordlist.csv" file with one line per cycle NOTE due to comma problems we use | as seperator
-
 REM imortant we disable delayedexpansion at start of loop
 setlocal disabledelayedexpansion
+REM Make working copies for filtering so each run adds to the last
+set "TEXT=%tmp%\work.txt"
 for /f "usebackq tokens=1,2,3 delims=|" %%A in ("wordlist.csv") do (
     set "TERM=%%~A" & set "COLOR=%%~B" & set "CASE=%%~C"
 REM Now safely re-enable delayed expansion
