@@ -58,7 +58,7 @@ A range of small coloured instruments :-)
 Some preset the settings colors and some act on selections.  
 
 PicColo4.hta now allows for presets and uses SVG icons (the newest for SumatraPDF 3.6.1+)  
-https://github.com/GitHubRulesOK/SumatraPDF-Plus/blob/master/PicColo.hta  
+https://github.com/GitHubRulesOK/SumatraPDF-Plus/blob/master/PicColo4.hta  
 Works by select an area, press a key, and on pick a colour it is then highlighted etc.
 ![PicColo361 Image](https://github.com/GitHubRulesOK/SumatraPDF-Plus/blob/master/Plus/PicColo361.png)  
 There are many ways to set the color related commands (apart from area highlight selection), so you can use duplicated copies for several different actions.  
