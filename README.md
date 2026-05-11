@@ -57,7 +57,7 @@ PicColo###.hta
 A range of small coloured instruments :-)
 Some preset the settings colors and some act on selections.  
 
-PicColo.hta now allows for mode 3 (the newest for SumatraPDF 3.6.1+)  
+PicColo4.hta now allows for presets and uses SVG icons (the newest for SumatraPDF 3.6.1+)  
 https://github.com/GitHubRulesOK/SumatraPDF-Plus/blob/master/PicColo.hta  
 Works by select an area, press a key, and on pick a colour it is then highlighted etc.
 ![PicColo361 Image](https://github.com/GitHubRulesOK/SumatraPDF-Plus/blob/master/Plus/PicColo361.png)  
@@ -66,8 +66,8 @@ To assign to a key and menu add to ExternalViewers a call, like this (using your
 ```
 ExternalViewers [
 	[
-		CommandLine = "C:\...\SumatraPDF\17629\PicColo3.hta"
-		Name = PicColo (Pick a &HL colour)
+		CommandLine = "C:\...\SumatraPDF\17629\PicColo4.hta"
+		Name = PicColo (Pick annot e.g. &HL and colour)
 		Filter = *.pdf
 		Key = h
 	]
