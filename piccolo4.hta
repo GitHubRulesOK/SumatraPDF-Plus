@@ -1,16 +1,22 @@
 <html><head><title>PicColo (Pick a Color)</title><meta http-equiv="X-UA-Compatible" content="IE=edge"><script>
-// PicColo version 2026-05-11 improved with icon CMD picker
+// PicColo version 2026-05-11 improved with icon CMD picker but now requires for POSition based annots a second click AFTERcolour is chosen
 
 // SET Persistence MODE
 var autoClose = false; // Note needed for keep current cmd active, SumatraPDF will be on top of color picker if kept not closed, so if set false, park outside SumatraPDF Area
+
+var shell = new ActiveXObject("WScript.Shell");
+var waitingForOutsideClick = false;   // placement mode flag
+var pendingCommand = "";              // command to fire after blur
+var targetPos = 0;                    // set by preset buttons 0 means use selection area 1 means wait for position click after colour
+
 // Preset annotation key names can include other options see example for freetext these are the most common but you could add square circle etc.
 var keyPresets = [
-    { label: "HL", key: "CmdCreateAnnotHighlight", svg:'<svg width="18" height="16" viewBox="0 0 24 24"><path d="M3 21l3-1 9-9-2-2-9 9-1 3z" fill="red"/><path d="M14 7l2 2 3-3-2-2-3 3z" fill="red"/></svg>' },
-    { label: "UL", key: "CmdCreateAnnotUnderline", svg:'<svg width="18" height="16"><line x1="0" y1="14" x2="18" y2="14" stroke="black" stroke-width="2"/></svg>' },
-    { label: "SO", key: "CmdCreateAnnotStrikeOut", svg:'<svg width="18" height="16"><line x1="0" y1="6" x2="18" y2="6" stroke="black" stroke-width="2"/></svg>' },
-    { label: "SQ", key: "CmdCreateAnnotSquiggly", svg:'<svg width="18" height="16" viewBox="0 0 24 24"><path d="M2 19c4-6 8 6 12 0s8 6 8 0" stroke="black" stroke-width="3" fill="none"/></svg>' },
-    { label: "CT", key: "CmdCreateAnnotCaret", svg:'<svg width="18" height="16" viewBox="0 0 24 24"><path d="M12 4 C12 10, 10 16, 6 22" stroke="black" stroke-width="2" fill="none"/><path d="M12 4 C12 10, 14 16, 18 22" stroke="black" stroke-width="2" fill="none"/></svg>' },
-    { label: "FT", key: "CmdCreateAnnotFreeText textsize 13 openedit setcontent focusedit", svg:'<svg width="18" height="16" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="18" stroke="black" stroke-width="2" fill="none"/><line x1="8" y1="9" x2="16" y2="9" stroke="black" stroke-width="2"/><line x1="12" y1="9" x2="12" y2="18" stroke="black" stroke-width="2"/></svg>' }
+    { label: "HL", pos: 0, key: "CmdCreateAnnotHighlight", svg:'<svg width="18" height="16" viewBox="0 0 24 24"><path d="M3 21l3-1 9-9-2-2-9 9-1 3z" fill="red"/><path d="M14 7l2 2 3-3-2-2-3 3z" fill="red"/></svg>' },
+    { label: "UL", pos: 0, key: "CmdCreateAnnotUnderline", svg:'<svg width="18" height="16"><line x1="0" y1="14" x2="18" y2="14" stroke="black" stroke-width="2"/></svg>' },
+    { label: "SO", pos: 0, key: "CmdCreateAnnotStrikeOut", svg:'<svg width="18" height="16"><line x1="0" y1="6" x2="18" y2="6" stroke="black" stroke-width="2"/></svg>' },
+    { label: "SQ", pos: 0, key: "CmdCreateAnnotSquiggly", svg:'<svg width="18" height="16" viewBox="0 0 24 24"><path d="M2 19c4-6 8 6 12 0s8 6 8 0" stroke="black" stroke-width="3" fill="none"/></svg>' },
+    { label: "CT", pos: 1, key: "CmdCreateAnnotCaret", svg:'<svg width="18" height="16" viewBox="0 0 24 24"><path d="M12 4 C12 10, 10 16, 6 22" stroke="black" stroke-width="2" fill="none"/><path d="M12 4 C12 10, 14 16, 18 22" stroke="black" stroke-width="2" fill="none"/></svg>' },
+    { label: "FT", pos: 1, key: "CmdCreateAnnotFreeText textsize 13 openedit setcontent focusedit", svg:'<svg width="18" height="16" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="18" stroke="black" stroke-width="2" fill="none"/><line x1="8" y1="9" x2="16" y2="9" stroke="black" stroke-width="2"/><line x1="12" y1="9" x2="12" y2="18" stroke="black" stroke-width="2"/></svg>' }
 ];
 
 function init() {
@@ -24,45 +30,29 @@ function init() {
 
 // Main function: get colour + optional DDE
 function pick(hex) {
-    var fso   = new ActiveXObject("Scripting.FileSystemObject"); var shell = new ActiveXObject("WScript.Shell");
+    var fso   = new ActiveXObject("Scripting.FileSystemObject");
     var htaPath = unescape(location.pathname.replace("file:///", "")); htaPath = htaPath.replace(/\//g, "\\");    // HTA folder (same as settings)
     if (htaPath.charAt(0) === "\\") htaPath = htaPath.substring(1); var folder = fso.GetParentFolderName(htaPath);
     var exe = '"' + folder.replace(/\\/g, "/") + '/SumatraPDF.exe"';    // Build EXE path (quoted, forward slashes) 
     var dde = '-dde \"[' + targetKey + ' ' + hex + ']\"';
     var userCmd = 'cmd.exe /c \"' + exe + ' ' + dde + '\"';
     //alert("DEBUG CMD-ECHO:\n\n" + userCmd);
-    shell.Run(userCmd, 0, false); if (autoClose) window.close();
+// If this preset needs placement, arm and wait for outside click
+    if (targetPos === 1) {
+        pendingCommand = userCmd; waitingForOutsideClick = true;
+    } else {
+        shell.Run(userCmd, 0, false);
+        if (autoClose) window.close();
+    }
 }
 
-// SUB-module: write colour into SumatraPDF-settings.txt
-function writeSettingsColor(fso, folder, hex) {
-    var settings = fso.BuildPath(folder, "SumatraPDF-settings.txt");
-    if (!fso.FileExists(settings)) {
-        alert("Settings file not found:\n" + settings); return;
+window.onblur = function () {
+    if (waitingForOutsideClick) {
+        waitingForOutsideClick = false;
+        shell.Run(pendingCommand, 0, false); if (autoClose) window.close();
     }
-    var f = fso.OpenTextFile(settings, 1); var lines = f.ReadAll().split(/\r?\n/);
-    f.Close();
-    var out = []; var insideSection = false; var currentSectionCount = 0; var currentKeyCount = 0;
-    for (var i = 0; i < lines.length; i++) {
-        var trimmed = lines[i].trim(); // Detect section even if indented
-        if (trimmed.indexOf(targetSection) === 0) {
-            currentSectionCount++; insideSection = (currentSectionCount === sectionIndex);
-            out.push(lines[i]);
-            continue;
-        }
-        // If inside the correct section, look for the key
-        if (insideSection && trimmed.indexOf(targetKey + " =") === 0) {
-            currentKeyCount++;
-            if (currentKeyCount === keyIndex) {
-                out.push("\t" + targetKey + " = " + hex); // Replace ONLY the target key
-                insideSection = false;                // Stop modifying keys inside this section
-                continue;
-            }
-        }
-        out.push(lines[i]);        // else copy line unchanged
-    }
-    f = fso.OpenTextFile(settings, 2); f.Write(out.join("\r\n")); f.Close();    // Write back the modified file
-}
+};
+
 // Build preset buttons dynamically
 function buildPresetButtons() {
     var bar = document.getElementById("presetBar");
@@ -82,6 +72,7 @@ function buildPresetButtons() {
             '<div>' + preset.label + '</div>';
         btn.onclick = function () {
             targetKey = preset.key;
+            targetPos = preset.pos;
             highlightActivePreset(index);
         };
         bar.appendChild(btn);
