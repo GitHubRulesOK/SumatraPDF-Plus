@@ -1,0 +1,112 @@
+<html><head><title>PicColo (Pick a Color)</title><meta http-equiv="X-UA-Compatible" content="IE=edge"><script>
+// PicColo version 2026-05-11 improved with icon CMD picker but now requires for POSition based annots a second click (+) AFTER colour is chosen
+
+// SET Persistence MODE
+var autoClose = false; // Note needed for keep current cmd active, if so, SumatraPDF may be on top of color picker, so if set false, park outside SumatraPDF Area
+
+var shell = new ActiveXObject("WScript.Shell");
+var targetPos = 0;                    // set by preset buttons, 0 means use a selection area, 1 means wait for position click after colour is chosen
+var waitingForOutsideClick = false;   // placement mode flag
+var pendingCommand = "";              // command to allow fire after blur
+
+// Preset annotation key names can include other options see example for freetext these are the most common but you could add others.
+// for more details on options see https://www.sumatrapdfreader.org/docs/Commands#commands-with-arguments
+var keyPresets = [
+    { label: "HL", pos: 0, key: "CmdCreateAnnotHighlight", svg:'<svg width="18" height="18" viewBox="0 0 24 24"><path d="M3 21l3-1 9-9-2-2-9 9-1 3z" fill="red"/><path d="M14 7l2 2 3-3-2-2-3 3z" fill="red"/></svg>' },
+    { label: "UL", pos: 0, key: "CmdCreateAnnotUnderline", svg:'<svg width="18" height="18"><line x1="0" y1="14" x2="18" y2="14" stroke="black" stroke-width="2"/></svg>' },
+    { label: "SO", pos: 0, key: "CmdCreateAnnotStrikeOut", svg:'<svg width="18" height="18"><line x1="0" y1="6" x2="18" y2="6" stroke="black" stroke-width="2"/></svg>' },
+    { label: "SU", pos: 0, key: "CmdCreateAnnotSquiggly", svg:'<svg width="18" height="18" viewBox="0 0 24 24"><path d="M2 19c4-6 8 6 12 0s8 6 8 0" stroke="black" stroke-width="3" fill="none"/></svg>' },
+    { label: "CT+", pos: 1, key: "CmdCreateAnnotCaret", svg:'<svg width="18" height="18" viewBox="0 0 24 24"><path d="M12 4 C12 10, 10 16, 6 22" stroke="black" stroke-width="2" fill="none"/><path d="M12 4 C12 10, 14 16, 18 22" stroke="black" stroke-width="2" fill="none"/></svg>' },
+    { label: "FT+", pos: 1, key: "CmdCreateAnnotFreeText textsize 13 openedit setcontent focusedit", svg:'<svg width="18" height="18" viewBox="0 0 24 24"><rect x="1" y="1" width="23" height="23" stroke="black" stroke-width="1" fill="none"/><line x1="8" y1="9" x2="16" y2="9" stroke="black" stroke-width="1"/><line x1="12" y1="9" x2="12" y2="18" stroke="black" stroke-width="1"/></svg>' },
+    { label: "SQ+", pos: 1, key: "CmdCreateAnnotSquare", svg:'<svg width="18" height="18" viewBox="0 0 24 24"><rect x="1" y="1" width="23" height="23" stroke="black" stroke-width="2" fill="none"/></svg>' },
+    { label: "CI+", pos: 1, key: "CmdCreateAnnotCircle" , svg:'<svg width="18" height="18" viewBox="0 0 24 24"><ellipse cx="12" cy="12" rx="11" ry="11" stroke="black" stroke-width="2" fill="none"/></svg>' },
+    { label: "ST+", pos: 1, key: "CmdCreateAnnotStamp" , svg:'<svg width="18" height="18" viewBox="0 0 24 24"><rect x="1" y="4" width="23" height="18" rx="6" ry="6" stroke="black" stroke-width="3" fill="none"/><line x1="8" y1="9" x2="16" y2="9" stroke="black" stroke-width="2"/><line x1="12" y1="9" x2="12" y2="18" stroke="black" stroke-width="2"/></svg>' },
+];
+
+function init() {
+    var w = 448, h = 130;
+    window.resizeTo(w, h);
+    var left = (screen.availWidth  - w) / 2;
+    var top  = (screen.availHeight - h) / 2;
+    window.moveTo(left, top);
+    buildPresetButtons(); // NEW
+}
+
+// Main function: get colour + optional DDE
+function pick(hex) {
+    var fso   = new ActiveXObject("Scripting.FileSystemObject");
+    var htaPath = unescape(location.pathname.replace("file:///", "")); htaPath = htaPath.replace(/\//g, "\\");    // HTA folder (same as settings)
+    if (htaPath.charAt(0) === "\\") htaPath = htaPath.substring(1); var folder = fso.GetParentFolderName(htaPath);
+    var exe = '"' + folder.replace(/\\/g, "/") + '/SumatraPDF.exe"';    // Build EXE path (quoted, forward slashes) 
+    var dde = '-dde \"[' + targetKey + ' ' + hex + ']\"';
+    var userCmd = 'cmd.exe /c \"' + exe + ' ' + dde + '\"';
+    //alert("DEBUG CMD-ECHO:\n\n" + userCmd);
+// If this preset needs placement, arm and wait for outside click
+    if (targetPos === 1) {
+        pendingCommand = userCmd; waitingForOutsideClick = true;
+    } else {
+        shell.Run(userCmd, 0, false);
+        if (autoClose) window.close();
+    }
+}
+
+window.onblur = function () {
+    if (waitingForOutsideClick) {
+        waitingForOutsideClick = false;
+        shell.Run(pendingCommand, 0, false); if (autoClose) window.close();
+    }
+};
+
+// Build preset buttons dynamically
+function buildPresetButtons() {
+    var bar = document.getElementById("presetBar");
+    keyPresets.forEach(function(preset, index) {
+        var btn = document.createElement("button");
+        btn.style.margin = "2px";
+        btn.style.width = "48px";
+        btn.style.height = "48px";
+        btn.style.cursor = "pointer";
+        btn.style.fontSize = "11px";
+        btn.style.display = "flex";
+        btn.style.flexDirection = "column";
+        btn.style.alignItems = "center";
+        btn.style.justifyContent = "center";
+        btn.innerHTML =
+            '<div style="margin-bottom:2px;">' + preset.svg + '</div>' +
+            '<div>' + preset.label + '</div>';
+        btn.onclick = function () {
+            targetKey = preset.key;
+            targetPos = preset.pos;
+            highlightActivePreset(index);
+        };
+        bar.appendChild(btn);
+    });
+    highlightActivePreset(0);
+    targetKey = keyPresets[0].key;
+}
+
+// Highlight selected preset
+function highlightActivePreset(activeIndex) {
+    var bar = document.getElementById("presetBar");
+    for (var i = 0; i < bar.children.length; i++) {
+        bar.children[i].style.background = (i === activeIndex) ? "#ffd27f" : "#eee";
+        bar.children[i].style.border = (i === activeIndex) ? "2px solid #cc8a00" : "1px solid #aaa";
+    }
+}
+
+</script></head><body onload="init()" style="margin:0;padding:0;overflow:hidden;">
+<div style="display:flex;flex-wrap:wrap;width:432px;height:60px;">
+<div id="presetBar" style="display:flex;flex-direction:row;"></div>
+<div onclick="pick('#804000')"   style="width:36px;height:36px;background:#804000;cursor:pointer;"></div>
+<div onclick="pick('#ff0000')"   style="width:36px;height:36px;background:#ff0000;cursor:pointer;"></div>
+<div onclick="pick('#ff80c0')"   style="width:36px;height:36px;background:#ff80c0;cursor:pointer;"></div>
+<div onclick="pick('#ffc000')"   style="width:36px;height:36px;background:#ffc000;cursor:pointer;"></div>
+<div onclick="pick('#ffff00')"   style="width:36px;height:36px;background:#ffff00;cursor:pointer;"></div>
+<div onclick="pick('#00ff00')"   style="width:36px;height:36px;background:#00ff00;cursor:pointer;"></div>
+<div onclick="pick('#00ffff')"   style="width:36px;height:36px;background:#00ffff;cursor:pointer;"></div>
+<div onclick="pick('#33aaff')"   style="width:36px;height:36px;background:#33aaff;cursor:pointer;"></div>
+<div onclick="pick('#800000ff')" style="width:36px;height:36px;background:#0000ff;cursor:pointer;"></div>
+<div onclick="pick('#9933ff')"   style="width:36px;height:36px;background:#9933ff;cursor:pointer;"></div>
+<div onclick="pick('#ff00ff')"   style="width:36px;height:36px;background:#ff00ff;cursor:pointer;"></div>
+<div onclick="pick('#80000000')" style="width:36px;height:36px;background:#c0c0c0;cursor:pointer;"></div>
+</div></body></html>
