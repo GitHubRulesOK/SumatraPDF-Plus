@@ -10,6 +10,7 @@ var pendingCommand = "";              // command to fire after blur
 var targetPos = 0;                    // set by preset buttons 0 means use selection area 1 means wait for position click after colour
 
 // Preset annotation key names can include other options see example for freetext these are the most common but you could add square circle etc.
+// for more details on options see https://www.sumatrapdfreader.org/docs/Commands#commands-with-arguments
 var keyPresets = [
     { label: "HL", pos: 0, key: "CmdCreateAnnotHighlight", svg:'<svg width="18" height="16" viewBox="0 0 24 24"><path d="M3 21l3-1 9-9-2-2-9 9-1 3z" fill="red"/><path d="M14 7l2 2 3-3-2-2-3 3z" fill="red"/></svg>' },
     { label: "UL", pos: 0, key: "CmdCreateAnnotUnderline", svg:'<svg width="18" height="16"><line x1="0" y1="14" x2="18" y2="14" stroke="black" stroke-width="2"/></svg>' },
