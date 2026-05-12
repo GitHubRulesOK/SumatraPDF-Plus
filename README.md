@@ -94,7 +94,12 @@ In 3.6 and later you can use a key to call it and change more than just "Highlig
         Key = h
 	]
 ```
-In 3.4.6 you could use it to change "TextIconColor" and in 3.5 "StrikeOutColor"  or  "SquigglyColor" and could be adapted for 3.6+ for set annotation values such as "FreeTextSize"
+In 3.4.6 you could use it to change "TextIconColor" and in 3.5 "StrikeOutColor"  or  "SquigglyColor" and could be adapted for 3.6+ for set annotation values such as "FreeTextSize"  
+
+PutTxT
+---
+There is a new addition to PicColo for text as PutTxT.hta
+![PuTTxT.png](https://github.com/GitHubRulesOK/SumatraPDF-Plus/blob/master/Plus/PuTTxT.png)
 
 SessionSavers  
 ---
