@@ -1,0 +1,134 @@
+<html><head><title>PuT TxT</title><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<hta:application applicationname="PuT TxT" border="thin" caption="yes" showintaskbar="yes" sysmenu="yes" scroll="no" windowstate="normal">
+<style>
+body { background:#222; color:#eee; font-family:Segoe UI; padding:8px; }
+button, textarea { font-size:13px; margin:2px; }
+.colorbox { width:28px; height:28px; display:inline-block; margin:2px; cursor:pointer; border:1px solid #555; }
+.section { margin-top:4px; }
+</style>
+<script>
+
+
+// USER SETS SUMATRAPDF LOCATION ***** NOTE USE \\ for folder seperation
+var sumatraPath  = "C:\\Program Files\\SumatraPDF\\SumatraPDF.exe";
+
+// Keep HTA small and front-ish first stop wrapping
+document.body.style.overflow = "hidden";
+window.onload = function () { try { window.resizeTo(308, 340); window.moveTo(10, 10); window.focus(); } catch (e) {} };
+var shell = new ActiveXObject("WScript.Shell"); var currentSize = 13; var currentColor = "#ff0000";
+var targetKey = buildTargetKey(currentSize); var pendingCommand = ""; var pendingText = ""; var waitingForOutsideClick = false;
+
+function buildTargetKey(size) {
+    return "CmdCreateAnnotFreeText textsize " + size + " openedit focusedit";
+}
+
+function copyToClipboard(text) {
+    var clip = new ActiveXObject("htmlfile");
+    clip.open();
+    clip.write("<html><body></body></html>");
+    clip.close();
+    clip.parentWindow.clipboardData.setData("text", text);
+}
+
+function escapeForSendKeys(text) {
+    return text
+        .replace(/\{/g, "{{}")
+        .replace(/\}/g, "{}}")
+        .replace(/\+/g, "{+}")
+        .replace(/\^/g, "{^}")
+        .replace(/%/g, "{%}")
+        .replace(/~/g, "{~}");
+}
+
+function rebuildCommand() {
+    var exe = '"' + sumatraPath.replace(/\\/g, "/") + '"';
+    var dde = '-dde \"[' + targetKey + ' ' + currentColor + ']\"';
+    pendingCommand = 'cmd.exe /c "' + exe + ' ' + dde + '"';
+}
+
+// arm gun: set colour, text, command; next click on PDF fires ONCE
+function pickColor(hex) {
+    currentColor = hex;
+    pendingText  = escapeForSendKeys(document.getElementById("txt").value);
+    targetKey    = buildTargetKey(currentSize);
+    rebuildCommand();
+    waitingForOutsideClick = true;
+}
+
+// font size presets
+function setFontSize(size) {
+    currentSize = size;
+    targetKey   = buildTargetKey(currentSize);
+    rebuildCommand();
+}
+
+// presets
+function presetCheck() {
+    document.getElementById("txt").value = "✔";
+    pickColor("#00ff00");
+}
+
+function presetCross() {
+    document.getElementById("txt").value = "✘";
+    pickColor("#ff0000");
+}
+
+// single-shot: one blur → one shot → done
+window.onblur = function () {
+    if (!waitingForOutsideClick) return;
+
+    waitingForOutsideClick = false;
+
+    shell.Run(pendingCommand, 0, false);
+
+    setTimeout(function () {
+
+        pendingText = escapeForSendKeys(document.getElementById("txt").value);
+
+        if (pendingText.length > 0) {
+            copyToClipboard(pendingText);
+            shell.SendKeys("^v");
+        }
+
+        shell.SendKeys("%{F4}"); // close FreeText editor
+        // no re-arm here: user taps preset/colour again for next shot
+
+    }, 140);
+};
+</script>
+</head>
+<body>
+<h3 style="margin:0;">PuT TxT</h3>
+<div class="section">
+
+<textarea id="txt"
+          placeholder="Text or ✔ / ✘…"
+          style="width:250px; height:40px; resize:none; overflow:hidden;"></textarea>
+
+</div>
+<div class="section">
+    <span>Font:</span>
+    <button onclick="setFontSize(10)">10</button>
+    <button onclick="setFontSize(14)">14</button>
+    <button onclick="setFontSize(18)">18</button>
+    <button onclick="setFontSize(22)">22</button>
+    <button onclick="setFontSize(26)">26</button>
+</div>
+<div class="section">
+    <div class="colorbox" style="background:#00ff00" onclick="pickColor('#00ff00')"></div>
+    <div class="colorbox" style="background:#ff0000" onclick="pickColor('#ff0000')"></div>
+    <div class="colorbox" style="background:#0000ff" onclick="pickColor('#0000ff')"></div>
+    <span>Presets:</span>
+    <button onclick="presetCheck()" style="font-size:18px;color:#0f0;">✔</button>
+    <button onclick="presetCross()" style="font-size:18px;color:#f00;">✘</button>
+</div>
+<p class="section" style="font-size:13px;line-height:1.3;">
+1. Open PDF in SumatraPDF.<br>
+2. Set repeating text and Text Font Size<br>
+3. Click Colour&nbsp;&nbsp;OR&nbsp;&nbsp;✔ / ✘ .<br>
+4. Click on the PDF canvas (Text is pasted as content, and editor closes).<br>
+3. Click Colour&nbsp;&nbsp;OR&nbsp;&nbsp;✔ / ✘ .<br>
+6. Click on the PDF canvas ...
+</p>
+</body></html>
+
