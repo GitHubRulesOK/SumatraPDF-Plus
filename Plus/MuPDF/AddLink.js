@@ -143,7 +143,7 @@ if (hasD) {
 // FINAL SAVE (always runs once)
 // ------
 try {
-    file.save(output, "garbage,decompress");
+    file.save(output, "garbage,compress");
 } catch (e) {
     print("ERROR: Could not write output file:", output);
     print("Windows Explorer Preview may be holding the file open.");
