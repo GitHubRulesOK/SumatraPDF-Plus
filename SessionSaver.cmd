@@ -1,5 +1,5 @@
 /*
-C:\Windows\Microsoft.NET\Framework64\v4.0.30319\csc  /target:winexe /platform:x86 "%~0"  
+C:\Windows\Microsoft.NET\Framework\v4.0.30319\csc  /target:winexe /platform:x86 "%~0"  
 exit /b
 
 After running in windows. This SessionSaver.CMD file becomes SessionSaver.exe
