@@ -34,7 +34,7 @@ for (var r = 0; r < required.length; r++) {
     if (!(k in args)) { print("ERROR: Missing required flag: -" + k + "=value"); quit(); }
 }
 var hasU = ("u" in args); var hasD = ("d" in args); var hasT = ("t" in args);
-var flatten = true; // Important we flatten the text as a freetext on a page can in MsEdge mask the overlaid link
+var flatten = true; // Important we flatten the text as a freetext on a page. Thus will in MsEdge mask the overlaid link
 // Illegal: both URL and destination
 if (hasU && hasD) { throw new Error("Cannot use -u (URL) and -d (destination) together."); }
 // Illegal: no link type provided (Text-only mode is allowed, but at least one of the three must exist)
