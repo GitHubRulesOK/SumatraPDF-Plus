@@ -90,7 +90,7 @@ window.onblur = function () {
             shell.SendKeys("^v");
         }
 
-        shell.SendKeys("%{F4}"); // close FreeText editor
+        setTimeout(function () { shell.SendKeys("%{F4}"); }, 250); // close FreeText editor after 250 ms
         // no re-arm here: user taps preset/colour again for next shot
 
     }, 140);
