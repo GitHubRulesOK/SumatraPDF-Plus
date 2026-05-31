@@ -9,23 +9,29 @@ Extracted from https://web.archive.org/web/20140225191751/http://xhmikosr.1f0.de
 
 ![npPdfViewer.png](https://github.com/GitHubRulesOK/SumatraPDF-Plus/blob/master/2.5%20Legacy%20Browser%20Plugin/npPdfViewer.png)
 
+Anewer build is also included as2.5.2 and das the file name npPdfViewer_x64.dll (This is the one I prefer to use)  [0e30f15a6bd33c3f4133b716ac018ef12b4190d6ff587c268a29885c07ab82bf](https://www.virustotal.com/gui/file/0e30f15a6bd33c3f4133b716ac018ef12b4190d6ff587c268a29885c07ab82bf/details)
+
 How to use with Pale Moon x64 is easy. Simply register with a recent SumatraPDF (Yes 3.7 with annotation, Brotlie PDF, PDF as p7m etc.) and you can read online XPS DjVu and PDF (even Brotlie encode) OR offline other formats.
 
-So for example register above 64bit file as 
+So for example register AS ADMIN above 64bit file as 
 ```
 %WINDIR%\System32\regsvr32.exe "%PROGRAMFILES%\SumatraPDF\npPdfViewer.dll"
+```
+OR
+```
+%WINDIR%\System32\regsvr32.exe "%PROGRAMFILES%\SumatraPDF\npPdfViewer_x64.dll"
 ```
 You should see a confirmation msg box saying succeeded.
 ```
 ---------------------------
 RegSvr32
 ---------------------------
-DllRegisterServer in C:\Program Files\SumatraPDF\npPdfViewer.dll succeeded.
+DllRegisterServer in C:\Program Files\SumatraPDF\npPdfViewer_x64.dll succeeded.
 ---------------------------
 OK   
 ---------------------------
 ```
-When checking in any Suitable browser it should Automatically see the registered dll. Here the 64 bit most recent PaleMoon Portable (Others may also work but this is the most reliable and frequently updated). For 32 bit Pale Moon use the SumatraPDF 2.5 official installer version.
+When checking in any Suitable browser it should Automatically see the registered dll. Here the 64 bit older 2.5.0 version in most recent 2026 PaleMoon Portable (Others may also work but this is the most reliable and frequently updated). For 32 bit Pale Moon use the SumatraPDF 2.5 official installer version.
 
 ![Plug-in.png](https://github.com/GitHubRulesOK/SumatraPDF-Plus/blob/master/2.5%20Legacy%20Browser%20Plugin/Plug-in.png)
 
