@@ -34,5 +34,12 @@ Once active the browser can load web based PDF's (and XPS or DjVu)
 
 
 Note it can also support simple goto page so click here 
-https://pdfobject.com/pdf/sample-3pp.pdf#page=2
+https://pdfobject.com/pdf/sample-3pp.pdf#page=2 will automatically goto page 2
+
+![goto.png](https://github.com/GitHubRulesOK/SumatraPDF-Plus/blob/master/2.5%20Legacy%20Browser%20Plugin/goto.png)
+
+
+
+
+
 If you have a HEIC decoder installed in Windows you can view them as Local Files as well as other formats SumatraPDF supports.
