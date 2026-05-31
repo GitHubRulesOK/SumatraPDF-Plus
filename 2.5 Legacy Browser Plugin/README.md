@@ -11,7 +11,7 @@ Extracted from https://web.archive.org/web/20140225191751/http://xhmikosr.1f0.de
 
 Anewer build is also included as2.5.2 and das the file name npPdfViewer_x64.dll (This is the one I prefer to use)  [0e30f15a6bd33c3f4133b716ac018ef12b4190d6ff587c268a29885c07ab82bf](https://www.virustotal.com/gui/file/0e30f15a6bd33c3f4133b716ac018ef12b4190d6ff587c268a29885c07ab82bf/details)
 
-How to use with Pale Moon x64 is easy. Simply register with a recent SumatraPDF (Yes 3.7 with annotation, Brotlie PDF, PDF as p7m etc.) and you can read online XPS DjVu and PDF (even Brotlie encode) OR offline other formats.
+How to use with Pale Moon x64 is easy. Simply register with a recent SumatraPDF (Yes 3.7 with annotation, Brotlie PDF, PDF as p7m etc.) and you can read online XPS DjVu and PDF (even Brotlie encode) OR **offline** other formats.
 
 So for example register AS ADMIN above 64bit file as 
 ```
@@ -46,6 +46,5 @@ https://pdfobject.com/pdf/sample-3pp.pdf#page=2 will automatically goto page 2
 
 
 
-
-
-If you have a HEIC decoder installed in Windows you can view them as Local Files as well as other formats SumatraPDF supports.
+If you have a HEIC decoder installed in Windows you can view them as Local Files as well as other formats SumatraPDF supportsBut will be opened externally.
+![heic.png](https://github.com/GitHubRulesOK/SumatraPDF-Plus/blob/master/2.5%20Legacy%20Browser%20Plugin/heic.png)
