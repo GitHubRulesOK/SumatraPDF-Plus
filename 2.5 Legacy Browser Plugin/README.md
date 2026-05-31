@@ -1,6 +1,6 @@
 This folder contains SumatraPDF Browser Plugins
 
-The Filename should simply be npPdfViewer.dll and registered in the corrrect folder with SumatraPDF instaled DLLS
+The Filename should simply be npPdfViewer.dll and registered in the corrrect folder with SumatraPDF installed DLLS
 
 The filename may need to be changed to the above name for normal use. 
 So for that reason and simplest to download the **UNOFFICIAL xhmikosr** X64 builds 2.5 version is that named file in this folder. 
