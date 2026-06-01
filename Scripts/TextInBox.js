@@ -53,7 +53,8 @@ var sqRect = ftRect.slice();				// Copy as same size box, it could be seperate, 
 sqRect[0] -= pad; sqRect[1] -= pad; sqRect[2] += pad; sqRect[3] += pad;
 
 // Open file at given page number
-var file = mupdf.Document.openDocument(input); var page = file.loadPage(p -1); // PDF Page index are one less than human numbers (dont remove the -1)
+var file = mupdf.Document.openDocument(input); if (!file.isPDF()) throw new Error("Not a PDF");
+var page = file.loadPage(p -1); // PDF Page index are one less than human numbers (dont remove the -1)
 
 // You can change order to square before text if you wish
 
