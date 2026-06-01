@@ -56,7 +56,13 @@ sqRect[0] -= pad; sqRect[1] -= pad; sqRect[2] += pad; sqRect[3] += pad;
 var file = mupdf.Document.openDocument(input); if (!file.isPDF()) throw new Error("Not a PDF");
 var page = file.loadPage(p -1); // PDF Page index are one less than human numbers (dont remove the -1)
 
-// You can change order to square before text if you wish
+// You can change order to text before square if you wish but in my testing this was best this way round
+
+// --- Square (box only) ---
+var sq = page.createAnnotation("Square");
+sq.setRect(sqRect);
+sq.setColor(boxRGB);    // border colour
+sq.setBorderWidth(bw);  // border width
 
 // --- FreeText (borderless text only) ---
 var ft = page.createAnnotation("FreeText");
@@ -64,12 +70,6 @@ ft.setContents(text);
 ft.setDefaultAppearance(font, size, textRGB);
 ft.setRect(ftRect);
 ft.setBorderWidth(0);   // IMPORTANT: disable FreeText border
-
-// --- Square (box only) ---
-var sq = page.createAnnotation("Square");
-sq.setRect(sqRect);
-sq.setColor(boxRGB);    // border colour
-sq.setBorderWidth(bw);  // border width
 
 page.update(); // IMPORTANT this should set appearance but there are other posibilities
 
