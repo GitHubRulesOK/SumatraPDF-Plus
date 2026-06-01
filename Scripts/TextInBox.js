@@ -70,7 +70,7 @@ sq.setRect(sqRect);
 sq.setColor(boxRGB);    // border colour
 sq.setBorderWidth(bw);  // border width
 
-page.update(); // IMPORTANT this should set apperance but there are other posibilities
+page.update(); // IMPORTANT this should set appearance but there are other posibilities
 
 // ------
 // FINAL SAVE (always runs once)
