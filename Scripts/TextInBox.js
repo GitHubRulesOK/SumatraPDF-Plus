@@ -35,7 +35,7 @@ if (!input || input === "-" || !output || output === "-") {
     quit();
 }
 // Default params
-var font     = args["-f"] || "TiRo";			// Times Roman use Helv for SansSerif or (Co
+var font     = args["-f"] || "TiRo";                // Times Roman use "Helv" for SansSerif (others are "Cour", "ZaDb")
 var size     = parseFloat(args["-s"] || "14");		// Nominal height of text in points
 var textRGB  = JSON.parse(args["-c"] || "[0,0,0]");	// black (R,G,B from 0.00 to 1.00)
 var boxRGB   = JSON.parse(args["-b"] || "[1,0,0]");	// red (1=fully red) decimal not needed but 1.000000 is max
