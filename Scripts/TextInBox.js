@@ -43,14 +43,14 @@ var bw       = parseFloat(args["-s"] || "2");		// border width (recommend not le
 var p        = parseInt(args["-p"] || "1");		// Page number (default is set as human based Page 1)
 var text     = args["-t"] || "Hello World!";		// Text WILL be VISUALLY CROPPED by the box but will wrap due to FreeStyling
 var r        = args["-r"] || "50,50,50,40";		// default uses 1/72" from top left of page x,y,box width,box height
-var pad      = parseFloat(args["-pad"] || "2");		// This is padding to add a gap between box and text
+// var pad      = parseFloat(args["-pad"] || "2");		// This WAS padding to add a gap between box and text not needed for single object
 
 // Calculations
 var parts = r.split(",").map(function(n){ return parseFloat(n); });
 if (parts.length !== 4 || parts.some(isNaN)) { print("ERROR: -r must be x,y,w,h (e.g. -r=\"50,50,100,40\")"); quit(); }
 var ftRect = [parts[0], parts[1], parts[0] + parts[2], parts[1] + parts[3]];
 var sqRect = ftRect.slice();				// Copy as same size box, it could be seperate, but we use margin padding !
-sqRect[0] -= pad; sqRect[1] -= pad; sqRect[2] += pad; sqRect[3] += pad;
+// sqRect[0] -= pad; sqRect[1] -= pad; sqRect[2] += pad; sqRect[3] += pad; // Not needed for FreeText only
 var hex = "#" + ("0" + Math.round(textRGB[0] * 255).toString(16)).slice(-2) + ("0" + Math.round(textRGB[1] * 255).toString(16)).slice(-2) + ("0" + Math.round(textRGB[2] * 255).toString(16)).slice(-2);
 
 // Open file at given page number
@@ -59,13 +59,13 @@ var page = file.loadPage(p -1); // PDF Page index are one less than human number
 
 // You can change order to text before square if you wish but in my testing this was best this way round
 
-// --- Square (box only) --- commented out as we use a newer single method
+// --- Square (box only) --- commented out as we use a newer single method thus redundant
 // var sq = page.createAnnotation("Square");
 // sq.setRect(sqRect);
 // sq.setColor(boxRGB);    // border colour
 // sq.setBorderWidth(bw);  // border width
 
-// --- FreeText (text only) --- partly commented out as we use a newer single method
+// --- FreeText (text only) --- partly commented out as we now use a newer single RichText method
 var ft = page.createAnnotation("FreeText");
 // ft.setContents(text);
 // ft.setDefaultAppearance(font, size, textRGB);
