@@ -51,6 +51,7 @@ if (parts.length !== 4 || parts.some(isNaN)) { print("ERROR: -r must be x,y,w,h 
 var ftRect = [parts[0], parts[1], parts[0] + parts[2], parts[1] + parts[3]];
 var sqRect = ftRect.slice();				// Copy as same size box, it could be seperate, but we use margin padding !
 sqRect[0] -= pad; sqRect[1] -= pad; sqRect[2] += pad; sqRect[3] += pad;
+var hex = "#" + ("0" + Math.round(textRGB[0] * 255).toString(16)).slice(-2) + ("0" + Math.round(textRGB[1] * 255).toString(16)).slice(-2) + ("0" + Math.round(textRGB[2] * 255).toString(16)).slice(-2);
 
 // Open file at given page number
 var file = mupdf.Document.openDocument(input); if (!file.isPDF()) throw new Error("Not a PDF");
@@ -67,11 +68,12 @@ var page = file.loadPage(p -1); // PDF Page index are one less than human number
 // --- FreeText (borderless text only) --- partly commented out as we use a newer single method
 var ft = page.createAnnotation("FreeText");
 // ft.setContents(text);
-ft.setDefaultAppearance(font, size, textRGB);
+// ft.setDefaultAppearance(font, size, textRGB);
+ft.setDefaultAppearance(font, size, boxRGB); // NOW use box color
 ft.setRect(ftRect);
 ft.setRichContents(text, text);	// NOTE the first is real Times Roman as Content the second is shown as per below!
 // this is where above text is set to black
-ft.setRichDefaults("text-align:left;font-family:Times New Roman,Times,Serif;font-size:14pt;color:#000000;");
+ft.setRichDefaults("text-align:left;font-family:Times New Roman,Times,Serif;font-size:14pt;color:" + hex + ";");
 // ft.setBorderWidth(0);   // WAS IMPORTANT: disable FreeText border and use the border as square
 ft.setBorderWidth(2);							// Set border width = 2
 
