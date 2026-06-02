@@ -1,4 +1,4 @@
-// TextInBox.js - parameterised FreeText + Square Annotation placement per SINGLE page
+// TextInBox.js - parameterised FreeText Annotation placement per SINGLE page
 // Run blind you never see printed errors but are included for console use or debugging
 // Use SumatraPDF.exe or mutool.exe to run
 
