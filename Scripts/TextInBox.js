@@ -58,18 +58,22 @@ var page = file.loadPage(p -1); // PDF Page index are one less than human number
 
 // You can change order to text before square if you wish but in my testing this was best this way round
 
-// --- Square (box only) ---
-var sq = page.createAnnotation("Square");
-sq.setRect(sqRect);
-sq.setColor(boxRGB);    // border colour
-sq.setBorderWidth(bw);  // border width
+// --- Square (box only) --- commented out as we use a newer single method
+// var sq = page.createAnnotation("Square");
+// sq.setRect(sqRect);
+// sq.setColor(boxRGB);    // border colour
+// sq.setBorderWidth(bw);  // border width
 
-// --- FreeText (borderless text only) ---
+// --- FreeText (borderless text only) --- partly commented out as we use a newer single method
 var ft = page.createAnnotation("FreeText");
-ft.setContents(text);
+// ft.setContents(text);
 ft.setDefaultAppearance(font, size, textRGB);
 ft.setRect(ftRect);
-ft.setBorderWidth(0);   // IMPORTANT: disable FreeText border
+ft.setRichContents(text, text);	// NOTE the first is real Times Roman as Content the second is shown as per below!
+// this is where above text is set to black
+ft.setRichDefaults("text-align:left;font-family:Times New Roman,Times,Serif;font-size:14pt;color:#000000;");
+// ft.setBorderWidth(0);   // WAS IMPORTANT: disable FreeText border and use the border as square
+ft.setBorderWidth(2);							// Set border width = 2
 
 page.update(); // IMPORTANT this should set appearance but there are other posibilities
 
