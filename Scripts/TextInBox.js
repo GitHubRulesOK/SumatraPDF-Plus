@@ -65,7 +65,7 @@ var page = file.loadPage(p -1); // PDF Page index are one less than human number
 // sq.setColor(boxRGB);    // border colour
 // sq.setBorderWidth(bw);  // border width
 
-// --- FreeText (borderless text only) --- partly commented out as we use a newer single method
+// --- FreeText (text only) --- partly commented out as we use a newer single method
 var ft = page.createAnnotation("FreeText");
 // ft.setContents(text);
 // ft.setDefaultAppearance(font, size, textRGB);
