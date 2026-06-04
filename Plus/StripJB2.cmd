@@ -5,7 +5,7 @@ if not exist "C:\Program Files\SumatraPDF\SumatraPDF.exe" echo needs a SumatraPD
 if not exist stripjb2.exe C:\Windows\Microsoft.NET\Framework\v4.0.30319\csc.exe /nologo /platform:x86  "%~f0"
 if not exist stripjb2.exe echo did not find compiled file "%~dpn0stripjb2.exe" &pause&exit /b
 StripJB2 "%~dpn1.pdf"
-"C:\Program Files\SumatraPDF\SumatraPDF.exe" clean "%~dpn1_stripped-JB2.pdf" "%~dpn1-fixed.pdf"
+"C:\Program Files\SumatraPDF\SumatraPDF.exe" clean -t -gg "%~dpn1_stripped-JB2.pdf" "%~dpn1-fixed.pdf"
 if exist "%~dpn1-fixed.pdf" del "%~dpn1_stripped-JB2.pdf"
 "C:\Program Files\SumatraPDF\SumatraPDF.exe" "%~dpn1-fixed.pdf"
 
