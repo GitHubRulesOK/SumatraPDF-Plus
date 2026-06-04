@@ -9,8 +9,8 @@ StripJB2 "%~dpn1.pdf"
 if exist "%~dpn1-fixed.pdf" del "%~dpn1_stripped-JB2.pdf"
 "C:\Program Files\SumatraPDF\SumatraPDF.exe" "%~dpn1-fixed.pdf"
 
-@REM important we exit the cmd
-@exit /b
+REM important we exit the cmd
+exit /b
 */
 using System; using System.IO; using System.Text;
 
