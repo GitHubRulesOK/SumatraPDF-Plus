@@ -1,11 +1,16 @@
-/*&@cls
-C:\Windows\Microsoft.NET\Framework\v4.0.30319\csc.exe /nologo /platform:x86  "%~f0"
+/*&@cls&@echo off&cd /d "%~dp0"
+
+if not exist "%~dpn1.pdf" echo did not find file "%~dpn1.pdf" &pause&exit /b
+if not exist "C:\Program Files\SumatraPDF\SumatraPDF.exe" echo needs a SumatraPDF.exe to post process the file &pause&exit /b
+if not exist stripjb2.exe C:\Windows\Microsoft.NET\Framework\v4.0.30319\csc.exe /nologo /platform:x86  "%~f0"
+if not exist stripjb2.exe echo did not find compiled file "%~dpn0stripjb2.exe" &pause&exit /b
+StripJB2 "%~dpn1.pdf"
+"C:\Program Files\SumatraPDF\SumatraPDF.exe" clean "%~dpn1_stripped-JB2.pdf" "%~dpn1-fixed.pdf"
+if exist "%~dpn1-fixed.pdf" del "%~dpn1_stripped-JB2.pdf"
+"C:\Program Files\SumatraPDF\SumatraPDF.exe" "%~dpn1-fixed.pdf"
+
 @REM important we exit the cmd
 @exit /b
-NOTE:
-This is a quick fix for files that still have the raw JB2 header that is disruptive to PDF /JBIG2Decode 
-the file will simply have the bytes removed and thus need a cleaning pass after such as 
-"C:\Program Files\SumatraPDF\SumatraPDF.exe" clean input_stripped-JB2.pdf fixed.pdf
 */
 using System; using System.IO; using System.Text;
 
