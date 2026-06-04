@@ -11,6 +11,10 @@ if exist "%~dpn1-fixed.pdf" del "%~dpn1_stripped-JB2.pdf"
 
 REM important we exit the cmd
 exit /b
+
+NOTES
+This file will scan a PDF for incorrect JB2 headers embeded in a PDF and delete them.
+Then the file needs cleaning with SumatraPDF to fix the now broken offsets, so workable in other viewers.
 */
 using System; using System.IO; using System.Text;
 
