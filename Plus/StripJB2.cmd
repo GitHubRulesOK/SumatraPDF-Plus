@@ -2,6 +2,10 @@
 C:\Windows\Microsoft.NET\Framework\v4.0.30319\csc.exe /nologo /platform:x86  "%~f0"
 @REM important we exit the cmd
 @exit /b
+NOTE:
+This is a quick fix for files that still have the raw JB2 header that is disruptive to PDF /JBIG2Decode 
+the file will simply have the bytes removed and thus need a cleaning pass after such as 
+"C:\Program Files\SumatraPDF\SumatraPDF.exe" clean input_stripped-JB2.pdf fixed.pdf
 */
 using System; using System.IO; using System.Text;
 
