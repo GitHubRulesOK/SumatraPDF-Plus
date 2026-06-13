@@ -1,3 +1,5 @@
+' Note this file has in effect been superceeded by a newer function in SumatraPDF  CmdRemoveDeletedFilesFromHistory
+
 Option Explicit
 
 Function StartsWith(s, prefix)
