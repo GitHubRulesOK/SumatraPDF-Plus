@@ -31,7 +31,8 @@ A collection of temporary fixes to provide some Feature Requests from either
 
 SumatraPDF issues https://github.com/sumatrapdfreader/sumatrapdf/issues  
 or the User Forum https://forum.sumatrapdfreader.org/  
-As / If / When any features are implimented in official / pre-releases they may be removed here.  
+As / If / When any features are implimented in official / pre-releases they may be removed here.
+for example there is now a command `CmdRemoveDeletedFilesFromHistory` that replaces https://github.com/GitHubRulesOK/SumatraPDF-Plus/blob/master/purgeHistory.vbs
 
 See the Plus folder for current offerings as this top level is only shows those related to portable settings.  
 There are several ways to add scripts to SumatraPDF but the easiest is via simple CMD files in a subfolder.  
