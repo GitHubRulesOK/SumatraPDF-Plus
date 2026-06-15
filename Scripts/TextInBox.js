@@ -1,6 +1,6 @@
 // TextInBox.js - parameterised FreeText Annotation placement per SINGLE page
 // Run blind you never see printed errors but are included for console use or debugging
-// Use SumatraPDF.exe or mutool.exe to run
+// Use SumatraPDF-Tool.exe or mutool.exe to run
 // Guard against running with WSHell
 if (typeof WScript !== "undefined") { WScript.Echo("Run using: \"SumatraPDF[-tool].exe\" run " + WScript.ScriptName + " -options [-...] input.pdf"); WScript.Quit(); }
 print("\n Running "+scriptPath);
