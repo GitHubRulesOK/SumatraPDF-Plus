@@ -5,7 +5,7 @@ Often it is easier to add a GUI frontend using Windows "Native" C#V5 or HyperTex
 A small utility to place text with a Hyperlink on a PDF page.
 
 # AddOverlay.js
-A bigger utility to place optionally a box / image and or text as an overlay on one or more PDF pages.
+A bigger utility to place optionally a box / image and or text as an overlay on one or more PDF pages. Has rotation Alpha graphic states and offsets.
 ![AddOvarlay.png](https://github.com/GitHubRulesOK/SumatraPDF-Plus/blob/master/Images/AddOverlay.png)
 
 # TextInBox.js
