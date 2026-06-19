@@ -1,0 +1,180 @@
+<html><head><title>MeasureHTA</title><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<HTA:APPLICATION ID="MeasureHTA" APPLICATIONAME="MeasureHTA" BORDER="none" />
+<style>
+/* 
+
+NOTE: this file has a dependency on a Compiled EXE see SumatraDDE.cmd @ http://
+
+*/
+body { background:#222; color:#eee; font-family:Segoe UI; margin:0; padding:6px; }
+.btn { width:33px; height:27px; font-size:12px; margin:1px; padding:0; text-align:center; vertical-align:middle; }
+.btn-wide { width:75px; height:27px; font-size:14px; margin:1px; padding:0; }
+#ratio, #unit { height:20px; font-size:14px; text-align:center; }
+#output { font-size:15px; margin-top:5px; white-space:pre; background:#111; padding:0px; border:1px solid #444; height:110px; overflow:auto; }
+</style>
+<script type="text/javascript">
+window.onload = function () { window.resizeTo(230, 270); }; // fixed size
+  /* IMPORTANT set document.title ensures the resize is set again !! */
+document.title = "MeasureHTA";
+var armed      = false;
+var clickIndex = 0;
+var points     = [];
+var calibrationMode  = false;
+var fso       = new ActiveXObject("Scripting.FileSystemObject");
+var htaPath   = location.pathname.replace(/^\/+/, "");
+var htaFolder = fso.GetParentFolderName(htaPath);
+var getposPath = htaFolder + "\\SumatraHTA.exe";
+// convert points as BASIC ratio is always units per inch
+function convert(pt) { var ratio = parseFloat(document.getElementById("ratio").value); return pt * (ratio / 72); }
+
+// unit buttons
+function setUnit(u) {
+    document.getElementById("unit").value = u;
+    if (u === "pt") document.getElementById("ratio").value = 72;
+    if (u === "px") document.getElementById("ratio").value = 96;
+    if (u === "mm") document.getElementById("ratio").value = 25.4;
+    if (u === "cm") document.getElementById("ratio").value = 2.54;
+    if (u === "in") document.getElementById("ratio").value = 1;
+    if (u === "ft") document.getElementById("ratio").value = (1/12); // currently not shown
+    if (u === "yd") document.getElementById("ratio").value = (1/36); // currently not shown
+}
+
+// GET = reset + arm
+function ArmGetPos() {
+    calibrationMode = false;
+    armed      = true;
+    clickIndex = 0;
+    points     = [];
+    document.getElementById("output").innerText =
+    "Click document for Location" +
+    "\n\n To change units or ratio" +
+    "\n enter values above or click a" +
+    "\n unit button, & Get Pos again." ;
+}
+
+// CALIBRATE button
+function calibrate() {
+    calibrationMode = true;
+    armed      = true;
+    clickIndex = 0;
+    points     = [];
+    document.getElementById("output").innerText =
+        "Calibrate: Step 1\n" +
+        "Change Unit: to known units.\n" +
+        "Enter known length in ratio.\n" +
+        "Click 1st calibration point.";
+}
+
+// MAIN capture is based on primed for when HTA loses focus
+window.onblur = function () {
+    if (!armed) return;
+    armed = false;
+    var shell = new ActiveXObject("WScript.Shell");
+    var exec  = shell.Exec('"' + getposPath + '" [GetMousePos]');
+    var text  = exec.StdOut.ReadAll().trim();
+    if (!text) return;
+    var lines = text.split(/\r?\n/);
+    if (lines.length < 3) return;
+    var x = parseFloat(lines[1].replace("x:", "").trim());
+    var y = parseFloat(lines[2].replace("y:", "").trim());
+    if (isNaN(x) || isNaN(y)) return;
+    points.push({ x: x, y: y });
+    var unit = document.getElementById("unit").value;
+
+    // CALIBRATION MODE 
+    if (calibrationMode) {
+        // FIRST calibration click
+        if (clickIndex === 0) {
+            var ratio = document.getElementById("ratio").value;
+            var unit  = document.getElementById("unit").value;
+            document.getElementById("output").innerText =
+                "Now click here then click 2nd" +
+                "\npoint at " + ratio + " " + unit + " from" +
+                "\nthe first point. To reset click" +
+                "\ncalibrate button again.";
+            clickIndex = 1;
+            armed = true;
+            return;
+        }
+
+        // SECOND calibration click
+        if (clickIndex === 1) {
+            var dx = points[1].x - points[0].x;
+            var dy = points[1].y - points[0].y;
+            var raw = Math.sqrt(dx*dx + dy*dy);
+            var guess = parseFloat(document.getElementById("ratio").value);
+            var unit  = document.getElementById("unit").value;
+            if (!isNaN(guess) && guess > 0) {
+                var newRatio = (guess * 72) / raw;
+                document.getElementById("ratio").value = newRatio.toFixed(6);
+                calibrationScale = guess / raw;
+                document.getElementById("output").innerText =
+                    "Calibration complete.\n" +
+                    "Measured: " + raw.toFixed(2) + " units\n" +
+                    "User says: " + guess + " " + unit + "\n" +
+                    "Scale: " + newRatio.toFixed(6) + " " + unit + " per inch";
+            } else {
+                document.getElementById("output").innerText =
+                    "No valid number entered.\nCalibration cancelled.";
+            }
+            calibrationMode = false;
+            clickIndex = 0;
+            points = [];
+            return;
+        }
+    }
+
+    // NORMAL GET FIRST CLICK
+    if (clickIndex === 0) {
+        document.getElementById("output").innerText =
+            "x1: " + convert(x).toFixed(2) + "  y1: " + convert(y).toFixed(2) +
+            "\n\nFor distance or area click \nHERE, then document for\n second point.";
+        clickIndex = 1;
+        armed = true;
+        return;
+    }
+    // SECOND CLICK
+    document.getElementById("output").innerText =
+        "x1: " + convert(points[0].x).toFixed(2) +
+        "  y1: " + convert(points[0].y).toFixed(2) +
+        "\nx2: " + convert(x).toFixed(2) +
+        "  y2: " + convert(y).toFixed(2) + "\n";
+    var dx   = points[1].x - points[0].x;
+    var dy   = points[1].y - points[0].y;
+    var dist = Math.sqrt(dx*dx + dy*dy);
+    var dx_u   = convert(dx);
+    var dy_u   = convert(dy);
+    var dist_u = convert(dist);
+    var area_u = Math.abs(dx_u * dy_u);
+    document.getElementById("output").innerText +=
+        "\ndx: "   + dx_u.toFixed(2) +
+        "  dy: "   + dy_u.toFixed(2) + "\n" +
+        "dist: "   + dist_u.toFixed(2) + " " + unit + "\n" +
+        "area: "   + area_u.toFixed(2) + " " + unit + "²";
+    clickIndex = 0;
+    points     = [];
+    armed      = false;
+};
+</script>
+</head>
+<body>
+<div>
+    Ratio:
+    <input id="ratio" type="text" value="72" style="width:70px;">
+    <button class="btn-wide" onclick="calibrate()">Calibrate</button>
+</div>
+<div style="margin-top:4px;">
+    Unit:
+    <input id="unit" type="text" value="pt" style="width:40px;">
+    <button class="btn" onclick="setUnit('pt')">pt</button>
+    <button class="btn" onclick="setUnit('px')">px</button>
+    <button class="btn" onclick="setUnit('mm')">mm</button>
+</div>
+<div style="display:flex; align-items:center; margin-top:6px;">
+    <button class="btn" onclick="setUnit('cm')">cm</button>
+    <button class="btn" onclick="setUnit('in')">in</button>&nbsp;
+    <button class="btn" style="width:60px;" onclick="ArmGetPos()">Get Pos</button>
+</div>
+<div id="output"></div>
+</body>
+</html>
