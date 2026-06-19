@@ -23,8 +23,6 @@ It should be self descriptive when you click `Get Pos` or `Calibrate`, which all
 NOTE it does NOT draw lines only GET's one or two points.  
 ![drawing.png](https://github.com/GitHubRulesOK/SumatraPDF-Plus/blob/master/Images/drawing.png)
 
-
-
 Navigator
 ---
 This is a complex beast compared to the others and you need to edit the Config.ini to see its potential
@@ -34,3 +32,11 @@ PiCs2PDF
 ---
 Not yet added here as still work in progress but is functional and can be used to convert CBZ to PDF if you run with a CMD file.
 See PiCs2PDF.PDF here https://github.com/GitHubRulesOK/MyNotes/tree/master/C%23
+
+StripJB2
+---
+Is a temporary fix until SumatraPDF is updated to 1.28 which supports such bad PDF's !
+
+TTS-sampler
+---
+This has mainly been replaced by the "Read Aloud" ability in SumatraPDF 3.7. But there are several cases where read aloud cannot work, but BalCon can. Thus retained for now.
