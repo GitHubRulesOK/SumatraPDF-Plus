@@ -19,7 +19,7 @@ Measure **NEW
 ---
 This HTA depends on a compiled support DDE.exe so you need both files and they can only work is SumatraPDF is viewing the target file but can be PDF eBook or Images.
 The HTA is aGUI that you use to the side as it cannot "Stay on top" but need to be able to interact with SumatraPDF mouse clicks. It should be self descriptive when you click `Get Pos` or `Calibrate` which allows you to set a custom scalar such as for Maps or CAD Architechture or Mechanical Drawings. NOTE it does NOT draw lines only GET's one or two points.
-![drawing.png](https://github.com/GitHubRulesOK/SumatraPDF-Plus/raw/master/images/drawing.png)
+![drawing.png](https://github.com/GitHubRulesOK/SumatraPDF-Plus/blob/master/Images/drawing.png)
 
 
 
