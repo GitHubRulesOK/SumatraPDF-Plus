@@ -99,8 +99,9 @@ In 3.4.6 you could use it to change "TextIconColor" and in 3.5 "StrikeOutColor" 
 
 PutImage **NEW
 ---
-This is a proof of concept that a native notepad text file can build a DDE query tool so as to DDE [GetMousPos] in SumatraPDF viewer.
-It does use SumatraPDF-tool.exe to run a JavaScript that does the editing. However the method can be adapted to make multiple queries or like [Measure](https://github.com/GitHubRulesOK/SumatraPDF-Plus/tree/master/Plus#measure-new) provide a floating utility.
+This is a proof of concept that a native notepad text file can build a DDE query tool so as to DDE [GetMousePos] in SumatraPDF Reader.
+It does use SumatraPDF-tool.exe to run a JavaScript that does the editing. However the method can be adapted to make multiple queries or like [Measure](https://github.com/GitHubRulesOK/SumatraPDF-Plus/tree/master/Plus#measure-new) provide a floating utility.  
+!{[PutImage](https://github.com/GitHubRulesOK/SumatraPDF-Plus/blob/master/Images/PutImage.png)
 
 PutTxT
 ---
