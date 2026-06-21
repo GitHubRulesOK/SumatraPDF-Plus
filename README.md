@@ -97,6 +97,11 @@ In 3.6 and later you can use a key to call it and change more than just "Highlig
 ```
 In 3.4.6 you could use it to change "TextIconColor" and in 3.5 "StrikeOutColor"  or  "SquigglyColor" and could be adapted for 3.6+ for set annotation values such as "FreeTextSize"  
 
+PutImage **NEW
+---
+This is a proof of concept that a native notepad text file can build a DDE query tool so as to DDE [GetMousPos] in SumatraPDF viewer.
+It does use SumatraPDF-tool.exe to run a JavaScript that does the editing. However the method can be adapted to make multiple queries or like [Measure](https://github.com/GitHubRulesOK/SumatraPDF-Plus/tree/master/Plus#measure-new) provide a floating utility.
+
 PutTxT
 ---
 There is a new addition to PicColo for text as PutTxT.hta
