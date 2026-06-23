@@ -2,14 +2,17 @@
 cd /d "%~dp0" & echo Compiling SumatraHTA.exe and SumatraGET.exe
 set "CSC=%SystemRoot%\Microsoft.NET\Framework\v4.0.30319\csc.exe"
 if not exist "%CSC%" echo Compiler not found & pause & exit /b
+rem the folowing variation is not needed but the pair are easy to generate for comparative testing
 "%CSC%" /nologo /target:winexe /platform:x86 /out:"SumatraHTA.exe" "%~dpnx0"
 "%CSC%" /nologo /target:exe    /platform:x86 /out:"SumatraGET.exe" "%~dpnx0"
 REM IMPORTANT we pause and exit here
 pause & exit /b
 
 NOTES:
-This Hybrid file is a companion to SumatraDDE.hta's it compiles the pair of support files but only
-SumatraHTA.exe is used by Measure.hta. The console version SumatraGET.exe is more for testing / cmd use.
+This Hybrid file is a companion to SumatraDDE.hta's it compiles a pair of support files but only
+SumatraHTA.exe was used by Measure.hta. That has now been replaced by a new one exe soloution.
+
+The console version SumatraGET.exe is more for testing / cmd use. and now the prefered output
 
 */
 using System;
