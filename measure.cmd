@@ -13,6 +13,12 @@ This CMD file is a working demonstration of SumatraPDF DDE [GetMousePos] which r
 On running the cmd in Windows 7+ it compiles an exe that can be used to measure page data. 
 Simply bind the exe to a shortcut in SumatraPDF settings.
 
+You can edit this file in MS Notepad and rerun with changes, but not while the current one is active !
+For example rather than cartographic degrees orientation, if you wanted mariners bearings you can edit
+"\r\nDist: " + dist_u.ToFixed(3) + " " + unit + "  Deg.: " + angleDeg.ToFixed(3) + "°" +
+to 
+"\r\nDist: " + dist_u.ToFixed(3) + " " + unit + "  Deg.: " + bearing.ToFixed(3) + "°" +
+
 */
 using System;
 using System.Collections.Generic;
@@ -335,8 +341,9 @@ class MeasureForm : Form
                 double dist = Math.Sqrt(dx * dx + dy * dy);
                 double dx_u = ConvertPt(dx); double dy_u = ConvertPt(dy);
                 double dist_u = ConvertPt(dist);
-                double angleRad = Math.Atan2(dy, dx); double angleDeg = angleRad * (180.0 / Math.PI);
-                if (angleDeg < 0) angleDeg += 360.0;
+                double angleRad = Math.Atan2(dy, dx);
+                double angleDeg = angleRad * (180.0 / Math.PI); if (angleDeg < 0) angleDeg += 360.0;
+                double bearing = 90.0 - angleDeg; if (bearing < 0) bearing += 360.0;
                 double area_u = Math.Abs(dx_u * dy_u);
                 outputLabel.Text =
                     "x1: " + x1u.ToFixed(4) + "   y1: " + y1u.ToFixed(4) +
