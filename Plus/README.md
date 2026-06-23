@@ -17,8 +17,8 @@ This is now to be retired as replaced by PiCs2PDF (see below) which accepts mult
 
 Measure **NEW
 ---
-This HTA depends on a compiled support DDE.exe so you need both files and they can only work if SumatraPDF is viewing the target file but can be PDF, eBook or Images etc.  
-The HTA is a GUI that you use to the side, as it cannot "Stay on top" but need to be able to interact with SumatraPDF mouse clicks.  
+Measure.HTA has been depreciated as now replaced by a better version see 
+
 It should be self descriptive when you click `Get Pos` or `Calibrate`, which allows you to set a custom scalar, such as for Maps, CAD Architecture or Mechanical Drawings.  
 NOTE it does NOT draw lines only GET's one or two points.  
 ![drawing.png](https://github.com/GitHubRulesOK/SumatraPDF-Plus/blob/master/Images/drawing.png)
