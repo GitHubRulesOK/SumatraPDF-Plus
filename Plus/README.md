@@ -17,7 +17,7 @@ This is now to be retired as replaced by PiCs2PDF (see below) which accepts mult
 
 Measure **NEW
 ---
-Measure.HTA has been depreciated as now replaced by a better version see 
+Measure.HTA has been depreciated as now replaced by a better version see https://github.com/GitHubRulesOK/SumatraPDF-Plus/blob/master/measure.cmd
 
 It should be self descriptive when you click `Get Pos` or `Calibrate`, which allows you to set a custom scalar, such as for Maps, CAD Architecture or Mechanical Drawings.  
 NOTE it does NOT draw lines only GET's one or two points.  
