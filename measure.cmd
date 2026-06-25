@@ -1,4 +1,4 @@
-/*&cls&@echo off&Title Measure Tool
+/*&cls&@echo off&Title SumatraPDF+ Measure Tool
 
 cd /d "%~dp0" & echo Compiling "%~dpn0.exe"
 set "CSC=%SystemRoot%\Microsoft.NET\Framework\v4.0.30319\csc.exe"
@@ -11,57 +11,52 @@ pause & exit /b
 NOTES:
 This CMD file is a working demonstration of SumatraPDF DDE [GetMousePos] which returns points.
 On running the cmd in Windows 7+ it compiles an exe that can be used to measure page data. 
-Simply bind the exe to a shortcut in SumatraPDF settings.
+Simply bind the exe to a shortcut in SumatraPDF settings. Like this:
 
-You can edit this file in MS Notepad and rerun with changes, but not while the current one is active !
-For example rather than cartographic degrees orientation, if you wanted mariners bearings you can edit
+ExternalViewers [
+	[
+		CommandLine = "C:\Users\ your chosen folder \measure.exe"
+		Name = &Measure Tool
+		Filter = *.*
+		Key = m
+                ToolbarSvgIcon = <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" stroke-width="1" fill="#FFEE00" stroke-linecap="round" stroke-linejoin="round"><rect x="0" y="0" width="24" height="24" stroke="none"/><path d="M0 18h24 M0 18L17 1 M0.5 18v6 M8 18v3 M16 18v6 M23.5 18v3" stroke="blue"/><path d="M0 18 L21 18 A21 21 0 0 0 15 3 Z" fill="red" fill-opacity="0.4" stroke="green"/><text fill="black" stroke-width="0.25" font-size="8" font-family="sans-serif" x="7" y="16">45°</text></svg>
+	]
+]
+
+You can edit this file in MS Notepad and re-run with changes, but not while the current one is active !
+For example rather than cartographic degrees orientation, if you wanted mariners bearings you can edit.
 "\r\nDist: " + dist_u.ToFixed(3) + " " + unit + "  Deg.: " + angleDeg.ToFixed(3) + "°" +
 to 
 "\r\nDist: " + dist_u.ToFixed(3) + " " + unit + "  Deg.: " + bearing.ToFixed(3) + "°" +
 
 */
-using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Windows.Forms;
+using System; using System.Collections.Generic; using System.Drawing; using System.Runtime.InteropServices; using System.Text; using System.Windows.Forms; using System.IO;
 
 class MeasureForm : Form
 {
     // window dragging
     [DllImport("user32.dll")] private static extern bool ReleaseCapture();
     [DllImport("user32.dll")] private static extern int SendMessage(IntPtr hWnd, int Msg, int wParam, int lParam);
-    private const int WM_NCLBUTTONDOWN = 0xA1;
-    private const int HTCAPTION = 0x2;
+    private const int WM_NCLBUTTONDOWN = 0xA1; private const int HTCAPTION = 0x2;
 
     // DDE
-    private delegate IntPtr DdeCallback(
-        int uType, int uFmt, IntPtr hConv,
-        IntPtr hsz1, IntPtr hsz2,
-        IntPtr hData, IntPtr dwData1, IntPtr dwData2);
+    private delegate IntPtr DdeCallback( int uType, int uFmt, IntPtr hConv, IntPtr hsz1, IntPtr hsz2, IntPtr hData, IntPtr dwData1, IntPtr dwData2);
     private static readonly DdeCallback ddeCallback = DdeCallbackProc;
     [DllImport("user32.dll", CharSet = CharSet.Unicode, EntryPoint = "DdeInitializeW")]
     private static extern int DdeInitializeW(out IntPtr pidInst, DdeCallback pfnCallback, int afCmd, int ulRes);
     [DllImport("user32.dll", CharSet = CharSet.Unicode, EntryPoint = "DdeCreateStringHandleW")]
     private static extern IntPtr DdeCreateStringHandleW(IntPtr idInst, string psz, int iCodePage);
-    [DllImport("user32.dll")]
-    private static extern IntPtr DdeConnect(IntPtr idInst, IntPtr hszService, IntPtr hszTopic, IntPtr pCC);
+    [DllImport("user32.dll")] private static extern IntPtr DdeConnect(IntPtr idInst, IntPtr hszService, IntPtr hszTopic, IntPtr pCC);
     [DllImport("user32.dll")]
     private static extern IntPtr DdeClientTransaction( byte[] pData, int cbData, IntPtr hConv, IntPtr hszItem, int wFmt, int wType, int dwTimeout, out int pdwResult);
     [DllImport("user32.dll")] private static extern int DdeGetData(IntPtr hData, byte[] pDst, int cbMax, int cbOff);
     [DllImport("user32.dll")] private static extern bool DdeDisconnect(IntPtr hConv);
     [DllImport("user32.dll")] private static extern bool DdeFreeStringHandle(IntPtr idInst, IntPtr hsz);
     [DllImport("user32.dll")] private static extern bool DdeUninitialize(IntPtr idInst);
-    private static IntPtr DdeCallbackProc(
-        int uType, int uFmt, IntPtr hConv, IntPtr hsz1, IntPtr hsz2, IntPtr hData, IntPtr dwData1, IntPtr dwData2)
-    {
-        return IntPtr.Zero;
-    }
+    private static IntPtr DdeCallbackProc( int uType, int uFmt, IntPtr hConv, IntPtr hsz1, IntPtr hsz2, IntPtr hData, IntPtr dwData1, IntPtr dwData2) { return IntPtr.Zero; }
 
     // mouse hook
-    private const int WH_MOUSE_LL = 14;
-    private const int WM_LBUTTONDOWN = 0x0201;
+    private const int WH_MOUSE_LL = 14; private const int WM_LBUTTONDOWN = 0x0201;
     private delegate IntPtr LowLevelMouseProc(int nCode, IntPtr wParam, IntPtr lParam);
     [DllImport("user32.dll")] private static extern IntPtr SetWindowsHookEx(int idHook, LowLevelMouseProc lpfn, IntPtr hMod, uint dwThreadId);
     [DllImport("user32.dll")] private static extern bool UnhookWindowsHookEx(IntPtr hhk);
@@ -80,39 +75,33 @@ class MeasureForm : Form
     private List<Pt> points = new List<Pt>();
     public MeasureForm()
     {
-        this.FormBorderStyle = FormBorderStyle.None;
-        this.TopMost = true;
-        this.BackColor = Color.FromArgb(34, 34, 34);
-        this.ForeColor = Color.White;
-        this.Size = new Size(260, 260);
-        this.StartPosition = FormStartPosition.Manual;
+        this.FormBorderStyle = FormBorderStyle.None; this.TopMost = true;
+        this.BackColor = Color.FromArgb(34, 34, 34); this.ForeColor = Color.White; // this.Opacity = 0.70;
+        this.Size = new Size(260, 260); this.StartPosition = FormStartPosition.CenterScreen;
+
         this.Font = new Font("Segoe UI", 12, FontStyle.Regular);
         // top bar
         Panel bar = new Panel { Height = 28, Dock = DockStyle.Top, BackColor = Color.FromArgb(50, 50, 50) };
-        bar.MouseDown += (s, e) =>
-        {
-            if (e.Button == MouseButtons.Left)
-            {
-                ReleaseCapture();
-                SendMessage(Handle, WM_NCLBUTTONDOWN, HTCAPTION, 0);
-            }
-        };
         Controls.Add(bar);
-        Label title = new Label { Text = "Chart-o-graphic Measure", AutoSize = true, Left = 10, Top = 6, ForeColor = Color.White };
+        string b64 = "iVBORw0KGgoAAAANSUhEUgAAABwAAAAcCAMAAABF0y+mAAAAe1BMVEU9SsrFenMAAP/4+PgAAACCprerkmj9mZr/yQ8/SMwYixiVxpUjjyNOjDZlr2W83bweih7ClHgsiyPHlXWq1KosiB6LilpQo0sJhQk/ijDS6NLs9Ozq9OpdjjxxjUhxjUbG3sYPgRIeixqdzp2PyI8AAP1lPzw8JyNCLSpOv0WrAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAArElEQVQoU5XSVw7DIBAEUHDAm03vvff7nzBLDbYBK/NB0dMgkGDdTNifKDGNEsskBtZAidddCqlX3g5xJAM4r6OoDWC5iKA1mPc6DXQGMOzX8WcwndRQmQBB4YLPxhXURkg9GlejEG1PNYGaMAjQmO5xNcBm71HfRbzeH+Fwe3Ho76mP5Wp1vFsM3uBzehhkDJFF047mNfX5qbEwG8TqXOQQQ3RB//naMJMsfgGbDxdi6sc/EAAAAABJRU5ErkJggg=="; // base64 PNG
+        byte[] bytes = Convert.FromBase64String(b64);
+        MemoryStream ms = new MemoryStream(bytes); Image icon = Image.FromStream(ms);
+        PictureBox pic = new PictureBox { Image = icon, Size = new Size(28, 28), Location = new Point(2, 2), BackColor = Color.Transparent };
+        bar.Controls.Add(pic);
+        Label title = new Label { Text = "Chart-o-graphic Measure", Left = 32, Top = 6, ForeColor = Color.White }; title.Width = 200; 
         bar.Controls.Add(title);
-        Label close = new Label
+        foreach (Control c in bar.Controls)
         {
-            Text = "X",
-            Width = 28,
-            Height = 28,
-            Dock = DockStyle.Right,
-            TextAlign = ContentAlignment.MiddleCenter,
-            ForeColor = Color.White
-        };
-        close.MouseEnter += (s, e) => close.BackColor = Color.FromArgb(200, 50, 50);
-        close.MouseLeave += (s, e) => close.BackColor = Color.FromArgb(50, 50, 50);
+          c.MouseDown += (s, e) =>
+          {
+          if (e.Button == MouseButtons.Left) { ReleaseCapture(); SendMessage(Handle, WM_NCLBUTTONDOWN, HTCAPTION, 0); }
+          };
+        }
+        Label close = new Label { Text = "X", Width = 28, Height = 28, Dock = DockStyle.Right, TextAlign = ContentAlignment.MiddleCenter, ForeColor = Color.White };
+        close.MouseEnter += (s, e) => close.BackColor = Color.FromArgb(200, 50, 50); close.MouseLeave += (s, e) => close.BackColor = Color.FromArgb(50, 50, 50);
         close.Click += (s, e) => Close();
         bar.Controls.Add(close);
+
         int margin = 6;
         int offsetY = 30;
         // ratio row
