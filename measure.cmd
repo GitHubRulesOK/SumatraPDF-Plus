@@ -15,11 +15,10 @@ Simply bind the exe to a shortcut in SumatraPDF settings. Like this:
 
 ExternalViewers [
 	[
-		CommandLine = "C:\Users\ your chosen folder \measure.exe"
-		Name = &Measure Tool
-		Filter = *.*
+		CommandLine = C:\path to your version\measure.exe
+		Name = &Measure
 		Key = m
-                ToolbarSvgIcon = <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" stroke-width="1" fill="#FFEE00" stroke-linecap="round" stroke-linejoin="round"><rect x="0" y="0" width="24" height="24" stroke="none"/><path d="M0 18h24 M0 18L17 1 M0.5 18v6 M8 18v3 M16 18v6 M23.5 18v3" stroke="blue"/><path d="M0 18 L21 18 A21 21 0 0 0 15 3 Z" fill="red" fill-opacity="0.4" stroke="green"/><text fill="black" stroke-width="0.25" font-size="8" font-family="sans-serif" x="7" y="16">45°</text></svg>
+		ToolbarSvgIcon = <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" stroke-width="1" fill="#FFEE00" stroke-linecap="round" stroke-linejoin="round"><rect x="0" y="0" width="24" height="24" stroke="none"/><path d="M0 18h24 M0 18L17 1 M0.5 18v6 M8 18v3 M16 18v6 M23.5 18v3" stroke="blue"/><path d="M0 18 L21 18 A21 21 0 0 0 15 3 Z" fill="red" fill-opacity="0.4" stroke="green"/><text fill="black" stroke-width="0.25" font-size="8" font-family="sans-serif" x="7" y="16">45°</text></svg>
 	]
 ]
 
