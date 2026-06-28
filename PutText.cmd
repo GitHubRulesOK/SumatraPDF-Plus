@@ -1,4 +1,4 @@
-/*&cls&@echo off&Title PutText
+/*&cls&@echo off&Title PutText &REM SEE // IMPORTANT NOTE: BELOW
 
 cd /d "%~dp0" & echo Compiling PutText.exe
 set "CSC=%SystemRoot%\Microsoft.NET\Framework\v4.0.30319\csc.exe"
@@ -18,12 +18,23 @@ The tests have not been extensive so can behave oddly with some PDF file types o
 Beware trying to view larger files may
 suffer "blocking" or mis-timings so there is an optional switch lower right but for now, is default ON.
 
+Simply bind the compiled exe to a shortcut in SumatraPDF settings. Like this:
+ExternalViewers [
+	[
+		CommandLine = C:\path to your version\PutText.exe
+		Name = Put &Text Overlay
+		Key = t
+		ToolbarSvgIcon = <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><rect x="0" y="0" width="24" height="24" fill="#FFdd00"/><text x="1" y="11" font-size="11" fill="black" font-family="sans-serif">PUT</text><text x="1" y="21" font-size="11" fill="black" font-family="sans-serif">Text</text></svg>
+
+	]
+]
+
 */
 using System; using System.IO; using System.Runtime.InteropServices; using System.Text; using System.Windows.Forms; using System.Drawing;
 using System.Threading;
 class Program
 {
-    			// IMPORTANT ALTER THESE TO YOUR OWN FILE LOCATIONS BEFORE BUILD
+    			// IMPORTANT NOTE: ALTER THESE TO YOUR OWN FILE LOCATIONS BEFORE BUILD
 
     public const string TOOL_PATH   = @"C:\Program Files\SumatraPDF\sumatrapdf-tool.exe";
     public const string SCRIPT_PATH = @"C:\Users\...\SumatraPDF\scripts\addoverlay.js";
