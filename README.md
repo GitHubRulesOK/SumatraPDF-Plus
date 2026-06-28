@@ -103,6 +103,11 @@ This is a proof of concept that a native notepad text file can build a DDE query
 It does use SumatraPDF-tool.exe to run a JavaScript that does the editing. However the method can be adapted to make multiple queries or like [Measure](https://github.com/GitHubRulesOK/SumatraPDF-Plus/tree/master/Plus#measure-new) provide a floating utility.  
 ![PutImage](https://github.com/GitHubRulesOK/SumatraPDF-Plus/blob/master/Images/PutImage.png)
 
+PutText **NEW
+---
+This is basically an example of using a contents Text overlay similar to above Image Overlay method and using the same methods and scripting. This is NOT the same as annotation or OCG overlays as it adds a secondary text layer over ONE page. NOTE for overlay multiple page use the script file direct it will via script be more efficient for say a "DRAFT" watermark on all pages.
+
+
 PutTxT
 ---
 There is a new addition to PicColo for text as PutTxT.hta
