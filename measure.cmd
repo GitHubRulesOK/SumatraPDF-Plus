@@ -192,6 +192,18 @@ class MeasureForm : Form
 
     private void ShowStartupText()
     {
+        // Check DDE probe
+        string reply = DdeRequest("[GetFileState()]");
+        if (reply == null)
+        {
+            MessageBox.Show(
+            "SumatraPDF may be active but currently\n there is no DDE reply channel.\n" +
+            "This simply means current state of SumatraPDF\n" +
+            "does not provide a DDE context yet. You may be able to use\nDDE after making changes.",
+            "No DDE Channel", MessageBoxButtons.OK, MessageBoxIcon.Information
+            );
+        // Continue NOT exit
+        }
         outputLabel.Text =
             "To start use \"Get point(s)\" THEN\r\nClick document for 1st location" +
             "\r\n To change units or ratio enter" +
