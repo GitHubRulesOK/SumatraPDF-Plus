@@ -1,6 +1,6 @@
-/*&cls&@echo off&Title PutImage
+/*&cls&@echo off&Title PutText
 
-cd /d "%~dp0" & echo Compiling PutImage.exe
+cd /d "%~dp0" & echo Compiling PutText.exe
 set "CSC=%SystemRoot%\Microsoft.NET\Framework\v4.0.30319\csc.exe"
 if not exist "%CSC%" echo Compiler not found & pause & exit /b
 "%CSC%" /nologo /target:winexe /platform:x86 /out:"%~dpn0.exe" "%~dpnx0"
@@ -9,13 +9,13 @@ REM IMPORTANT we pause and exit here
 pause & exit /b
 
 NOTES:
-This Hybrid file is a working demonstration of SumatraPDF DDE [Get...] it compiles to an exe that can place an image 
+This Hybrid file is a working demonstration of SumatraPDF DDE [Get...] it compiles to an exe that can place text 
 using a tools script. It has a dependency on https://github.com/GitHubRulesOK/SumatraPDF-Plus/blob/master/Scripts/AddOverlay.js
 
 You may use this concept many other ways but the one thing you may be suprised at, is how that script applies rotation!
-The tests have not been extensive so can behave oddly with some PDF file types or odd images thus it is not guaranteed!
+The tests have not been extensive so can behave oddly with some PDF file types or odd text thus it is not guaranteed!
 
-Images can be overlaid and will work with some alpha transparency, such as PNG's. Beware trying to view largeer files may
+Beware trying to view larger files may
 suffer "blocking" or mis-timings so there is an optional switch lower right but for now, is default ON.
 
 */
@@ -49,150 +49,137 @@ class Program
     // Continue to launch
         Application.EnableVisualStyles();
         Application.SetCompatibleTextRenderingDefault(false);
-        Application.Run(new ImageForm());
+        Application.Run(new TextForm());
     }
 }
 
-public class ImageForm : Form
+public class TextForm : Form
 {
     public const int WM_NCLBUTTONDOWN = 0xA1; public const int HTCAPTION = 0x2;
     [DllImport("user32.dll")] public static extern bool ReleaseCapture();
     [DllImport("user32.dll")] public static extern int SendMessage(IntPtr hWnd, int Msg, int wParam, int lParam);
-    private TextBox txtImage;  private TextBox txtW; private TextBox txtH; private TextBox txtR; private TextBox txtOutput; 
-    private CheckBox chkTopY; private CheckBox chkOpen;
-    private Button btnGetImg; private Button btnGetOut; private Button btnPut;
+    private TextBox txtText; private TextBox txtFont; private TextBox txtR; private TextBox txtOutput;
+    private CheckBox chkOpen; //private CheckBox chkTopY;
+    private Button btnGetOut; private Button btnPut;
     private bool armed = false;
     private Panel dragBar; private Label titleLabel;
+    private TextBox txtColorR; private TextBox txtColorG; private TextBox txtColorB; private TextBox txtAlpha; private TextBox txtOffsetX; private TextBox txtOffsetY;
+    private ComboBox txtFontName;
 
-    public ImageForm()
+    public TextForm()
     {
         this.FormBorderStyle = FormBorderStyle.None; this.TopMost = true; this.StartPosition = FormStartPosition.CenterScreen;
         this.BackColor = Color.FromArgb(30, 30, 30); this.ForeColor = Color.White; // this.Opacity = 0.70;
-        this.Size = new Size(460, 225); this.Font = new Font("Segoe UI", 12, FontStyle.Regular);
+        this.Size = new Size(460, 260); this.Font = new Font("Segoe UI", 12, FontStyle.Regular);
 
-    // DRAG BAR and ARMING NOTIFICATION AREA
-    dragBar = new Panel(); dragBar.Left = 0; dragBar.Top = 0; dragBar.Width = this.Width; dragBar.Height = 28; dragBar.BackColor = Color.FromArgb(50,50,50);
-    this.Controls.Add(dragBar);
-        string b64 = "iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAACXBIWXMAAA7EAAAOxAGVKw4bAAABhElEQVRIibWVMU/CUBDHf6ctFBJXN10c3IwsDsaPwVRHBwcWdwbj4M5CooODGpkc/QIOEDdIHIxRo9HPIFiCPodXKi3vFTDllru2l//v7l7zTgoOijmaA9Ctzke8eBwCAOQoW3F1qL0Tf2uZlkj6d1s+sJCWl1sQEEG1QLXAy4k5sVGyahgBBVcLB00tPLTebQhNij8/wcXGdICcI1y+WgsiaIKXl0h8+a5D/eaTtda9sZMYIO8KjTcdX3+AbJshahAGfpulfljYQD+nAq4SladBhh28bK0D8FBandyByUyQ4IdIrH7yqP35ewSdCZCE5HfQv2s4jsrBZswnxzQVYBTS/1axSuu1Tsz/q4NRCCJaxG+D3453MOmQp4bsmquNwCMWvypmgJRF/q6OmhirHwOUV+yinhsGChDwHMAVWIRKQOz+sQI4862ALzt73PYa44CCA+w3TOmzm2MI57V0ZN4rU1RiiRRdUd2qXne9U/uZTGupv2khgzOxArI6E+OIspHW9gtrPHnP3FjSVQAAAABJRU5ErkJggg=="; // base64 PNG
-        byte[] bytes = Convert.FromBase64String(b64);
-        MemoryStream ms = new MemoryStream(bytes); Image icon = Image.FromStream(ms);
-        PictureBox pic = new PictureBox { Image = icon, Size = new Size(28, 28), Location = new Point(2, 2), BackColor = Color.Transparent };
-        pic.MouseDown += (s, e) => {
+        // DRAG BAR and ARMING NOTIFICATION AREA
+        dragBar = new Panel(); dragBar.Left = 0; dragBar.Top = 0; dragBar.Width = this.Width; dragBar.Height = 28; dragBar.BackColor = Color.FromArgb(50,50,50);
+        this.Controls.Add(dragBar);
+          string b64 = "iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAACXBIWXMAAA7EAAAOxAGVKw4bAAAA50lEQVRIibWVTQvDIAyGX0d2SP/wDh1oYTvsDxdv2cHZOb9WJL5QlDTkyYeoYYJgoggA9nVO8OX5AQCA2XSDiw0r/RhFp1vMDMCXAKCsRGywxYzivlZx9PHeH7YCkDr22pYDW6oCNOfRrWAaoKbhqpggYiEAREtAiMkE+XuKgHMtaw37UgsWHePebN8vTaK1dgEt5dmlwdKEhgFnAw4D0tb1WjIMSGcQgTWfwsYE2dfw0zl3lteVcw5is+uaCXg9dACcHP5jO+vRMbOfTJM/MsvVyL6G/t3ubi5AQ83bVGsm1Qp0Qge9ARS+qUk3M9ZVAAAAAElFTkSuQmCC"; // base64 PNG
+          byte[] bytes = Convert.FromBase64String(b64);
+          MemoryStream ms = new MemoryStream(bytes); Image icon = Image.FromStream(ms);
+          PictureBox pic = new PictureBox { Image = icon, Size = new Size(28, 28), Location = new Point(2, 2), BackColor = Color.Transparent };
+          pic.MouseDown += (s, e) => {
+          if (e.Button == MouseButtons.Left) { ReleaseCapture(); SendMessage(this.Handle, WM_NCLBUTTONDOWN, HTCAPTION, 0); } };
+          dragBar.Controls.Add(pic);
+
+        titleLabel = new Label(); titleLabel.Text = "Put Text Overlay Tool";
+        titleLabel.ForeColor = Color.White; titleLabel.BackColor = Color.Transparent;
+        titleLabel.Font = new Font("Segoe UI", 12, FontStyle.Regular);
+        titleLabel.Width = 390; titleLabel.Left = 36; titleLabel.Top = 4;
+        titleLabel.MouseDown += (s, e) => {
         if (e.Button == MouseButtons.Left) { ReleaseCapture(); SendMessage(this.Handle, WM_NCLBUTTONDOWN, HTCAPTION, 0); } };
-        dragBar.Controls.Add(pic);
+        dragBar.Controls.Add(titleLabel);
 
-    titleLabel = new Label(); titleLabel.Text = "Put Image Overlay Tool";
-    titleLabel.ForeColor = Color.White; titleLabel.BackColor = Color.Transparent;
-    titleLabel.Font = new Font("Segoe UI", 12, FontStyle.Regular);
-    titleLabel.Width = 390; titleLabel.Left = 36; titleLabel.Top = 4;
-    titleLabel.MouseDown += (s, e) => {
-    if (e.Button == MouseButtons.Left) { ReleaseCapture(); SendMessage(this.Handle, WM_NCLBUTTONDOWN, HTCAPTION, 0); } };
-    dragBar.Controls.Add(titleLabel);
+        // CLOSE BUTTON
+        Label btnX = new Label();
+        btnX.Text = "X"; btnX.Font = new Font("Segoe UI", 15, FontStyle.Bold);
+        btnX.ForeColor = Color.White; btnX.BackColor = Color.FromArgb(60,60,60);
+        btnX.Top = 0; btnX.Left = this.Width - 30; btnX.Width = 30; btnX.Height = 30;
+        btnX.TextAlign = ContentAlignment.TopCenter;
+        btnX.MouseEnter += (s, e) => { btnX.BackColor = Color.FromArgb(200, 50, 50); };
+        btnX.MouseLeave += (s, e) => { btnX.BackColor = Color.FromArgb(60, 60, 60); };
+        btnX.Click += (s, e) => this.Close();
+        dragBar.Controls.Add(btnX);
 
-    // CLOSE BUTTON
-    Label btnX = new Label();
-    btnX.Text = "X"; btnX.Font = new Font("Segoe UI", 15, FontStyle.Bold);
-    btnX.ForeColor = Color.White; btnX.BackColor = Color.FromArgb(60,60,60);
-    btnX.Top = 0; btnX.Left = this.Width - 30; btnX.Width = 30; btnX.Height = 30;
-    btnX.TextAlign = ContentAlignment.TopCenter;
-    btnX.MouseEnter += (s, e) => { btnX.BackColor = Color.FromArgb(200, 50, 50); };
-    btnX.MouseLeave += (s, e) => { btnX.BackColor = Color.FromArgb(60, 60, 60); };
-    btnX.Click += (s, e) => this.Close();
-    dragBar.Controls.Add(btnX);
-
-        int y = 30; 
+        int y = 30;
         this.StartPosition = FormStartPosition.CenterScreen;
-        // IMAGE INPUT
-        Label lblImg = new Label(); lblImg.Text = "Image:"; lblImg.Left = 8; lblImg.Top = y + 3; lblImg.Width = 65;
-        txtImage = new TextBox(); txtImage.Left = 75; txtImage.Top = y; txtImage.Width = 300;
-        txtImage.BackColor = Color.FromArgb(45,45,45); txtImage.ForeColor = Color.White;
-        btnGetImg = new Button(); btnGetImg.Text = "Browse"; btnGetImg.Left = 380;
-        btnGetImg.Top = y - 1; btnGetImg.Width = 70; btnGetImg.Height = 30;
-        btnGetImg.Click += OnBrowseImage;
-        this.Controls.Add(lblImg); this.Controls.Add(txtImage); this.Controls.Add(btnGetImg);
+        // TEXT INPUT
+        Label lblText = new Label(); lblText.Text = "Text (\\n):"; lblText.Left = 8; lblText.Top = y + 3; lblText.Width = 75;
+        this.Controls.Add(lblText); 
+        txtText = new TextBox(); txtText.Left = 85; txtText.Top = y; txtText.Width = 365; txtText.Height = 60; txtText.Multiline = true;
+        txtText.BackColor = Color.FromArgb(45,45,45); txtText.ForeColor = Color.White;
+        this.Controls.Add(txtText);
+
+        y += 70;
+        // FONT SIZE
+        Label lblFont = new Label(); lblFont.Text = "Font (pt):"; lblFont.Left = 8; lblFont.Top = y + 3; lblFont.Width = 75;
+        this.Controls.Add(lblFont); 
+        txtFont = new TextBox(); txtFont.Left = 85; txtFont.Top = y; txtFont.Width = 55; txtFont.Text = "12";
+        txtFont.BackColor = Color.FromArgb(45,45,45); txtFont.ForeColor = Color.White;
+        this.Controls.Add(txtFont);
+
+        txtFontName = new ComboBox(); this.txtFontName.DropDownStyle = ComboBoxStyle.DropDownList;
+        txtFontName.Location = new Point(160, y); this.txtFontName.Size = new Size(200, 21);
+        txtFontName.Items.AddRange(new object[] {
+            "Helvetica", "Helvetica-Bold", "Helvetica-Oblique", "Helvetica-BoldOblique", "Times-Roman", "Times-Bold", "Times-Italic", "Times-BoldItalic",
+            "Courier", "Courier-Bold", "Courier-Oblique", "Courier-BoldOblique", "Symbol", "ZapfDingbats" });
+        txtFontName.SelectedIndex = 0; // Helvetica
+        this.Controls.Add(txtFontName);
 
         y += 36;
-        // WIDTH
-        Label lblW = new Label(); lblW.Text = "W (pt's):"; lblW.Left = 8; lblW.Top = y + 3; lblW.Width = 67;
-        txtW = new TextBox();  txtW.Left = 75; txtW.Top = y; txtW.Width = 75;
-        txtW.BackColor = Color.FromArgb(45,45,45); txtW.ForeColor = Color.White;
-        // HEIGHT
-        Label lblH = new Label(); lblH.Text = "H (pt's):"; lblH.Left = 165; lblH.Top = y + 3; lblH.Width = 65;
-        txtH = new TextBox(); txtH.Left = 230; txtH.Top = y; txtH.Width = 75;
-        txtH.BackColor = Color.FromArgb(45,45,45); txtH.ForeColor = Color.White;
+        // Colour R/G/B/A
+        Label RGBA = new Label(); RGBA.Text = "RGB+A  0.00 - 1.00:"; RGBA.Left = 8; RGBA.Top = y + 3; RGBA.Width = 150; this.Controls.Add(RGBA);
+        txtColorR = new TextBox(); txtColorR.Location = new Point(160, y); txtColorR.Size = new Size(40, 20); txtColorR.Text = "0.00"; this.Controls.Add(txtColorR);
+        txtColorG = new TextBox(); txtColorG.Location = new Point(200, y); txtColorG.Size = new Size(40, 20); txtColorG.Text = "0.00"; this.Controls.Add(txtColorG);
+        txtColorB = new TextBox(); txtColorB.Location = new Point(240, y); txtColorB.Size = new Size(40, 20); txtColorB.Text = "1.00"; this.Controls.Add(txtColorB);
+        txtAlpha = new TextBox(); txtAlpha.Location = new Point(280, y); txtAlpha.Size = new Size(40, 20); txtAlpha.Text = "1.00"; this.Controls.Add(txtAlpha);
         // ROTATION
-        Label lblR = new Label(); lblR.Text = "Rot (°):"; lblR.Left = 315; lblR.Top = y + 3; lblR.Width = 65;
+        Label lblR = new Label(); lblR.Text = "Rot (°):"; lblR.Left = 320; lblR.Top = y + 3; lblR.Width = 60;
+        this.Controls.Add(lblR); 
         txtR = new TextBox(); txtR.Left = 380; txtR.Top = y; txtR.Width = 70; txtR.Text = "0";
         txtR.BackColor = Color.FromArgb(45,45,45); txtR.ForeColor = Color.White;
-        this.Controls.Add(lblW); this.Controls.Add(txtW); this.Controls.Add(lblH); this.Controls.Add(txtH); this.Controls.Add(lblR); this.Controls.Add(txtR);
+        this.Controls.Add(txtR);
 
-        y += 28;
-        // TOP-LEFT ANCHOR CHECKBOX
-        chkTopY = new CheckBox(); chkTopY.Left = 12; chkTopY.Top = y + 3; chkTopY.Width = 500;
-        chkTopY.Text = "Put image @ Top‑Left (Not PDF=y up, but image downward)";
-        chkTopY.Checked = true;   // DEFAULT ON
         y += 36;
-        Label lblMsg = new Label(); lblMsg.Text = "Default = infile-overlaid.PDF. You can change or overwrite one.";
-        lblMsg.Left = 8; lblMsg.Top = y + 3; lblMsg.Width = 500;
-        lblMsg.BackColor = Color.FromArgb(45,45,45); lblMsg.ForeColor = Color.White;
-        this.Controls.Add(chkTopY); this.Controls.Add(lblMsg);
-
-        y += 30;
         // OUTPUT PDF
-        Label lblOut = new Label(); lblOut.Text = "Output PDF:"; lblOut.Left = 8; lblOut.Top = y + 3; lblOut.Width = 65;
-        txtOutput = new TextBox(); txtOutput.Left = 75; txtOutput.Top = y; txtOutput.Width = 300;
+        Label lblOut = new Label(); lblOut.Text = "Output PDF:"; lblOut.Left = 8; lblOut.Top = y + 3; lblOut.Width = 100;
+        this.Controls.Add(lblOut); 
+        txtOutput = new TextBox(); txtOutput.Left = 110; txtOutput.Top = y; txtOutput.Width = 265;
         txtOutput.BackColor = Color.FromArgb(45,45,45); txtOutput.ForeColor = Color.White;
-        btnGetOut = new Button(); btnGetOut.Text = "Browse"; btnGetOut.Left = 380;
-        btnGetOut.Top = y - 1; btnGetOut.Width = 70; btnGetOut.Height = 30;
+        this.Controls.Add(txtOutput); 
+        btnGetOut = new Button(); btnGetOut.Text = "Browse"; btnGetOut.Left = 380; btnGetOut.Top = y - 1; btnGetOut.Width = 70; btnGetOut.Height = 30;
         btnGetOut.Click += OnGetOutput;
-        this.Controls.Add(lblOut); this.Controls.Add(txtOutput); this.Controls.Add(btnGetOut);
+        this.Controls.Add(btnGetOut);
 
-        y += 30;
+        y += 36;
         // GETPOS
-        btnPut = new Button(); btnPut.Text = "Put Image"; btnPut.Left = 8; btnPut.Top = y; btnPut.Width = 100; btnPut.Height = 30;
+        btnPut = new Button(); btnPut.Text = "Put Text"; btnPut.Left = 8; btnPut.Top = y; btnPut.Width = 100; btnPut.Height = 30;
         btnPut.Click += OnPut;
-        Label lblMsg2 = new Label(); lblMsg2.Text = "Autoview output if file is < 32 MB";
-        lblMsg2.Left = 115; lblMsg2.Top = y + 3; lblMsg2.Width = 245;
-        lblMsg2.BackColor = Color.FromArgb(45,45,45); lblMsg2.ForeColor = Color.White;
-        chkOpen = new CheckBox(); chkOpen.Left = 360; chkOpen.Top = y + 3; chkOpen.Width = 100; chkOpen.Text = "Try Open"; chkOpen.Checked = true;   // default ON
-        this.Controls.Add(btnPut); this.Controls.Add(lblMsg2); this.Controls.Add(chkOpen);
+        this.Controls.Add(btnPut);
+        // Offset X/Y
+        Label lblToXY = new Label(); lblToXY.Text = "Move TL by X,Y:"; lblToXY.Left = 120; lblToXY.Top = y + 3; lblToXY.Width = 120; this.Controls.Add(lblToXY);
+        txtOffsetX = new TextBox(); txtOffsetX.Location = new Point(240, y); txtOffsetX.Size = new Size(40, 20); txtOffsetX.Text = "-1"; this.Controls.Add(txtOffsetX);
+        txtOffsetY = new TextBox(); txtOffsetY.Location = new Point(280, y); txtOffsetY.Size = new Size(40, 20); txtOffsetY.Text = "12";  this.Controls.Add(txtOffsetY);
+        chkOpen = new CheckBox(); chkOpen.Left = 360; chkOpen.Top = y + 3; chkOpen.Width = 100; chkOpen.Text = "Try Open"; chkOpen.Checked = true;
+        this.Controls.Add(chkOpen);
 
         this.Deactivate += OnLoseFocus;
-    }
-
-    private void OnBrowseImage(object sender, EventArgs e)
-    {
-        using (OpenFileDialog ofd = new OpenFileDialog())
-        {
-            ofd.Filter = "Image files|*.png;*.jpg;*.jpeg;*.bmp;*.gif|All files|*.*";
-            if (ofd.ShowDialog() == DialogResult.OK)
-                txtImage.Text = ofd.FileName;
-        }
     }
 
     private void OnGetOutput(object sender, EventArgs e)
     {
         using (SaveFileDialog sfd = new SaveFileDialog())
         {
-            sfd.Filter = "PDF files|*.pdf"; if (sfd.ShowDialog() == DialogResult.OK) txtOutput.Text = sfd.FileName;
+            sfd.Filter = "PDF files|*.pdf"; if (sfd.ShowDialog() == DialogResult.OK)  txtOutput.Text = sfd.FileName;
         }
     }
 
     private void OnPut(object sender, EventArgs e)
     {
-        if (!File.Exists(txtImage.Text.Trim()))
-        {
-            MessageBox.Show("Please select a valid image file.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error); return;
-        }
-        double w, h, r;
-        if (!double.TryParse(txtW.Text.Trim(), out w) || !double.TryParse(txtH.Text.Trim(), out h) || !double.TryParse(txtR.Text.Trim(), out r))
-        {
-            MessageBox.Show("Width, height, and rotation must be numeric.", "Error",
-            MessageBoxButtons.OK, MessageBoxIcon.Error); return;
-        }
         armed = true;
-        dragBar.BackColor = Color.FromArgb(240, 80, 20);   // amber-ish
-        titleLabel.Text = "ARMED - Image will be put @ click on the PDF in view";
+        dragBar.BackColor = Color.FromArgb(240, 80, 20);
+        titleLabel.Text = "ARMED - Text will be put @ click on the PDF in view";
     }
 
     private void OnLoseFocus(object sender, EventArgs e)
@@ -200,25 +187,23 @@ public class ImageForm : Form
         if (!armed)
             return;
         armed = false;
-        dragBar.BackColor = Color.FromArgb(50, 50, 50);   // original colour
-        titleLabel.Text = "Put Image Overlay Tool";
+        dragBar.BackColor = Color.FromArgb(50, 50, 50);
+        titleLabel.Text = "Put Text Overlay Tool";
         PerformDdeAndBuildCommand();
-        // Attempt user option
         if (chkOpen.Checked)
         {
-          // Give script time to finish writing so set a 1 second delay
-          Thread.Sleep(1000);
-          string outFile = txtOutput.Text;
-          if (File.Exists(outFile)) // Only open if under 32 MB (SumatraPDF safe size)
-          {
-            long outSize = new FileInfo(outFile).Length;    
-            if (outSize < (32L * 1024 * 1024)) // TODO check if the 32 MB is needed but bigger files will likely take longer
+            Thread.Sleep(1000);
+            string outFile = txtOutput.Text;
+            if (File.Exists(outFile))
             {
-                string sumatra = Program.VIEWER_PATH;
-                string args = "-reuse-instance \"" + outFile + "\"";
-                RunHiddenCommand(sumatra, args, Path.GetDirectoryName(sumatra));
+                long outSize = new FileInfo(outFile).Length;
+                if (outSize < (32L * 1024 * 1024))
+                {
+                    string sumatra = Program.VIEWER_PATH;
+                    string args = "-reuse-instance \"" + outFile + "\"";
+                    RunHiddenCommand(sumatra, args, Path.GetDirectoryName(sumatra));
+                }
             }
-          }
         }
     }
 
@@ -227,7 +212,8 @@ public class ImageForm : Form
         string reply = SumatraDdeClient.Request("[GetFileState()][GetMousePos]");
         if (reply == null)
         {
-            MessageBox.Show("DDE failed.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error); return;
+            MessageBox.Show("DDE failed.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            return;
         }
         string path = ""; string page = ""; string x = ""; string ypdf = "";
         bool firstPageSeen = false;
@@ -254,25 +240,43 @@ public class ImageForm : Form
         }
         if (path == "" || page == "" || x == "" || ypdf == "")
         {
-            MessageBox.Show("Incomplete DDE data:\n" + reply, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error); return;
+            MessageBox.Show("Incomplete DDE data:\n" + reply, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            return;
         }
-        // Auto-seed output if empty
+        // Ensure the active document is a real PDF
+        if (!path.EndsWith(".pdf", StringComparison.OrdinalIgnoreCase) || !File.Exists(path))
+        {
+            MessageBox.Show(
+            "The active document is not a valid PDF file.\n\nPlease open a PDF in SumatraPDF before placing overlays.",
+            "Invalid Document", MessageBoxButtons.OK, MessageBoxIcon.Warning
+            );
+            return;
+        }
         if (string.IsNullOrWhiteSpace(txtOutput.Text))
         {
-            string outPdf = Path.Combine( Path.GetDirectoryName(path), Path.GetFileNameWithoutExtension(path) + "-overlaid.pdf" );
+            string outPdf = Path.Combine(
+                Path.GetDirectoryName(path),
+                Path.GetFileNameWithoutExtension(path) + "-overlaid.pdf"
+            );
             txtOutput.Text = outPdf;
         }
-        string img = txtImage.Text.Trim();
-        string wStr = txtW.Text.Trim(); string hStr = txtH.Text.Trim(); string rStr = txtR.Text.Trim();
+        string text = txtText.Text;
+        string fontStr = txtFont.Text.Trim();
+        string fontName = txtFontName.Text.Trim();
+        string rStr = txtR.Text.Trim();
         string outPdfFinal = txtOutput.Text.Trim();
-        // TOP-LEFT ANCHOR COMPENSATE (shift overlay down by its own height)
-        double yVal = double.Parse(ypdf); double hVal = double.Parse(hStr);
-        if (chkTopY.Checked) { yVal = yVal - hVal; }
-        ypdf = yVal.ToString(); // replace ypdf with compensated value
+        double bw = 0;  // are these correct for overlay.js
+        double bh = 2;  // are these correct for overlay.js should it be 1 ?
+        double yVal = double.Parse(ypdf);
+        ypdf = yVal.ToString();
+        string textArg = text  .Replace("\r", "")  .Replace("\n", "\\n")  .Replace("\"", "\\\"");
+        string colorR = txtColorR.Text.Trim();string colorG = txtColorG.Text.Trim();string colorB = txtColorB.Text.Trim();
+        string toX   = txtOffsetX.Text.Trim();string toY   = txtOffsetY.Text.Trim();string alpha  = txtAlpha.Text.Trim();
+        // NOTE: above bw & bh = 0,2 (Compensatory values for JS), may still need adjust 
         string exe = Program.TOOL_PATH;
         string args = string.Format(
-            "run \"{0}\" -p={1} -img=\"{2}\" -b=\"{3},{4},{5},{6}\" -r={7} -o=\"{8}\" \"{9}\"",
-            Program.SCRIPT_PATH, page, img, x, ypdf, wStr, hStr, rStr, outPdfFinal, path
+            "run \"{0}\" -p={1} -t=\"{2}\" -b=\"{3},{4},{5},{6}\" -s={7} -f=\"{8}\" -c=[{9},{10},{11}] -to={12},{13} -ta={14} -r={15} -o=\"{16}\" \"{17}\"",
+            Program.SCRIPT_PATH, page, textArg, x, ypdf, bw, bh, fontStr, fontName, colorR, colorG, colorB, toX, toY, alpha, rStr, outPdfFinal, path 
         );
         // Debugging needs a console otherwise this is in effect hidden
         Console.WriteLine("EXE=[" + exe + "]");
