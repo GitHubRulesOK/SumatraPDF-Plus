@@ -1,22 +1,35 @@
-/*&cls&@echo off&Title PutText &REM SEE // IMPORTANT NOTE: BELOW
+/*&cls&@echo off&Title PutText & REM SEE // IMPORTANT NOTE: BELOW about file locations before running this file
 
 cd /d "%~dp0" & echo Compiling PutText.exe
 set "CSC=%SystemRoot%\Microsoft.NET\Framework\v4.0.30319\csc.exe"
 if not exist "%CSC%" echo Compiler not found & pause & exit /b
-"%CSC%" /nologo /target:winexe /platform:x86 /out:"%~dpn0.exe" "%~dpnx0"
-REM this is the debug console variation > "%CSC%" /nologo /target:exe /platform:x86 /out:"%~dpn0-dbg.exe" "%~dpnx0"
-REM IMPORTANT we pause and exit here
+
+::Prepare the Icon/BMP/ICO/PNG graphics as a 24 px X 24 px RAW PNG.Base64
+>icon.b64 echo iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAACXBIWXMAAA7EAAAOxAGVKw4bAAAA50lEQVRIibWVTQvDIAyGX0d2SP/wDh1oYTvsDxdv2cHZOb9WJL5QlDTkyYeoYYJgoggA9nVO8OX5AQCA2XSDiw0r/RhFp1vMDMCXAKCsRGywxYzivlZx9PHeH7YCkDr22pYDW6oCNOfRrWAaoKbhqpggYiEAREtAiMkE+XuKgHMtaw37UgsWHePebN8vTaK1dgEt5dmlwdKEhgFnAw4D0tb1WjIMSGcQgTWfwsYE2dfw0zl3lteVcw5is+uaCXg9dACcHP5jO+vRMbOfTJM/MsvVyL6G/t3ubi5AQ83bVGsm1Qp0Qge9ARS+qUk3M9ZVAAAAAElFTkSuQmCC
+::Convert first into an App.ico and keep base64 for internal conversion
+>makeico.cs echo using System; using System.IO; class M { static void Main() {
+>>makeico.cs echo var p = Convert.FromBase64String(File.ReadAllText("icon.b64")); using (var f = File.Create("app.ico")) { f.Write(new byte[]{0,0,1,0,1,0,24,24,0,0,1,0,32,0},0,14); W(f,p.Length); W(f,22); f.Write(p,0,p.Length); } } static void W(Stream s,int v){s.WriteByte((byte)v);s.WriteByte((byte)(v^>^>8));s.WriteByte((byte)(v^>^>16));s.WriteByte((byte)(v^>^>24)); } }
+"%CSC%" /nologo makeico.cs && makeico.exe && del makeico.cs makeico.exe
+:: The app.ico AND Title icon.b64 can now be used by main compilation
+
+"%CSC%"  /nologo /target:winexe /win32icon:app.ico /resource:icon.b64 /platform:x86 /out:"%~dpn0.exe" "%~dpnx0"
+REM this is the debug console variation > "%CSC%" /nologo /target:exe /win32icon:app.ico /resource:icon.b64 /platform:x86 /out:"%~dpn0-dbg.exe" "%~dpnx0"
+
+:: It should now be safe to delete the temporary graphics
+del app.ico icon.b64
+
+REM IMPORTANT we must pause and exit here before NOTES
 pause & exit /b
 
 NOTES:
-This Hybrid file is a working demonstration of SumatraPDF DDE [Get...] it compiles to an exe that can place text 
-using a tools script. It has a dependency on https://github.com/GitHubRulesOK/SumatraPDF-Plus/blob/master/Scripts/AddOverlay.js
+ This Hybrid file is a working demonstration of SumatraPDF DDE [Get...] it compiles to an exe that can place text 
+ using a tools script. It has a dependency on https://github.com/GitHubRulesOK/SumatraPDF-Plus/blob/master/Scripts/AddOverlay.js
 
-You may use this concept many other ways but the one thing you may be suprised at, is how that script applies rotation!
-The tests have not been extensive so can behave oddly with some PDF file types or odd text thus it is not guaranteed!
+ You may use this concept many other ways but the one thing you may be suprised at, is how that script applies rotation!
+ The tests have not been extensive so can behave oddly with some PDF file types or odd text thus it is not guaranteed!
 
-Beware trying to view larger files may
-suffer "blocking" or mis-timings so there is an optional switch lower right but for now, is default ON.
+ Beware trying to view larger files may
+ suffer "blocking" or mis-timings so there is an optional switch lower right but for now, is default ON.
 
 Simply bind the compiled exe to a shortcut in SumatraPDF settings. Like this:
 ExternalViewers [
@@ -24,20 +37,20 @@ ExternalViewers [
 		CommandLine = C:\path to your version\PutText.exe
 		Name = Put &Text Overlay
 		Key = t
-		ToolbarSvgIcon = <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><rect x="0" y="0" width="24" height="24" fill="#FFdd00"/><text x="1" y="11" font-size="11" fill="black" font-family="sans-serif">PUT</text><text x="1" y="21" font-size="11" fill="black" font-family="sans-serif">Text</text></svg>
-
+		ToolbarSvgIcon = <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"><rect width="24" height="24" fill="#fd1"/><rect x="4.5" y="19.5" width="20" height="4" stroke="#000" stroke-width="1" fill="#f81"/><rect x="6.5" y="19.5" width="20" height="2" stroke="#000" stroke-width="1" fill="#999"/><rect x="1" y="1" width="22" height="18.5" stroke="#000" stroke-width="1" fill="#f81"/><rect x="3" y="3" width="18" height="14.5" stroke="#000" stroke-width="1" fill="#fff"/><text x="4" y="10" font-size="8" font-family="sans-serif" fill="#00f">PUT</text><text x="4" y="16.5" font-size="8" font-family="sans-serif" fill="#00f">Text</text></svg>
 	]
 ]
 
 */
-using System; using System.IO; using System.Runtime.InteropServices; using System.Text; using System.Windows.Forms; using System.Drawing;
-using System.Threading;
+using System; using System.IO; using System.Runtime.InteropServices; using System.Text;
+using System.Windows.Forms; using System.Drawing; using System.Threading; using System.Reflection;
+
 class Program
 {
     			// IMPORTANT NOTE: ALTER THESE TO YOUR OWN FILE LOCATIONS BEFORE BUILD
 
     public const string TOOL_PATH   = @"C:\Program Files\SumatraPDF\sumatrapdf-tool.exe";
-    public const string SCRIPT_PATH = @"C:\Users\...\SumatraPDF\scripts\addoverlay.js";
+    public const string SCRIPT_PATH = @"C:\Users\ your path to \plus\addoverlay.js";
     public const string VIEWER_PATH = @"C:\Program Files\SumatraPDF\SumatraPDF.exe";
 
     [STAThread]
@@ -56,7 +69,6 @@ class Program
     // VIEWER_PATH is optional remove this section if you dont want checking it exists
     if (!File.Exists(VIEWER_PATH))
     {   MessageBox.Show("Viewer not found:\n" + VIEWER_PATH, "Missing Viewer", MessageBoxButtons.OK, MessageBoxIcon.Warning); }
-
     // Continue to launch
         Application.EnableVisualStyles();
         Application.SetCompatibleTextRenderingDefault(false);
@@ -73,44 +85,51 @@ public class TextForm : Form
     private CheckBox chkOpen; //private CheckBox chkTopY;
     private Button btnGetOut; private Button btnPut;
     private bool armed = false;
-    private Panel dragBar; private Label titleLabel;
+    private Panel dragBar; private Label title;
     private TextBox txtColorR; private TextBox txtColorG; private TextBox txtColorB; private TextBox txtAlpha; private TextBox txtOffsetX; private TextBox txtOffsetY;
     private ComboBox txtFontName;
 
     public TextForm()
     {
+    // READ the external icon.b64 convert and embed it replacing any internal methods
+    var asm = Assembly.GetExecutingAssembly(); Image icon; using (var s = asm.GetManifestResourceStream("icon.b64"))
+    using (var r = new StreamReader(s)) { byte[] png = Convert.FromBase64String(r.ReadToEnd()); using (var ms = new MemoryStream(png)) icon = Image.FromStream(ms); }
+    using (var bmp = new Bitmap(icon)) this.Icon = Icon.FromHandle(bmp.GetHicon());
+
         this.FormBorderStyle = FormBorderStyle.None; this.TopMost = true; this.StartPosition = FormStartPosition.CenterScreen;
         this.BackColor = Color.FromArgb(30, 30, 30); this.ForeColor = Color.White; // this.Opacity = 0.70;
         this.Size = new Size(460, 260); this.Font = new Font("Segoe UI", 12, FontStyle.Regular);
+        // Check DDE probe
+        string reply = SumatraDdeClient.Request("[GetFileState()]");
+        if (reply == null)
+        {
+            MessageBox.Show(
+            "SumatraPDF may be active but currently\n there is no DDE reply channel.\n" +
+            "This simply means current state of SumatraPDF\n" +
+            "does not provide a DDE context yet. You may be able to use\nDDE after making changes.",
+            "No DDE Channel", MessageBoxButtons.OK, MessageBoxIcon.Information
+            );
+        // Continue NOT exit
+        }
 
         // DRAG BAR and ARMING NOTIFICATION AREA
         dragBar = new Panel(); dragBar.Left = 0; dragBar.Top = 0; dragBar.Width = this.Width; dragBar.Height = 28; dragBar.BackColor = Color.FromArgb(50,50,50);
         this.Controls.Add(dragBar);
-          string b64 = "iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAACXBIWXMAAA7EAAAOxAGVKw4bAAAA50lEQVRIibWVTQvDIAyGX0d2SP/wDh1oYTvsDxdv2cHZOb9WJL5QlDTkyYeoYYJgoggA9nVO8OX5AQCA2XSDiw0r/RhFp1vMDMCXAKCsRGywxYzivlZx9PHeH7YCkDr22pYDW6oCNOfRrWAaoKbhqpggYiEAREtAiMkE+XuKgHMtaw37UgsWHePebN8vTaK1dgEt5dmlwdKEhgFnAw4D0tb1WjIMSGcQgTWfwsYE2dfw0zl3lteVcw5is+uaCXg9dACcHP5jO+vRMbOfTJM/MsvVyL6G/t3ubi5AQ83bVGsm1Qp0Qge9ARS+qUk3M9ZVAAAAAElFTkSuQmCC"; // base64 PNG
-          byte[] bytes = Convert.FromBase64String(b64);
-          MemoryStream ms = new MemoryStream(bytes); Image icon = Image.FromStream(ms);
-          PictureBox pic = new PictureBox { Image = icon, Size = new Size(28, 28), Location = new Point(2, 2), BackColor = Color.Transparent };
-          pic.MouseDown += (s, e) => {
-          if (e.Button == MouseButtons.Left) { ReleaseCapture(); SendMessage(this.Handle, WM_NCLBUTTONDOWN, HTCAPTION, 0); } };
-          dragBar.Controls.Add(pic);
-
-        titleLabel = new Label(); titleLabel.Text = "Put Text Overlay Tool";
-        titleLabel.ForeColor = Color.White; titleLabel.BackColor = Color.Transparent;
-        titleLabel.Font = new Font("Segoe UI", 12, FontStyle.Regular);
-        titleLabel.Width = 390; titleLabel.Left = 36; titleLabel.Top = 4;
-        titleLabel.MouseDown += (s, e) => {
+        PictureBox pic = new PictureBox { Image = icon, Size = new Size(28, 28), Location = new Point(0, 0), BackColor = Color.FromArgb(255, 201, 15), SizeMode = PictureBoxSizeMode.CenterImage };
+        pic.MouseDown += (s, e) => {
         if (e.Button == MouseButtons.Left) { ReleaseCapture(); SendMessage(this.Handle, WM_NCLBUTTONDOWN, HTCAPTION, 0); } };
-        dragBar.Controls.Add(titleLabel);
-
+        dragBar.Controls.Add(pic);
+        title = new Label(); title.Text = "Put Text Overlay Tool";
+        title.ForeColor = Color.White; title.BackColor = Color.Transparent; title.Left = 30; title.Top = 4; title.Width = 390;
+        title.MouseDown += (s, e) => {
+        if (e.Button == MouseButtons.Left) { ReleaseCapture(); SendMessage(this.Handle, WM_NCLBUTTONDOWN, HTCAPTION, 0); } };
+        dragBar.Controls.Add(title);
         // CLOSE BUTTON
-        Label btnX = new Label();
-        btnX.Text = "X"; btnX.Font = new Font("Segoe UI", 15, FontStyle.Bold);
-        btnX.ForeColor = Color.White; btnX.BackColor = Color.FromArgb(60,60,60);
-        btnX.Top = 0; btnX.Left = this.Width - 30; btnX.Width = 30; btnX.Height = 30;
-        btnX.TextAlign = ContentAlignment.TopCenter;
-        btnX.MouseEnter += (s, e) => { btnX.BackColor = Color.FromArgb(200, 50, 50); };
-        btnX.MouseLeave += (s, e) => { btnX.BackColor = Color.FromArgb(60, 60, 60); };
-        btnX.Click += (s, e) => this.Close();
+        Label btnX = new Label() {
+        Text = "X", Font = new Font("Segoe UI", 15, FontStyle.Bold), Top = 0, Left = this.Width - 30, Width = 30, Height = 30,
+        ForeColor = Color.White, BackColor = Color.FromArgb(60,60,60), TextAlign = ContentAlignment.TopCenter};
+        btnX.MouseEnter += (s, e) => btnX.BackColor = Color.FromArgb(200, 50, 50); btnX.MouseLeave += (s, e) => btnX.BackColor = Color.FromArgb(50, 50, 50); 
+        btnX.Click += (s, e) => Close();
         dragBar.Controls.Add(btnX);
 
         int y = 30;
@@ -190,7 +209,7 @@ public class TextForm : Form
     {
         armed = true;
         dragBar.BackColor = Color.FromArgb(240, 80, 20);
-        titleLabel.Text = "ARMED - Text will be put @ click on the PDF in view";
+        title.Text = "ARMED - Text will be put @ click on the PDF in view";
     }
 
     private void OnLoseFocus(object sender, EventArgs e)
@@ -199,7 +218,7 @@ public class TextForm : Form
             return;
         armed = false;
         dragBar.BackColor = Color.FromArgb(50, 50, 50);
-        titleLabel.Text = "Put Text Overlay Tool";
+        title.Text = "Put Text Overlay Tool";
         PerformDdeAndBuildCommand();
         if (chkOpen.Checked)
         {

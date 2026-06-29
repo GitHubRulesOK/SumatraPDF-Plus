@@ -1,32 +1,57 @@
-/*&cls&@echo off&Title PutImage
+/*&cls&@echo off&Title PutImage & REM SEE // IMPORTANT NOTE: BELOW about file locations before running this file
+
 
 cd /d "%~dp0" & echo Compiling PutImage.exe
 set "CSC=%SystemRoot%\Microsoft.NET\Framework\v4.0.30319\csc.exe"
 if not exist "%CSC%" echo Compiler not found & pause & exit /b
-"%CSC%" /nologo /target:winexe /platform:x86 /out:"%~dpn0.exe" "%~dpnx0"
-REM this is the debug console variation > "%CSC%" /nologo /target:exe /platform:x86 /out:"%~dpn0-dbg.exe" "%~dpnx0"
-REM IMPORTANT we pause and exit here
+
+::Prepare the Icon/BMP/ICO/PNG graphics as a 24 px X 24 px RAW PNG.Base64
+>icon.b64 echo iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAACXBIWXMAAA7EAAAOxAGVKw4bAAABhElEQVRIibWVMU/CUBDHf6ctFBJXN10c3IwsDsaPwVRHBwcWdwbj4M5CooODGpkc/QIOEDdIHIxRo9HPIFiCPodXKi3vFTDllru2l//v7l7zTgoOijmaA9Ctzke8eBwCAOQoW3F1qL0Tf2uZlkj6d1s+sJCWl1sQEEG1QLXAy4k5sVGyahgBBVcLB00tPLTebQhNij8/wcXGdICcI1y+WgsiaIKXl0h8+a5D/eaTtda9sZMYIO8KjTcdX3+AbJshahAGfpulfljYQD+nAq4SladBhh28bK0D8FBandyByUyQ4IdIrH7yqP35ewSdCZCE5HfQv2s4jsrBZswnxzQVYBTS/1axSuu1Tsz/q4NRCCJaxG+D3453MOmQp4bsmquNwCMWvypmgJRF/q6OmhirHwOUV+yinhsGChDwHMAVWIRKQOz+sQI4862ALzt73PYa44CCA+w3TOmzm2MI57V0ZN4rU1RiiRRdUd2qXne9U/uZTGupv2khgzOxArI6E+OIspHW9gtrPHnP3FjSVQAAAABJRU5ErkJggg==
+::Convert first into an App.ico and keep base64 for internal conversion
+>makeico.cs echo using System; using System.IO; class M { static void Main() {
+>>makeico.cs echo var p = Convert.FromBase64String(File.ReadAllText("icon.b64")); using (var f = File.Create("app.ico")) { f.Write(new byte[]{0,0,1,0,1,0,24,24,0,0,1,0,32,0},0,14); W(f,p.Length); W(f,22); f.Write(p,0,p.Length); } } static void W(Stream s,int v){s.WriteByte((byte)v);s.WriteByte((byte)(v^>^>8));s.WriteByte((byte)(v^>^>16));s.WriteByte((byte)(v^>^>24)); } }
+"%CSC%" /nologo makeico.cs && makeico.exe && del makeico.cs makeico.exe
+:: The app.ico AND Title icon.b64 can now be used by main compilation
+
+"%CSC%"  /nologo /target:winexe /win32icon:app.ico /resource:icon.b64 /platform:x86 /out:"%~dpn0.exe" "%~dpnx0"
+REM this is the debug console variation > "%CSC%" /nologo /target:exe /win32icon:app.ico /resource:icon.b64 /platform:x86 /out:"%~dpn0-dbg.exe" "%~dpnx0"
+
+:: It should now be safe to delete the temporary graphics
+del app.ico icon.b64
+
+REM IMPORTANT we must pause and exit here before NOTES
 pause & exit /b
 
 NOTES:
-This Hybrid file is a working demonstration of SumatraPDF DDE [Get...] it compiles to an exe that can place an image 
-using a tools script. It has a dependency on https://github.com/GitHubRulesOK/SumatraPDF-Plus/blob/master/Scripts/AddOverlay.js
+ This Hybrid file is a working demonstration of SumatraPDF DDE [Get...] it compiles to an exe that can place an image 
+ using a tools script. It has a dependency on https://github.com/GitHubRulesOK/SumatraPDF-Plus/blob/master/Scripts/AddOverlay.js
 
-You may use this concept many other ways but the one thing you may be suprised at, is how that script applies rotation!
-The tests have not been extensive so can behave oddly with some PDF file types or odd images thus it is not guaranteed!
+ You may use this concept many other ways but the one thing you may be suprised at, is how that script applies rotation!
+ The tests have not been extensive so can behave oddly with some PDF file types or odd images thus it is not guaranteed!
 
-Images can be overlaid and will work with some alpha transparency, such as PNG's. Beware trying to view largeer files may
-suffer "blocking" or mis-timings so there is an optional switch lower right but for now, is default ON.
+ Images can be overlaid and will work with some alpha transparency, such as PNG's. Beware trying to view largeer files may
+ suffer "blocking" or mis-timings so there is an optional switch lower right but for now, is default ON.
+
+Simply bind the compiled exe to a shortcut in SumatraPDF settings. Like this:
+ExternalViewers [
+	[
+		CommandLine = C:\path to your version\PutImage.exe
+		Name = &Put Image Overlay
+		Key = p
+		ToolbarSvgIcon = <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"><rect width="24" height="24" fill="none"/><rect x="4.5" y="19.5" width="20" height="4" stroke="#000" stroke-width="1" fill="#f81"/><rect x="6.5" y="19.5" width="20" height="2" stroke="#000" stroke-width="1" fill="#999"/><rect x="1" y="1" width="22" height="18.5" stroke="#000" stroke-width="1" fill="#f81"/><rect x="3" y="3" width="18" height="14.5" stroke="#000" stroke-width="1" fill="#0ff"/><circle cx="10" cy="8" r="4" fill="#fd1" stroke="#000" stroke-width="1"/><polygon points="3 17.5, 3 10, 7 6, 15.5 17.5" fill="#9e0" stroke="#000" stroke-width="1"/><path d="M17.5 8V17.5" stroke="#630" stroke-width="1"/><path d="M15.5 10L17.5 8L19.5 10" stroke="#080" stroke-width="1"/><path d="M15.5 13L17.5 11L19.5 13" stroke="#080" stroke-width="1"/><path d="M15.5 16L17.5 14L19.5 16" stroke="#080" stroke-width="1"/></svg>
+	]
+]
 
 */
-using System; using System.IO; using System.Runtime.InteropServices; using System.Text; using System.Windows.Forms; using System.Drawing;
-using System.Threading;
+using System; using System.IO; using System.Runtime.InteropServices; using System.Text;
+using System.Windows.Forms; using System.Drawing; using System.Threading; using System.Reflection;
+
 class Program
 {
     			// IMPORTANT ALTER THESE TO YOUR OWN FILE LOCATIONS BEFORE BUILD
 
     public const string TOOL_PATH   = @"C:\Program Files\SumatraPDF\sumatrapdf-tool.exe";
-    public const string SCRIPT_PATH = @"C:\Users\...\SumatraPDF\scripts\addoverlay.js";
+    public const string SCRIPT_PATH = @"C:\Users\ your path to \plus\addoverlay.js";
     public const string VIEWER_PATH = @"C:\Program Files\SumatraPDF\SumatraPDF.exe";
 
     [STAThread]
@@ -45,7 +70,6 @@ class Program
     // VIEWER_PATH is optional remove this section if you dont want checking it exists
     if (!File.Exists(VIEWER_PATH))
     {   MessageBox.Show("Viewer not found:\n" + VIEWER_PATH, "Missing Viewer", MessageBoxButtons.OK, MessageBoxIcon.Warning); }
-
     // Continue to launch
         Application.EnableVisualStyles();
         Application.SetCompatibleTextRenderingDefault(false);
@@ -62,43 +86,50 @@ public class ImageForm : Form
     private CheckBox chkTopY; private CheckBox chkOpen;
     private Button btnGetImg; private Button btnGetOut; private Button btnPut;
     private bool armed = false;
-    private Panel dragBar; private Label titleLabel;
+    private Panel dragBar; private Label title;
 
     public ImageForm()
     {
+    // READ the external icon.b64 convert and embed it replacing any internal methods
+    var asm = Assembly.GetExecutingAssembly(); Image icon; using (var s = asm.GetManifestResourceStream("icon.b64"))
+    using (var r = new StreamReader(s)) { byte[] png = Convert.FromBase64String(r.ReadToEnd()); using (var ms = new MemoryStream(png)) icon = Image.FromStream(ms); }
+    using (var bmp = new Bitmap(icon)) this.Icon = Icon.FromHandle(bmp.GetHicon());
+
         this.FormBorderStyle = FormBorderStyle.None; this.TopMost = true; this.StartPosition = FormStartPosition.CenterScreen;
         this.BackColor = Color.FromArgb(30, 30, 30); this.ForeColor = Color.White; // this.Opacity = 0.70;
         this.Size = new Size(460, 225); this.Font = new Font("Segoe UI", 12, FontStyle.Regular);
+        // Check DDE probe
+        string reply = SumatraDdeClient.Request("[GetFileState()]");
+        if (reply == null)
+        {
+            MessageBox.Show(
+            "SumatraPDF may be active but currently\n there is no DDE reply channel.\n" +
+            "This simply means current state of SumatraPDF\n" +
+            "does not provide a DDE context yet. You may be able to use\nDDE after making changes.",
+            "No DDE Channel", MessageBoxButtons.OK, MessageBoxIcon.Information
+            );
+        // Continue NOT exit
+        }
 
-    // DRAG BAR and ARMING NOTIFICATION AREA
-    dragBar = new Panel(); dragBar.Left = 0; dragBar.Top = 0; dragBar.Width = this.Width; dragBar.Height = 28; dragBar.BackColor = Color.FromArgb(50,50,50);
-    this.Controls.Add(dragBar);
-        string b64 = "iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAACXBIWXMAAA7EAAAOxAGVKw4bAAABhElEQVRIibWVMU/CUBDHf6ctFBJXN10c3IwsDsaPwVRHBwcWdwbj4M5CooODGpkc/QIOEDdIHIxRo9HPIFiCPodXKi3vFTDllru2l//v7l7zTgoOijmaA9Ctzke8eBwCAOQoW3F1qL0Tf2uZlkj6d1s+sJCWl1sQEEG1QLXAy4k5sVGyahgBBVcLB00tPLTebQhNij8/wcXGdICcI1y+WgsiaIKXl0h8+a5D/eaTtda9sZMYIO8KjTcdX3+AbJshahAGfpulfljYQD+nAq4SladBhh28bK0D8FBandyByUyQ4IdIrH7yqP35ewSdCZCE5HfQv2s4jsrBZswnxzQVYBTS/1axSuu1Tsz/q4NRCCJaxG+D3453MOmQp4bsmquNwCMWvypmgJRF/q6OmhirHwOUV+yinhsGChDwHMAVWIRKQOz+sQI4862ALzt73PYa44CCA+w3TOmzm2MI57V0ZN4rU1RiiRRdUd2qXne9U/uZTGupv2khgzOxArI6E+OIspHW9gtrPHnP3FjSVQAAAABJRU5ErkJggg=="; // base64 PNG
-        byte[] bytes = Convert.FromBase64String(b64);
-        MemoryStream ms = new MemoryStream(bytes); Image icon = Image.FromStream(ms);
-        PictureBox pic = new PictureBox { Image = icon, Size = new Size(28, 28), Location = new Point(2, 2), BackColor = Color.Transparent };
+        // DRAG BAR and ARMING NOTIFICATION AREA
+        dragBar = new Panel(); dragBar.Left = 0; dragBar.Top = 0; dragBar.Width = this.Width; dragBar.Height = 28; dragBar.BackColor = Color.FromArgb(50,50,50);
+        this.Controls.Add(dragBar);
+        PictureBox pic = new PictureBox { Image = icon, Size = new Size(28, 28), Location = new Point(0, 0), BackColor = Color.FromArgb(255, 201, 15), SizeMode = PictureBoxSizeMode.CenterImage };
         pic.MouseDown += (s, e) => {
         if (e.Button == MouseButtons.Left) { ReleaseCapture(); SendMessage(this.Handle, WM_NCLBUTTONDOWN, HTCAPTION, 0); } };
         dragBar.Controls.Add(pic);
-
-    titleLabel = new Label(); titleLabel.Text = "Put Image Overlay Tool";
-    titleLabel.ForeColor = Color.White; titleLabel.BackColor = Color.Transparent;
-    titleLabel.Font = new Font("Segoe UI", 12, FontStyle.Regular);
-    titleLabel.Width = 390; titleLabel.Left = 36; titleLabel.Top = 4;
-    titleLabel.MouseDown += (s, e) => {
-    if (e.Button == MouseButtons.Left) { ReleaseCapture(); SendMessage(this.Handle, WM_NCLBUTTONDOWN, HTCAPTION, 0); } };
-    dragBar.Controls.Add(titleLabel);
-
-    // CLOSE BUTTON
-    Label btnX = new Label();
-    btnX.Text = "X"; btnX.Font = new Font("Segoe UI", 15, FontStyle.Bold);
-    btnX.ForeColor = Color.White; btnX.BackColor = Color.FromArgb(60,60,60);
-    btnX.Top = 0; btnX.Left = this.Width - 30; btnX.Width = 30; btnX.Height = 30;
-    btnX.TextAlign = ContentAlignment.TopCenter;
-    btnX.MouseEnter += (s, e) => { btnX.BackColor = Color.FromArgb(200, 50, 50); };
-    btnX.MouseLeave += (s, e) => { btnX.BackColor = Color.FromArgb(60, 60, 60); };
-    btnX.Click += (s, e) => this.Close();
-    dragBar.Controls.Add(btnX);
+        title = new Label(); title.Text = "Put Image Overlay Tool";
+        title.ForeColor = Color.White; title.BackColor = Color.Transparent; title.Left = 30; title.Top = 4; title.Width = 390;
+        title.MouseDown += (s, e) => {
+        if (e.Button == MouseButtons.Left) { ReleaseCapture(); SendMessage(this.Handle, WM_NCLBUTTONDOWN, HTCAPTION, 0); } };
+        dragBar.Controls.Add(title);
+        // CLOSE BUTTON
+        Label btnX = new Label() {
+        Text = "X", Font = new Font("Segoe UI", 15, FontStyle.Bold), Top = 0, Left = this.Width - 30, Width = 30, Height = 30,
+        ForeColor = Color.White, BackColor = Color.FromArgb(60,60,60), TextAlign = ContentAlignment.TopCenter};
+        btnX.MouseEnter += (s, e) => btnX.BackColor = Color.FromArgb(200, 50, 50); btnX.MouseLeave += (s, e) => btnX.BackColor = Color.FromArgb(50, 50, 50); 
+        btnX.Click += (s, e) => Close();
+        dragBar.Controls.Add(btnX);
 
         int y = 30; 
         this.StartPosition = FormStartPosition.CenterScreen;
@@ -192,7 +223,7 @@ public class ImageForm : Form
         }
         armed = true;
         dragBar.BackColor = Color.FromArgb(240, 80, 20);   // amber-ish
-        titleLabel.Text = "ARMED - Image will be put @ click on the PDF in view";
+        title.Text = "ARMED - Image will be put @ click on the PDF in view";
     }
 
     private void OnLoseFocus(object sender, EventArgs e)
@@ -201,7 +232,7 @@ public class ImageForm : Form
             return;
         armed = false;
         dragBar.BackColor = Color.FromArgb(50, 50, 50);   // original colour
-        titleLabel.Text = "Put Image Overlay Tool";
+        title.Text = "Put Image Overlay Tool";
         PerformDdeAndBuildCommand();
         // Attempt user option
         if (chkOpen.Checked)
