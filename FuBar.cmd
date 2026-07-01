@@ -14,6 +14,9 @@ if not exist "%CSC%" echo Compiler not found & pause & exit /b
 
 "%CSC%"  /nologo /target:winexe /win32icon:app.ico /resource:icon.b64 /platform:x86 /out:"%~dpn0.exe" "%~dpnx0"
 
+:: It should now be safe to delete the temporary graphics
+del app.ico icon.b64
+
 REM IMPORTANT we must pause and exit here before NOTES
 pause & exit /b
 
