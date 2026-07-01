@@ -1,9 +1,40 @@
-/*
-C:\Windows\Microsoft.NET\Framework\v4.0.30319\csc /nologo /target:winexe /platform:x86 "%~0"
-pause
-exit /b
+/*&cls&@echo off&Title "%~dpnx0" & REM SEE // USER CUSTOMISATION * BELOW if you wish to make changes before running this file
+
+cd /d "%~dp0" & echo Compiling "%~dpn0.exe"
+set "CSC=%SystemRoot%\Microsoft.NET\Framework\v4.0.30319\csc.exe"
+if not exist "%CSC%" echo Compiler not found & pause & exit /b
+
+::Prepare the Icon/BMP/ICO/PNG graphics as a 24 px X 24 px RAW PNG.Base64
+>icon.b64 echo iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAACXBIWXMAAA7EAAAOxAGVKw4bAAAAvElEQVRIiWNU2ujDQEvAgk3wnv+W/+QYprTRh5EoCxgYGBj+/yfNDkZGDLMZGBgYGJhIMoUMMGrBwFvAqLTRh+Fu3OVXDOc+izIY8b5m1F7eSC3DlcrbpkJ8ADWc4dxnUWoZDgMQC2CGG/G+prYFkIwGc/m5z6JKV9qm3vPf8p+cjKa00YfxXmdVNrI4nSJZ5xjcuYyxW3KoZTgikmkI6BNE6ICSSEYXH/pBNGoBQYCzTsZVx5IKsCZTagIA6K8628UfHS8AAAAASUVORK5CYII=
+::Convert first into an App.ico and keep base64 for internal conversion
+>makeico.cs echo using System; using System.IO; class M { static void Main() {
+>>makeico.cs echo var p = Convert.FromBase64String(File.ReadAllText("icon.b64")); using (var f = File.Create("app.ico")) { f.Write(new byte[]{0,0,1,0,1,0,24,24,0,0,1,0,32,0},0,14); W(f,p.Length); W(f,22); f.Write(p,0,p.Length); } } static void W(Stream s,int v){s.WriteByte((byte)v);s.WriteByte((byte)(v^>^>8));s.WriteByte((byte)(v^>^>16));s.WriteByte((byte)(v^>^>24)); } }
+"%CSC%" /nologo makeico.cs && makeico.exe && del makeico.cs makeico.exe
+:: The app.ico AND Title icon.b64 can now be used by main compilation
+
+"%CSC%"  /nologo /target:winexe /win32icon:app.ico /resource:icon.b64 /platform:x86 /out:"%~dpn0.exe" "%~dpnx0"
+
+REM IMPORTANT we must pause and exit here before NOTES
+pause & exit /b
+
+NOTES:
+ This Hybrid file is a working demonstration of SumatraPDF Plugin Overlay on canvas it compiles to an exe that can follow the  
+ canvas area. It is simply providing a focal bar for reading.
+
+ You may use this concept many other ways, but this is simply a demonstration for Windows 7+!
+
+Simply bind the compiled exe to a shortcut in SumatraPDF settings. Like this:
+ExternalViewers [
+	[
+		CommandLine = C:\path to your version\FuBar.exe
+		Name = Focused &User Overlay
+		Key = u
+		ToolbarSvgIcon = <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"><rect width="24" height="24" fill="none"/><rect x="5" y="0" width="15" height="24" stroke="#000" stroke-width="1" fill="#fff" /><rect x="1" y="8" width="3" height="8" fill="#fd1"/><rect x="4" y="8" width="20" height="3" fill="#888"/><rect x="4" y="13" width="20" height="3" fill="#888"/><rect x="21" y="8" width="3" height="8" fill="#888"/><text x="1" y="12" font-size="6" font-family="sans-serif" fill="#f00">x</text></svg>
+	]
+]
+
 */
-using System; using System.Drawing; using System.Text; using System.Windows.Forms; using System.Runtime.InteropServices;
+using System; using System.Drawing; using System.Text; using System.Windows.Forms; using System.Runtime.InteropServices;  using System.IO; using System.Reflection;
 
 class Overlay : Form
 {
@@ -16,14 +47,13 @@ class Overlay : Form
     public static Color BAR_COLOR     = Color.FromArgb(120,120,120);	// Only RGB 0-255
     public static int SLOT_HEIGHT     = 40;				// Pixels
     public static int SLOT_MARGIN     = 20;				// Pixels (slot width = W - SLOT_MARGIN x 2)
-    public static int CLOSE_SIZE      = 20;				// Pixels
-    public static Color ARROW_COLOR   = Color.FromArgb(255,200,10);	// Only RGB 0-255
-    public static int ARROW_SIZE      = 40;				// half-height of arrow
+    public static Color GRIP_COLOR   = Color.FromArgb(255,200,10);	// Only RGB 0-255
 
     // Avoid altering these
     public static Color CLOSE_COLOR   = Color.Red;	// X CROSS colour
-    public static Color SLOT_COLOR    = Color.Magenta;	// Transparency key colour
+    public static int CLOSE_SIZE      = 20;		// Pixels
     public static int ANTI_JITTER     = 2;		// Pixels
+    public static Color SLOT_COLOR    = Color.Magenta;	// Transparency key colour
 
     // INTERNAL
     [DllImport("user32.dll")] static extern IntPtr SetWindowsHookEx(int idHook, LowLevelMouseProc lpfn, IntPtr hMod, uint dwThreadId);
@@ -62,6 +92,11 @@ class Overlay : Form
     }
 
     public Overlay() {
+    // READ the external icon.b64 convert and embed it replacing any internal methods
+    var asm = Assembly.GetExecutingAssembly(); Image icon; using (var s = asm.GetManifestResourceStream("icon.b64"))
+    using (var r = new StreamReader(s)) { byte[] png = Convert.FromBase64String(r.ReadToEnd()); using (var ms = new MemoryStream(png)) icon = Image.FromStream(ms); }
+    using (var bmp = new Bitmap(icon)) this.Icon = Icon.FromHandle(bmp.GetHicon());
+
         FormBorderStyle = FormBorderStyle.None; ShowInTaskbar = true; TopMost = true;
         BackColor = SLOT_COLOR; TransparencyKey = SLOT_COLOR; Opacity = OVERLAY_OPACITY / 100.0;
         poll.Interval = 500;
@@ -109,7 +144,7 @@ class Overlay : Form
         }
         SetWindowPos(Handle, TOP, newRect.L, newRect.T, W, BAR_HEIGHT, SWP);
         lastOverlay = newRect; hasOverlay = true;
-        handleZone = new Rectangle( newRect.L, newRect.T + (BAR_HEIGHT/2 - 80), W, 160 );
+//        handleZone = new Rectangle( newRect.L, newRect.T + (BAR_HEIGHT/2 - 80), W, 160 );
         Invalidate();
     }
 
@@ -123,10 +158,11 @@ class Overlay : Form
         }
         return CallNextHookEx(mouseHook, nCode, wParam, lParam);
     }
+
     void HandleMouse(int msg, POINT pt) {
         if (!hasCanvas || !hasOverlay) return;
         Point p = new Point(pt.x, pt.y);
-        // Recompute slot geometry
+        // Recompute slot geometry is this required ?
         int slotW = lastOverlay.R - lastOverlay.L;
         int slotH = lastOverlay.B - lastOverlay.T;
         int slotMid = lastOverlay.T + (slotH / 2);
@@ -135,18 +171,18 @@ class Overlay : Form
         int sx = lastOverlay.L + (slotW - sw) / 2;
         int sy = slotMid - sh/2;
         // Close button hit-test
-        Rectangle closeBox = new Rectangle(sx + sw - (CLOSE_SIZE + 5), sy + 5, CLOSE_SIZE, CLOSE_SIZE);
+        int barTop = lastOverlay.T;        // top of the bar
+        Rectangle closeBox = new Rectangle(lastOverlay.L,barTop,CLOSE_SIZE,CLOSE_SIZE);
         if (msg == WM_LBUTTONDOWN && closeBox.Contains(p)) { Application.Exit(); return; }
-        // Drag zone refresh
-        RECT o;
-        GetWindowRect(this.Handle, out o);
-        handleZone = new Rectangle( o.L, o.T + (BAR_HEIGHT/2 - 80), o.R - o.L, 160 );
+        // Drag zone = grip bar only
+        handleZone = new Rectangle( lastOverlay.L, lastOverlay.T, 20, BAR_HEIGHT );
         if (msg == WM_LBUTTONDOWN) {
             if (handleZone.Contains(p)) {
                 dragging   = true;
                 dragStartY = p.Y;
                 offsetStart = userOffset;
             }
+            return; 
         }
         else if (msg == WM_MOUSEMOVE && dragging) {
             int dy = p.Y - dragStartY;
@@ -170,32 +206,34 @@ class Overlay : Form
         }
     }
 
-    // DRAWING
-    protected override void OnPaint(PaintEventArgs e) {
-        var g = e.Graphics;
-        int W = Width, H = Height, mid = H/2;
-        g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
-        // Bar (background)
-        using (var band = new SolidBrush(BAR_COLOR))
-            g.FillRectangle(band, new Rectangle(0, mid-(BAR_HEIGHT/2), W, BAR_HEIGHT));
-        // Slot
-        int sw = W - SLOT_MARGIN * 2; int sh = SLOT_HEIGHT; int sx = (W - sw) / 2; int sy = mid - sh/2;
-        using (var er = new SolidBrush(SLOT_COLOR))
-            g.FillRectangle(er, new Rectangle(sx, sy, sw, sh));
-        // Arrows
-        using (var o = new Pen(Color.Black,6))
-        using (var f = new SolidBrush(ARROW_COLOR)) {
-            Point[] L = { new Point(16,mid), new Point(0,mid-ARROW_SIZE), new Point(0,mid+ARROW_SIZE) };
-            Point[] R = { new Point(W-16,mid), new Point(W,mid-ARROW_SIZE), new Point(W,mid+ARROW_SIZE) };
-            g.DrawPolygon(o,L); g.FillPolygon(f,L);
-            g.DrawPolygon(o,R); g.FillPolygon(f,R);
-        }
-        // Close button
-        int cx = sx + sw - (CLOSE_SIZE + 5); int cy = sy + 5;
-        using (var pen = new Pen(CLOSE_COLOR, 4)) {
-            g.DrawLine(pen, cx, cy, cx+CLOSE_SIZE, cy+CLOSE_SIZE); g.DrawLine(pen, cx+CLOSE_SIZE, cy, cx, cy+CLOSE_SIZE);
-        }
+// DRAWING
+protected override void OnPaint(PaintEventArgs e)
+{
+    var g = e.Graphics;
+    int W = Width, H = Height, mid = H / 2;
+    // Bar (background)
+    Rectangle barRect = new Rectangle(0, mid - (BAR_HEIGHT / 2), W, BAR_HEIGHT);
+    using (var band = new SolidBrush(BAR_COLOR))
+        g.FillRectangle(band, barRect);
+    // Slot (transparent hole)
+    int sw = W - SLOT_MARGIN * 2;
+    int sh = SLOT_HEIGHT;
+    int sx = (W - sw) / 2;
+    int sy = mid - sh / 2;
+    using (var er = new SolidBrush(SLOT_COLOR))
+        g.FillRectangle(er, new Rectangle(sx, sy, sw, sh));
+    // LEFT VERTICAL GRIP BAR (20px wide, now YELLOW)
+    Rectangle gripRect = new Rectangle(0, barRect.Top, 20, BAR_HEIGHT);
+    using (var grip = new SolidBrush(GRIP_COLOR))
+        g.FillRectangle(grip, gripRect);
+    // CLOSE BUTTON (top-left inside grip bar)
+    int cy = barRect.Top + 0;
+    using (var pen = new Pen(CLOSE_COLOR, 4))
+    {
+        g.DrawLine(pen, 0, cy, CLOSE_SIZE, cy + CLOSE_SIZE);
+        g.DrawLine(pen, CLOSE_SIZE, cy, 0, cy + CLOSE_SIZE);
     }
+}
     
     // MAIN
     [STAThread]
