@@ -49,91 +49,63 @@ class Overlay : Form
     // ********************
     // USER CUSTOMISATION *
     // ********************
+    public static string LEFT_HOTKEY  = "p";   // default, can be overridden by L="..."
+    public static string RIGHT_HOTKEY = "n";   // default, can be overridden by R="..."
+    public static int OVERLAY_OPACITY  = 25;   // This is so you know where the Zones are but once trialed can be reduced
+    public static int HOTZONE_HEIGHT   = 240;  // Reduce as much as you wish but below 60 will be hard to avoid the close area
+    public static int HOTZONE_WIDTH    = 50;   // to provide a wide enough area keep above 20
+    public static Color HOTZONE_COLOR  = Color.FromArgb(120,255,120); // This is a grey green tint but you can alter to suite a theme or mood
 
-    public static int OVERLAY_OPACITY  = 25;
-    public static int HOTZONE_HEIGHT   = 240;
-    public static int HOTZONE_WIDTH    = 50;
-    public static Color HOTZONE_COLOR  = Color.FromArgb(120,255,120);
-
+    // You should not need to change these
     public static Color CLOSE_COLOR    = Color.Red;
     public static int CLOSE_SIZE       = 20;
     public static int ANTI_JITTER      = 2;
     public static Color TRANSPARENT_KEY = Color.Magenta;
 
-    public static string LEFT_HOTKEY  = "p";   // default, can be overridden by L="..."
-    public static string RIGHT_HOTKEY = "n";   // default, can be overridden by R="..."
-
-    // ============================
-    // INTERNAL
-    // ============================
-
+	// INTERNAL
     [DllImport("user32.dll")] static extern bool PostMessage(IntPtr hWnd, uint Msg, IntPtr wParam, IntPtr lParam);
-    const uint WM_KEYDOWN = 0x0100;
-    const uint WM_KEYUP   = 0x0101;
-
+    const uint WM_KEYDOWN = 0x0100; const uint WM_KEYUP   = 0x0101;
     [DllImport("user32.dll")] static extern IntPtr SetWindowsHookEx(int idHook, LowLevelMouseProc lpfn, IntPtr hMod, uint dwThreadId);
     [DllImport("user32.dll")] static extern bool UnhookWindowsHookEx(IntPtr hhk);
     [DllImport("user32.dll")] static extern IntPtr CallNextHookEx(IntPtr hhk, int nCode, IntPtr wParam, IntPtr lParam);
     [DllImport("kernel32.dll")] static extern IntPtr GetModuleHandle(string lpModuleName);
-
     [DllImport("user32.dll", CharSet = CharSet.Auto)] static extern IntPtr FindWindow(string c, string n);
     [DllImport("user32.dll")] static extern IntPtr FindWindowEx(IntPtr parent, IntPtr childAfter, string className, string windowName);
-
     [DllImport("user32.dll")] static extern bool GetWindowRect(IntPtr h, out RECT r);
     [DllImport("user32.dll")] static extern bool SetWindowPos(IntPtr h, IntPtr ins, int X, int Y, int W, int H, uint f);
-
-    const int WH_MOUSE_LL = 14;
-    const int WM_LBUTTONDOWN = 0x201;
-    const uint SWP = 0x40 | 0x10;
-    static readonly IntPtr TOP = new IntPtr(-1);
-
+    const int WH_MOUSE_LL = 14; const int WM_LBUTTONDOWN = 0x201; const uint SWP = 0x40 | 0x10; static readonly IntPtr TOP = new IntPtr(-1);
     [StructLayout(LayoutKind.Sequential)] struct POINT { public int x, y; }
     [StructLayout(LayoutKind.Sequential)] struct MSLLHOOKSTRUCT { public POINT pt; public uint mouseData; public uint flags; public uint time; public IntPtr dwExtraInfo; }
     struct RECT { public int L, T, R, B; }
-
     delegate IntPtr LowLevelMouseProc(int nCode, IntPtr wParam, IntPtr lParam);
-    static LowLevelMouseProc mouseProc;
-    static IntPtr mouseHook = IntPtr.Zero;
-
+    static LowLevelMouseProc mouseProc; static IntPtr mouseHook = IntPtr.Zero;
     Timer poll = new Timer();
-    RECT lastOverlay;
-    bool hasOverlay = false;
+    RECT lastOverlay; bool hasOverlay = false;
+    Rectangle leftBarZone; Rectangle rightBarZone;
 
-    Rectangle leftBarZone;
-    Rectangle rightBarZone;
-
-    // ============================
-    // KEY PARSER (CSC-SAFE)
-    // ============================
-
+	// KEY PARSER
     static void ParseKey(string key, out int vk, out bool ctrl, out bool alt, out bool shift)
     {
         string lower = key.ToLower();
-
         ctrl  = lower.Contains("ctrl+");
         alt   = lower.Contains("alt+");
         shift = lower.Contains("shift+");
-
         string k = lower;
         k = k.Replace("ctrl+", "");
         k = k.Replace("alt+", "");
         k = k.Replace("shift+", "");
         k = k.Trim();
-
         vk = 0;
-
         if (k == "left") vk = 0x25;
         else if (k == "up") vk = 0x26;
         else if (k == "right") vk = 0x27;
         else if (k == "down") vk = 0x28;
-
         else if (k == "pgup") vk = 0x21;
         else if (k == "pgdn") vk = 0x22;
         else if (k == "home") vk = 0x24;
         else if (k == "end") vk = 0x23;
         else if (k == "tab") vk = 0x09;
         else if (k == "esc") vk = 0x1B;
-
         else if (k.StartsWith("f"))
         {
             int fn;
@@ -149,10 +121,7 @@ class Overlay : Form
         }
     }
 
-    // ============================
     // FORM SETUP
-    // ============================
-
     protected override CreateParams CreateParams {
         get {
             const int WS_EX_LAYERED = 0x80000;
@@ -163,143 +132,81 @@ class Overlay : Form
         }
     }
 
-    public Overlay() {
-
+	public Overlay() {
         // Load icon from embedded base64
-        var asm = Assembly.GetExecutingAssembly();
-        Image icon;
-        using (var s = asm.GetManifestResourceStream("icon.b64"))
-        using (var r = new StreamReader(s)) {
-            byte[] png = Convert.FromBase64String(r.ReadToEnd());
-            using (var ms = new MemoryStream(png)) icon = Image.FromStream(ms);
+        var asm = Assembly.GetExecutingAssembly(); Image icon; using (var s = asm.GetManifestResourceStream("icon.b64"))
+		using (var r = new StreamReader(s)) {
+            byte[] png = Convert.FromBase64String(r.ReadToEnd()); using (var ms = new MemoryStream(png)) icon = Image.FromStream(ms);
         }
         using (var bmp = new Bitmap(icon)) this.Icon = Icon.FromHandle(bmp.GetHicon());
 
-        FormBorderStyle = FormBorderStyle.None;
-        ShowInTaskbar = true;
-        TopMost = true;
-
-        BackColor = TRANSPARENT_KEY;
-        TransparencyKey = TRANSPARENT_KEY;
-        Opacity = OVERLAY_OPACITY / 100.0;
-
-        poll.Interval = 500;
-        poll.Tick += (s,e)=>UpdateOverlay();
-        poll.Start();
-
-        mouseProc = MouseHookCallback;
-        mouseHook = SetWindowsHookEx(WH_MOUSE_LL, mouseProc, GetModuleHandle(null), 0);
+		FormBorderStyle = FormBorderStyle.None; ShowInTaskbar = true; TopMost = true;
+        BackColor = TRANSPARENT_KEY; TransparencyKey = TRANSPARENT_KEY; Opacity = OVERLAY_OPACITY / 100.0;
+        poll.Interval = 500; poll.Tick += (s,e)=>UpdateOverlay(); poll.Start();
+        mouseProc = MouseHookCallback; mouseHook = SetWindowsHookEx(WH_MOUSE_LL, mouseProc, GetModuleHandle(null), 0);
     }
 
     protected override void OnFormClosed(FormClosedEventArgs e) {
-        if (mouseHook != IntPtr.Zero) UnhookWindowsHookEx(mouseHook);
-        base.OnFormClosed(e);
+        if (mouseHook != IntPtr.Zero) UnhookWindowsHookEx(mouseHook); base.OnFormClosed(e);
     }
 
-    // ============================
-    // FIND SUMATRA CANVAS
-    // ============================
-
+	// FIND SUMATRA CANVAS
     IntPtr FindCanvas() {
         IntPtr frame = FindWindow("SUMATRA_PDF_FRAME", null);
-        if (frame == IntPtr.Zero)
-            frame = FindWindow("SumatraPDF", null);
-        if (frame == IntPtr.Zero)
-            return IntPtr.Zero;
-
+        if (frame == IntPtr.Zero) frame = FindWindow("SumatraPDF", null);
+        if (frame == IntPtr.Zero) return IntPtr.Zero;
         return FindWindowEx(frame, IntPtr.Zero, "SUMATRA_PDF_CANVAS", null);
     }
 
-    // ============================
     // SEND HOTKEY (SEQUENCES)
-    // ============================
-
     void SendHotKey(string key)
     {
         IntPtr f = FindWindow("SUMATRA_PDF_FRAME", null);
-        if (f == IntPtr.Zero)
-            f = FindWindow("SumatraPDF", null);
-        if (f == IntPtr.Zero)
-            return;
-
+        if (f == IntPtr.Zero) f = FindWindow("SumatraPDF", null);
+        if (f == IntPtr.Zero) return;
         string[] parts = key.Split(',');
-
         foreach (string part in parts)
         {
             int vk;
             bool ctrl, alt, shift;
-
             ParseKey(part.Trim(), out vk, out ctrl, out alt, out shift);
-
             if (vk == 0) continue;
-
             if (ctrl)  PostMessage(f, WM_KEYDOWN, (IntPtr)0x11, IntPtr.Zero);
             if (alt)   PostMessage(f, WM_KEYDOWN, (IntPtr)0x12, IntPtr.Zero);
             if (shift) PostMessage(f, WM_KEYDOWN, (IntPtr)0x10, IntPtr.Zero);
-
             PostMessage(f, WM_KEYDOWN, (IntPtr)vk, IntPtr.Zero);
             PostMessage(f, WM_KEYUP,   (IntPtr)vk, IntPtr.Zero);
-
             if (shift) PostMessage(f, WM_KEYUP, (IntPtr)0x10, IntPtr.Zero);
             if (alt)   PostMessage(f, WM_KEYUP, (IntPtr)0x12, IntPtr.Zero);
             if (ctrl)  PostMessage(f, WM_KEYUP, (IntPtr)0x11, IntPtr.Zero);
         }
     }
 
-    // ============================
     // POSITION OVERLAY
-    // ============================
-
     void UpdateOverlay() {
         IntPtr c = FindCanvas();
-
         if (c == IntPtr.Zero) {
-            poll.Stop();
-            MessageBox.Show(
-                "No SumatraPDF document is open.\n\n" +
-                "Please open a document first, then restart the overlay.",
-                "Overlay Disabled",
-                MessageBoxButtons.OK,
-                MessageBoxIcon.Warning);
-            Application.Exit();
-            return;
+            poll.Stop(); MessageBox.Show(
+            "No SumatraPDF document is open.\n\nPlease open a document first, then restart the overlay.",
+            "Overlay Disabled", MessageBoxButtons.OK, MessageBoxIcon.Warning); Application.Exit(); return;
         }
-
         RECT r;
         if (!GetWindowRect(c, out r)) return;
-
         int W = r.R - r.L;
         int H = r.B - r.T;
-
         int autoY = r.T + (H / 2 - HOTZONE_HEIGHT / 2);
-
-        RECT newRect = new RECT {
-            L = r.L,
-            T = autoY,
-            R = r.L + W,
-            B = autoY + HOTZONE_HEIGHT
-        };
-
+        RECT newRect = new RECT { L = r.L, T = autoY, R = r.L + W, B = autoY + HOTZONE_HEIGHT };
         if (hasOverlay) {
             bool changed =
                 Math.Abs(newRect.L - lastOverlay.L) > ANTI_JITTER ||
                 Math.Abs(newRect.T - lastOverlay.T) > ANTI_JITTER;
-
             if (!changed) return;
         }
-
         SetWindowPos(Handle, TOP, newRect.L, newRect.T, W, HOTZONE_HEIGHT, SWP);
-
-        lastOverlay = newRect;
-        hasOverlay = true;
-
-        Invalidate();
+        lastOverlay = newRect; hasOverlay = true; Invalidate();
     }
 
-    // ============================
     // MOUSE HOOK
-    // ============================
-
     static IntPtr MouseHookCallback(int nCode, IntPtr wParam, IntPtr lParam) {
         if (nCode >= 0) {
             int msg = wParam.ToInt32();
@@ -312,59 +219,46 @@ class Overlay : Form
 
     void HandleMouse(int msg, POINT pt) {
         if (!hasOverlay) return;
-
         Point p = new Point(pt.x, pt.y);
-
         Rectangle closeBox = new Rectangle(lastOverlay.L, lastOverlay.T, CLOSE_SIZE, CLOSE_SIZE);
         if (msg == WM_LBUTTONDOWN && closeBox.Contains(p)) {
             Application.Exit();
             return;
         }
-
         if (msg == WM_LBUTTONDOWN && leftBarZone.Contains(p)) {
             SendHotKey(LEFT_HOTKEY);
             return;
         }
-
         if (msg == WM_LBUTTONDOWN && rightBarZone.Contains(p)) {
             SendHotKey(RIGHT_HOTKEY);
             return;
         }
     }
 
-    // ============================
-    // DRAW OVERLAY
-    // ============================
-
+    // DRAW VARIABLE OVERLAY
     protected override void OnPaint(PaintEventArgs e)
     {
         var g = e.Graphics;
         int W = Width, H = Height, mid = H / 2;
-
         int barH = HOTZONE_HEIGHT;
         int barY = mid - (barH / 2);
-
         leftBarZone = new Rectangle(
             lastOverlay.L,
             lastOverlay.T + barY,
             HOTZONE_WIDTH,
             barH);
-
         rightBarZone = new Rectangle(
             lastOverlay.R - HOTZONE_WIDTH,
             lastOverlay.T + barY,
             HOTZONE_WIDTH,
             barH);
-
         Rectangle leftBar  = new Rectangle(0, barY, HOTZONE_WIDTH, barH);
         Rectangle rightBar = new Rectangle(W - HOTZONE_WIDTH, barY, HOTZONE_WIDTH, barH);
-
         using (var band = new SolidBrush(HOTZONE_COLOR))
         {
             g.FillRectangle(band, leftBar);
             g.FillRectangle(band, rightBar);
         }
-
         using (var pen = new Pen(CLOSE_COLOR, 4))
         {
             g.DrawLine(pen, 0, 0, CLOSE_SIZE, CLOSE_SIZE);
@@ -372,24 +266,18 @@ class Overlay : Form
         }
     }
 
-    // ============================
     // MAIN
-    // ============================
-
     [STAThread]
     static void Main(string[] args)
     {
-        // Defaults already set; allow overrides via args: L="..." R="..."
+        // Defaults already set in user area but allow complex overrides via args: L="..." R="..."
         foreach (var a in args)
         {
             if (a.StartsWith("L=", StringComparison.OrdinalIgnoreCase))
                 LEFT_HOTKEY = a.Substring(2).Trim('"');
-
             if (a.StartsWith("R=", StringComparison.OrdinalIgnoreCase))
                 RIGHT_HOTKEY = a.Substring(2).Trim('"');
         }
-
-        Application.EnableVisualStyles();
-        Application.Run(new Overlay());
+        Application.EnableVisualStyles(); Application.Run(new Overlay());
     }
 }
