@@ -14,6 +14,9 @@ if not exist "%CSC%" echo Compiler not found & pause & exit /b
 
 "%CSC%"  /nologo /target:winexe /win32icon:app.ico /resource:icon.b64 /platform:x86 /out:"%~dpn0.exe" "%~dpnx0"
 
+:: It should now be safe to delete the temporary graphics
+del app.ico icon.b64
+
 REM IMPORTANT we must pause and exit here before NOTES
 pause & exit /b
 
@@ -27,22 +30,17 @@ Simply bind the compiled exe to run shortcuts in SumatraPDF settings. Like this:
 These are single or multiple combinations, just like sendkeys.
 
 ExternalViewers [
-	[
-		CommandLine = C:\path to your version\KeyZones.exe L="a,b" R="c,d"
-		Name = Hot &Zones Overlay
-		Key = z
-		ToolbarSvgIcon = <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"><rect width="24" height="24" fill="none"/><rect x="5" y="0" width="15" height="24" fill="#fff" stroke="#000" stroke-width="1"/><rect x="1" y="8" width="3" height="8" fill="#f88"/><path d="M 7 6 L 18 6 M 7 9 L 18 9 M 7 12 L 18 12 M 7 15 L 18 15 M 7 18 L 18 18" stroke="#888"/><rect x="21" y="8" width="3" height="8" fill="#f88"/></svg>
-	]
+        [
+                CommandLine = C:\path to your version\KeyZones.exe L="a,b" R="c,d"
+                Name = Hot &Zones Overlay
+                Key = z
+                ToolbarSvgIcon = <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"><rect width="24" height="24" fill="none"/><rect x="5" y="0" width="15" height="24" fill="#fff" stroke="#000" stroke-width="1"/><rect x="1" y="8" width="3" height="8" fill="#f88"/><path d="M 7 6 L 18 6 M 7 9 L 18 9 M 7 12 L 18 12 M 7 15 L 18 15 M 7 18 L 18 18" stroke="#888"/><rect x="21" y="8" width="3" height="8" fill="#f88"/></svg>
+        ]
 ]
 
 */
-using System;
-using System.Drawing;
-using System.Text;
-using System.Windows.Forms;
-using System.Runtime.InteropServices;
-using System.IO;
-using System.Reflection;
+using System;using System.Drawing;using System.Text;using System.Windows.Forms;
+using System.Runtime.InteropServices;using System.IO;using System.Reflection;
 
 class Overlay : Form
 {
@@ -62,7 +60,7 @@ class Overlay : Form
     public static int ANTI_JITTER      = 2;
     public static Color TRANSPARENT_KEY = Color.Magenta;
 
-	// INTERNAL
+        // INTERNAL
     [DllImport("user32.dll")] static extern bool PostMessage(IntPtr hWnd, uint Msg, IntPtr wParam, IntPtr lParam);
     const uint WM_KEYDOWN = 0x0100; const uint WM_KEYUP   = 0x0101;
     [DllImport("user32.dll")] static extern IntPtr SetWindowsHookEx(int idHook, LowLevelMouseProc lpfn, IntPtr hMod, uint dwThreadId);
@@ -72,9 +70,10 @@ class Overlay : Form
     [DllImport("user32.dll", CharSet = CharSet.Auto)] static extern IntPtr FindWindow(string c, string n);
     [DllImport("user32.dll")] static extern IntPtr FindWindowEx(IntPtr parent, IntPtr childAfter, string className, string windowName);
     [DllImport("user32.dll")] static extern bool GetWindowRect(IntPtr h, out RECT r);
+    [DllImport("user32.dll")] static extern IntPtr WindowFromPoint(POINT pt);
     [DllImport("user32.dll")] static extern bool SetWindowPos(IntPtr h, IntPtr ins, int X, int Y, int W, int H, uint f);
     const int WH_MOUSE_LL = 14; const int WM_LBUTTONDOWN = 0x201; const uint SWP = 0x40 | 0x10; static readonly IntPtr TOP = new IntPtr(-1);
-    [StructLayout(LayoutKind.Sequential)] struct POINT { public int x, y; }
+    [StructLayout(LayoutKind.Sequential)] public struct POINT { public int x, y; }
     [StructLayout(LayoutKind.Sequential)] struct MSLLHOOKSTRUCT { public POINT pt; public uint mouseData; public uint flags; public uint time; public IntPtr dwExtraInfo; }
     struct RECT { public int L, T, R, B; }
     delegate IntPtr LowLevelMouseProc(int nCode, IntPtr wParam, IntPtr lParam);
@@ -83,7 +82,126 @@ class Overlay : Form
     RECT lastOverlay; bool hasOverlay = false;
     Rectangle leftBarZone; Rectangle rightBarZone;
 
-	// KEY PARSER
+    // MAIN
+    [STAThread]
+    static void Main(string[] args)
+    {
+        // Defaults already set in user area but allow complex overrides via args: L="..." R="..."
+        foreach (var a in args)
+        {
+            if (a.StartsWith("L=", StringComparison.OrdinalIgnoreCase))
+                LEFT_HOTKEY = a.Substring(2).Trim('"');
+            if (a.StartsWith("R=", StringComparison.OrdinalIgnoreCase))
+                RIGHT_HOTKEY = a.Substring(2).Trim('"');
+        }
+        Application.EnableVisualStyles(); Application.Run(new Overlay());
+    }
+
+    // FORM SETUP
+    protected override CreateParams CreateParams {
+        get {
+            const int WS_EX_LAYERED = 0x80000;
+            const int WS_EX_TRANSPARENT = 0x20;
+            var cp = base.CreateParams;
+            cp.ExStyle |= WS_EX_LAYERED | WS_EX_TRANSPARENT;
+            return cp;
+        }
+    }
+
+    protected override void OnFormClosed(FormClosedEventArgs e) {
+        if (mouseHook != IntPtr.Zero) UnhookWindowsHookEx(mouseHook); base.OnFormClosed(e);
+    }
+
+    public Overlay() {
+        // Load icon from embedded base64
+        var asm = Assembly.GetExecutingAssembly(); Image icon; using (var s = asm.GetManifestResourceStream("icon.b64"))
+                using (var r = new StreamReader(s)) {
+            byte[] png = Convert.FromBase64String(r.ReadToEnd()); using (var ms = new MemoryStream(png)) icon = Image.FromStream(ms);
+        }
+        using (var bmp = new Bitmap(icon)) this.Icon = Icon.FromHandle(bmp.GetHicon());
+        IntPtr c = FindCanvas(); if (c == IntPtr.Zero) { Close(); return; }
+        FormBorderStyle = FormBorderStyle.None; ShowInTaskbar = true; TopMost = true;
+        BackColor = TRANSPARENT_KEY; TransparencyKey = TRANSPARENT_KEY; Opacity = OVERLAY_OPACITY / 100.0;
+        poll.Interval = 500; poll.Tick += (s,e)=>UpdateOverlay(); poll.Start(); // Cause of problems as it starts from the off
+        mouseProc = MouseHookCallback; mouseHook = SetWindowsHookEx(WH_MOUSE_LL, mouseProc, GetModuleHandle(null), 0);
+    }
+
+// FIND SUMATRA CANVAS
+IntPtr FindCanvas()
+{
+    IntPtr frame = FindWindow("SUMATRA_PDF_FRAME", null);
+    if (frame == IntPtr.Zero) frame = FindWindow("SumatraPDF", null);
+    IntPtr canvas = IntPtr.Zero;
+    if (frame != IntPtr.Zero) canvas = FindWindowEx(frame, IntPtr.Zero, "SUMATRA_PDF_CANVAS", null);
+
+    // If no canvas, ask user what to do
+    if (canvas == IntPtr.Zero)
+    {
+    // ⭐ FIX: if Sumatra is NOT ACTIVE, STOP TIMER and restart after the user says yes start timer
+    poll.Stop();
+        var choice = MessageBox.Show(
+            "SumatraPDF canvas not active.\n\nNO = abort overlay now\nYES = load a document then continue",
+            "Canvas Missing", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+        if (choice == DialogResult.No) return IntPtr.Zero;   // abort overlay
+        // User chose YES allow them to fix state Try again immediately
+        frame = FindWindow("SUMATRA_PDF_FRAME", null);
+        if (frame == IntPtr.Zero) frame = FindWindow("SumatraPDF", null); poll.Start(); 
+        if (frame != IntPtr.Zero) canvas = FindWindowEx(frame, IntPtr.Zero, "SUMATRA_PDF_CANVAS", null);
+        // Fail if no canvas
+        if (canvas == IntPtr.Zero) return IntPtr.Zero;
+    }
+    return canvas;  // SUCCESS: return handle
+}
+
+// MOUSE HOOK
+static IntPtr MouseHookCallback(int nCode, IntPtr wParam, IntPtr lParam) {
+    if (nCode >= 0) {
+        int msg = wParam.ToInt32();
+        MSLLHOOKSTRUCT data = (MSLLHOOKSTRUCT)Marshal.PtrToStructure(lParam, typeof(MSLLHOOKSTRUCT));
+        Overlay self = Application.OpenForms.Count > 0 ? Application.OpenForms[0] as Overlay : null;
+        if (self != null) self.HandleMouse(msg, data.pt);
+    }
+    return CallNextHookEx(mouseHook, nCode, wParam, lParam);
+}
+
+void HandleMouse(int msg, POINT pt) {
+    if (!hasOverlay) return;
+    Point p = new Point(pt.x, pt.y);
+    IntPtr frame = FindWindow("SUMATRA_PDF_FRAME", null);
+    if (frame == IntPtr.Zero) frame = FindWindow("SumatraPDF", null); IntPtr canvas = IntPtr.Zero;
+    if (frame != IntPtr.Zero) canvas = FindWindowEx(frame, IntPtr.Zero, "SUMATRA_PDF_CANVAS", null);
+    IntPtr underMouse = WindowFromPoint(pt);
+    Rectangle closeBox = new Rectangle(lastOverlay.L, lastOverlay.T, CLOSE_SIZE, CLOSE_SIZE);
+    if (msg == WM_LBUTTONDOWN && closeBox.Contains(p)) { Application.Exit(); return; }
+    if (msg == WM_LBUTTONDOWN && leftBarZone.Contains(p)) { if (!onCanvas(frame, canvas, underMouse)) return; SendHotKey(LEFT_HOTKEY); return; }
+    if (msg == WM_LBUTTONDOWN && rightBarZone.Contains(p)) { if (!onCanvas(frame, canvas, underMouse)) return; SendHotKey(RIGHT_HOTKEY); return; }
+}
+
+bool onCanvas(IntPtr frame, IntPtr canvas, IntPtr underMouse)
+{
+    if (underMouse == frame || underMouse == canvas) return true;
+    return new offCanvasMsg().ShowDialog() == DialogResult.Yes;
+}
+
+public class offCanvasMsg : Form
+{
+    public offCanvasMsg()
+    {
+        Text = "Different App Detected"; Width = 300; Height = 200; TopMost = true; // IMPORTANT
+        StartPosition = FormStartPosition.CenterScreen;
+        var label = new Label()
+        {
+            Text = "You clicked a KeyZone, but Windows detected\n a different app under the cursor.\n\n" +
+                   "YES = send keys anyway\nNO = return without send\nOr else click Zone close symbol",
+            Dock = DockStyle.Fill, TextAlign = ContentAlignment.MiddleCenter
+        };
+        var yes = new Button() { Text = "Yes", DialogResult = DialogResult.Yes, Dock = DockStyle.Bottom };
+        var no  = new Button() { Text = "No",  DialogResult = DialogResult.No,  Dock = DockStyle.Bottom };
+        Controls.Add(label); Controls.Add(yes); Controls.Add(no); AcceptButton = yes; CancelButton = no;
+    }
+}
+
+    // KEY PARSER
     static void ParseKey(string key, out int vk, out bool ctrl, out bool alt, out bool shift)
     {
         string lower = key.ToLower();
@@ -121,49 +239,13 @@ class Overlay : Form
         }
     }
 
-    // FORM SETUP
-    protected override CreateParams CreateParams {
-        get {
-            const int WS_EX_LAYERED = 0x80000;
-            const int WS_EX_TRANSPARENT = 0x20;
-            var cp = base.CreateParams;
-            cp.ExStyle |= WS_EX_LAYERED | WS_EX_TRANSPARENT;
-            return cp;
-        }
-    }
-
-	public Overlay() {
-        // Load icon from embedded base64
-        var asm = Assembly.GetExecutingAssembly(); Image icon; using (var s = asm.GetManifestResourceStream("icon.b64"))
-		using (var r = new StreamReader(s)) {
-            byte[] png = Convert.FromBase64String(r.ReadToEnd()); using (var ms = new MemoryStream(png)) icon = Image.FromStream(ms);
-        }
-        using (var bmp = new Bitmap(icon)) this.Icon = Icon.FromHandle(bmp.GetHicon());
-
-		FormBorderStyle = FormBorderStyle.None; ShowInTaskbar = true; TopMost = true;
-        BackColor = TRANSPARENT_KEY; TransparencyKey = TRANSPARENT_KEY; Opacity = OVERLAY_OPACITY / 100.0;
-        poll.Interval = 500; poll.Tick += (s,e)=>UpdateOverlay(); poll.Start();
-        mouseProc = MouseHookCallback; mouseHook = SetWindowsHookEx(WH_MOUSE_LL, mouseProc, GetModuleHandle(null), 0);
-    }
-
-    protected override void OnFormClosed(FormClosedEventArgs e) {
-        if (mouseHook != IntPtr.Zero) UnhookWindowsHookEx(mouseHook); base.OnFormClosed(e);
-    }
-
-	// FIND SUMATRA CANVAS
-    IntPtr FindCanvas() {
-        IntPtr frame = FindWindow("SUMATRA_PDF_FRAME", null);
-        if (frame == IntPtr.Zero) frame = FindWindow("SumatraPDF", null);
-        if (frame == IntPtr.Zero) return IntPtr.Zero;
-        return FindWindowEx(frame, IntPtr.Zero, "SUMATRA_PDF_CANVAS", null);
-    }
-
     // SEND HOTKEY (SEQUENCES)
     void SendHotKey(string key)
     {
-        IntPtr f = FindWindow("SUMATRA_PDF_FRAME", null);
-        if (f == IntPtr.Zero) f = FindWindow("SumatraPDF", null);
-        if (f == IntPtr.Zero) return;
+        // IntPtr f = FindWindow("SUMATRA_PDF_FRAME", null);
+        // if (f == IntPtr.Zero) f = FindWindow("SumatraPDF", null);
+        // if (f == IntPtr.Zero) return;
+        IntPtr f = FindCanvas(); if (f == IntPtr.Zero) return;
         string[] parts = key.Split(',');
         foreach (string part in parts)
         {
@@ -179,59 +261,6 @@ class Overlay : Form
             if (shift) PostMessage(f, WM_KEYUP, (IntPtr)0x10, IntPtr.Zero);
             if (alt)   PostMessage(f, WM_KEYUP, (IntPtr)0x12, IntPtr.Zero);
             if (ctrl)  PostMessage(f, WM_KEYUP, (IntPtr)0x11, IntPtr.Zero);
-        }
-    }
-
-    // POSITION OVERLAY
-    void UpdateOverlay() {
-        IntPtr c = FindCanvas();
-        if (c == IntPtr.Zero) {
-            poll.Stop(); MessageBox.Show(
-            "No SumatraPDF document is open.\n\nPlease open a document first, then restart the overlay.",
-            "Overlay Disabled", MessageBoxButtons.OK, MessageBoxIcon.Warning); Application.Exit(); return;
-        }
-        RECT r;
-        if (!GetWindowRect(c, out r)) return;
-        int W = r.R - r.L;
-        int H = r.B - r.T;
-        int autoY = r.T + (H / 2 - HOTZONE_HEIGHT / 2);
-        RECT newRect = new RECT { L = r.L, T = autoY, R = r.L + W, B = autoY + HOTZONE_HEIGHT };
-        if (hasOverlay) {
-            bool changed =
-                Math.Abs(newRect.L - lastOverlay.L) > ANTI_JITTER ||
-                Math.Abs(newRect.T - lastOverlay.T) > ANTI_JITTER;
-            if (!changed) return;
-        }
-        SetWindowPos(Handle, TOP, newRect.L, newRect.T, W, HOTZONE_HEIGHT, SWP);
-        lastOverlay = newRect; hasOverlay = true; Invalidate();
-    }
-
-    // MOUSE HOOK
-    static IntPtr MouseHookCallback(int nCode, IntPtr wParam, IntPtr lParam) {
-        if (nCode >= 0) {
-            int msg = wParam.ToInt32();
-            MSLLHOOKSTRUCT data = (MSLLHOOKSTRUCT)Marshal.PtrToStructure(lParam, typeof(MSLLHOOKSTRUCT));
-            Overlay self = Application.OpenForms.Count > 0 ? Application.OpenForms[0] as Overlay : null;
-            if (self != null) self.HandleMouse(msg, data.pt);
-        }
-        return CallNextHookEx(mouseHook, nCode, wParam, lParam);
-    }
-
-    void HandleMouse(int msg, POINT pt) {
-        if (!hasOverlay) return;
-        Point p = new Point(pt.x, pt.y);
-        Rectangle closeBox = new Rectangle(lastOverlay.L, lastOverlay.T, CLOSE_SIZE, CLOSE_SIZE);
-        if (msg == WM_LBUTTONDOWN && closeBox.Contains(p)) {
-            Application.Exit();
-            return;
-        }
-        if (msg == WM_LBUTTONDOWN && leftBarZone.Contains(p)) {
-            SendHotKey(LEFT_HOTKEY);
-            return;
-        }
-        if (msg == WM_LBUTTONDOWN && rightBarZone.Contains(p)) {
-            SendHotKey(RIGHT_HOTKEY);
-            return;
         }
     }
 
@@ -266,18 +295,21 @@ class Overlay : Form
         }
     }
 
-    // MAIN
-    [STAThread]
-    static void Main(string[] args)
-    {
-        // Defaults already set in user area but allow complex overrides via args: L="..." R="..."
-        foreach (var a in args)
-        {
-            if (a.StartsWith("L=", StringComparison.OrdinalIgnoreCase))
-                LEFT_HOTKEY = a.Substring(2).Trim('"');
-            if (a.StartsWith("R=", StringComparison.OrdinalIgnoreCase))
-                RIGHT_HOTKEY = a.Substring(2).Trim('"');
+    // POSITION OVERLAY
+    void UpdateOverlay() {
+        IntPtr c = FindCanvas();
+        if (c == IntPtr.Zero) { poll.Stop(); Application.Exit(); return; }
+        RECT r;
+        if (!GetWindowRect(c, out r)) return;
+        int W = r.R - r.L; int H = r.B - r.T; int autoY = r.T + (H / 2 - HOTZONE_HEIGHT / 2);
+        RECT newRect = new RECT { L = r.L, T = autoY, R = r.L + W, B = autoY + HOTZONE_HEIGHT };
+        if (hasOverlay) {
+            bool changed =
+                Math.Abs(newRect.L - lastOverlay.L) > ANTI_JITTER || Math.Abs(newRect.R - lastOverlay.R) > ANTI_JITTER ||
+                Math.Abs(newRect.T - lastOverlay.T) > ANTI_JITTER || Math.Abs(newRect.B - lastOverlay.B) > ANTI_JITTER;
+            if (!changed) return;
         }
-        Application.EnableVisualStyles(); Application.Run(new Overlay());
+        SetWindowPos(Handle, TOP, newRect.L, newRect.T, W, HOTZONE_HEIGHT, SWP);
+        lastOverlay = newRect; hasOverlay = true; Invalidate();
     }
 }
