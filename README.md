@@ -111,11 +111,11 @@ This is basically an example of using a contents Text overlay similar to above I
 PutTxT
 ---
 There is a new addition to PicColo for text as PutTxT.hta
-![PuTTxT.png](https://github.com/GitHubRulesOK/SumatraPDF-Plus/blob/master/Plus/PuTTxT.png)
+![PuTTxT.png](https://github.com/GitHubRulesOK/SumatraPDF-Plus/tree/master/Images/PuTTxT.png)
 
 SessionSavers  
 ---
-![SessionSavers.png Image](https://github.com/GitHubRulesOK/SumatraPDF-Plus/blob/master/SessionSavers.png)  
+![SessionSavers.png Image](https://github.com/GitHubRulesOK/SumatraPDF-Plus/tree/master/Images/SessionSavers.png)  
 There are 2 variants  
 - One saves the session as at a point in time for backup or replace however you wish it to be used  
 - The  Dialog version saves current session as SumatraPDF-settings .txt into a folder named in the first box (It WILL overwrite so practice first)  
