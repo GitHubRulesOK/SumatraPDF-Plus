@@ -61,7 +61,7 @@ Some preset the settings colors and some act on selections.
 PicColo4.hta now allows for presets and uses SVG icons (the newest for SumatraPDF 3.6.1+)  
 https://github.com/GitHubRulesOK/SumatraPDF-Plus/blob/master/PicColo4.hta  
 Works by select an area, press a key, and on pick a colour it is then highlighted etc.
-![PicColo361 Image](https://github.com/GitHubRulesOK/SumatraPDF-Plus/blob/master/Plus/PicColo361.png)  
+![PicColo361 Image](https://github.com/GitHubRulesOK/SumatraPDF-Plus/blob/master/Images/PicColo361.png)  
 There are many ways to set the color related commands (apart from area highlight selection), so you can use duplicated copies for several different actions.  
 To assign to a key and menu add to ExternalViewers a call, like this (using your own folder\filename).  
 ```
@@ -111,11 +111,11 @@ This is basically an example of using a contents Text overlay similar to above I
 PutTxT
 ---
 There is a new addition to PicColo for text as PutTxT.hta
-![PuTTxT.png](https://github.com/GitHubRulesOK/SumatraPDF-Plus/tree/master/Images/PuTTxT.png)
+![PuTTxT.png](https://github.com/GitHubRulesOK/SumatraPDF-Plus/blob/master/Images/PuTTxT.png)
 
 SessionSavers  
 ---
-![SessionSavers.png Image](https://github.com/GitHubRulesOK/SumatraPDF-Plus/tree/master/Images/SessionSavers.png)  
+![SessionSavers.png Image](https://github.com/GitHubRulesOK/SumatraPDF-Plus/blob/master/Images/SessionSavers.png)  
 There are 2 variants  
 - One saves the session as at a point in time for backup or replace however you wish it to be used  
 - The  Dialog version saves current session as SumatraPDF-settings .txt into a folder named in the first box (It WILL overwrite so practice first)  
