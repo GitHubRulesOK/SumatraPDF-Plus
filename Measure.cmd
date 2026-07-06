@@ -105,6 +105,7 @@ class MeasureForm : Form
         if (e.Button == MouseButtons.Left) { ReleaseCapture(); SendMessage(this.Handle, WM_NCLBUTTONDOWN, HTCAPTION, 0); } };
         bar.Controls.Add(pic);
         Label title = new Label { Text = "Chart-o-graphic Measure", Left = 30, Top = 4, ForeColor = Color.White }; title.Width = 196; 
+        bar.Controls.Add(title);
         title.MouseDown += (s, e) => {
         if (e.Button == MouseButtons.Left) { ReleaseCapture(); SendMessage(this.Handle, WM_NCLBUTTONDOWN, HTCAPTION, 0); } };
         // CLOSE BUTTON
