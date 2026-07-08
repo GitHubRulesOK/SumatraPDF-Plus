@@ -9,7 +9,7 @@ And normally if you download a script as .txt you can then rename to a run time 
 Intended structure is This Top level folder with SumatraPDF.exe and friends (A portable version of 3.6.1 or 3.7 pre-release is recommended)
 Then a middle level of scripts and a lower level of folders with dependencies.
 
-![Folders.png](https://github.com/GitHubRulesOK/SumatraPDF-Plus/blob/master/Images/Folders.png)
+![Folders.png](https://github.com/GitHubRulesOK/SumatraPDF-Plus/blob/master/Images/Folders.png)  
 Some simply interact with Windows Functions like open the current file in Edge (Perhaps for "Dual" file review or add inking?)  
 You can assign it to a single "Key", so here it opens the file on the left when I press the `T` key.
 ```
