@@ -44,7 +44,7 @@ There are several ways to add scripts to SumatraPDF but the easiest is via simpl
 		Key = P
 	]
 ```
-THe older scripted needs are now likely found in 3.6+ so most older ones have been removed.
+The older scripted needs are now likely found in 3.6+ so most older ones have been removed.
 
  Plus Functions list
 --------------------
