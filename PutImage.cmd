@@ -51,7 +51,7 @@ class Program
     			// IMPORTANT ALTER THESE TO YOUR OWN FILE LOCATIONS BEFORE BUILD
 
     public const string TOOL_PATH   = @"C:\Program Files\SumatraPDF\sumatrapdf-tool.exe";
-    public const string SCRIPT_PATH = @"C:\Users\ your path to \plus\addoverlay.js";
+    public const string SCRIPT_PATH = @"C:\Users\WDAGUtilityAccount\Downloads\addoverlay.js";
     public const string VIEWER_PATH = @"C:\Program Files\SumatraPDF\SumatraPDF.exe";
 
     [STAThread]
@@ -99,7 +99,7 @@ public class ImageForm : Form
         this.BackColor = Color.FromArgb(30, 30, 30); this.ForeColor = Color.White; // this.Opacity = 0.70;
         this.Size = new Size(460, 225); this.Font = new Font("Segoe UI", 12, FontStyle.Regular);
         // Check DDE probe
-        string reply = SumatraDdeClient.Request("[GetFileState()]");
+        string reply = DdeClient.Request("[GetFileState()]");
         if (reply == null)
         {
             MessageBox.Show(
@@ -255,7 +255,7 @@ public class ImageForm : Form
 
     private void PerformDdeAndBuildCommand()
     {
-        string reply = SumatraDdeClient.Request("[GetFileState()][GetMousePos]");
+        string reply = DdeClient.Request("[GetFileState()][GetMousePos]");
         if (reply == null)
         {
             MessageBox.Show("DDE failed.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error); return;
@@ -339,71 +339,45 @@ public class ImageForm : Form
 // End Class
 }
 
-public static class SumatraDdeClient
+public static class DdeClient
 {
     const int APPCLASS_STANDARD = 0x00000000;
     const int APPCMD_CLIENTONLY = 0x00000010;
-    const int XTYP_REQUEST = 0x20B0; const int CF_TEXT = 1; const int TIMEOUT = 5000;
-    delegate IntPtr DdeCallback(int uType, int uFmt, IntPtr hConv,
-        IntPtr hsz1, IntPtr hsz2, IntPtr hData, IntPtr dwData1, IntPtr dwData2);
-    [DllImport("user32.dll", CharSet = CharSet.Ansi)]
-    static extern int DdeInitializeA(out IntPtr pidInst, DdeCallback pfnCallback, int afCmd, int ulRes);
-    [DllImport("user32.dll", CharSet = CharSet.Ansi)]
-    static extern IntPtr DdeCreateStringHandleA(IntPtr idInst, string psz, int iCodePage);
-    [DllImport("user32.dll")]
-    static extern IntPtr DdeConnect(IntPtr idInst, IntPtr hszService, IntPtr hszTopic, IntPtr pCC);
-    [DllImport("user32.dll")]
-    static extern IntPtr DdeClientTransaction(byte[] pData, int cbData, IntPtr hConv,
-        IntPtr hszItem, int wFmt, int wType, int dwTimeout, out int pdwResult);
+    const int XTYP_REQUEST = 0x20B0; const int CF_UNICODETEXT = 13; const int TIMEOUT = 5000;
+    delegate IntPtr DdeCallback(int uType, int uFmt, IntPtr hConv, IntPtr hsz1, IntPtr hsz2, IntPtr hData, IntPtr dwData1, IntPtr dwData2);
+    [DllImport("user32.dll", CharSet = CharSet.Unicode)] static extern int DdeInitializeW(out IntPtr pidInst, DdeCallback pfnCallback, int afCmd, int ulRes);
+    [DllImport("user32.dll", CharSet = CharSet.Unicode)] static extern IntPtr DdeCreateStringHandleW(IntPtr idInst, string psz, int iCodePage);
+    [DllImport("user32.dll")] static extern IntPtr DdeConnect(IntPtr idInst, IntPtr hszService, IntPtr hszTopic, IntPtr pCC);
+    [DllImport("user32.dll")] static extern IntPtr DdeClientTransaction(byte[] pData, int cbData, IntPtr hConv, IntPtr hszItem, int wFmt, int wType, int dwTimeout, out int pdwResult);
     [DllImport("user32.dll")] static extern int DdeGetData(IntPtr hData, byte[] pDst, int cbMax, int cbOff);
     [DllImport("user32.dll")] static extern bool DdeDisconnect(IntPtr hConv);
     [DllImport("user32.dll")] static extern bool DdeFreeStringHandle(IntPtr idInst, IntPtr hsz);
     [DllImport("user32.dll")] static extern bool DdeUninitialize(IntPtr idInst);
-    static IntPtr DdeCallbackProc(int uType, int uFmt, IntPtr hConv,
-        IntPtr hsz1, IntPtr hsz2, IntPtr hData, IntPtr dwData1, IntPtr dwData2)
-    {
-        return IntPtr.Zero;
-    }
+    static IntPtr DdeCallbackProc(int uType, int uFmt, IntPtr hConv, IntPtr hsz1, IntPtr hsz2, IntPtr hData, IntPtr dwData1, IntPtr dwData2) { return IntPtr.Zero; }
 
     public static string Request(string item)
     {
         IntPtr inst;
-        int ret = DdeInitializeA(out inst, DdeCallbackProc,
-                                 APPCLASS_STANDARD | APPCMD_CLIENTONLY, 0);
-        if (ret != 0) return null;
-        IntPtr hszService = DdeCreateStringHandleA(inst, "SUMATRA", 1004);
-        IntPtr hszTopic   = DdeCreateStringHandleA(inst, "control", 1004);
-        IntPtr hszItem    = DdeCreateStringHandleA(inst, item, 1004);
+        if (DdeInitializeW(out inst, DdeCallbackProc, APPCLASS_STANDARD | APPCMD_CLIENTONLY, 0) != 0) return null;
+        IntPtr hszService = DdeCreateStringHandleW(inst, "SUMATRA", 1200);
+        IntPtr hszTopic   = DdeCreateStringHandleW(inst, "control", 1200);
+        IntPtr hszItem    = DdeCreateStringHandleW(inst, item, 1200);
         IntPtr hConv = DdeConnect(inst, hszService, hszTopic, IntPtr.Zero);
-        if (hConv == IntPtr.Zero)
-        {
-            Cleanup(inst, hszService, hszTopic, hszItem);
-            return null;
-        }
+        if (hConv == IntPtr.Zero) { Cleanup(inst, hszService, hszTopic, hszItem); return null; }
         int result;
-        IntPtr hData = DdeClientTransaction(null, 0, hConv, hszItem,
-                                            CF_TEXT, XTYP_REQUEST,
-                                            TIMEOUT, out result);
-        if (hData == IntPtr.Zero)
-        {
-            DdeDisconnect(hConv);
-            Cleanup(inst, hszService, hszTopic, hszItem);
-            return null;
-        }
+        IntPtr hData = DdeClientTransaction(null, 0, hConv, hszItem, CF_UNICODETEXT, XTYP_REQUEST, TIMEOUT, out result);
+        if (hData == IntPtr.Zero) { DdeDisconnect(hConv); Cleanup(inst, hszService, hszTopic, hszItem); return null; }
         int size = DdeGetData(hData, null, 0, 0);
         byte[] buffer = new byte[size];
         DdeGetData(hData, buffer, size, 0);
-        string reply = Encoding.ASCII.GetString(buffer).TrimEnd('\0');
-        DdeDisconnect(hConv);
-        Cleanup(inst, hszService, hszTopic, hszItem);
-        DdeUninitialize(inst);
+        string reply = Encoding.Unicode.GetString(buffer).TrimEnd('\0');
+        DdeDisconnect(hConv); Cleanup(inst, hszService, hszTopic, hszItem);
         return reply;
     }
 
     static void Cleanup(IntPtr inst, IntPtr hszService, IntPtr hszTopic, IntPtr hszItem)
     {
-        DdeFreeStringHandle(inst, hszService);
-        DdeFreeStringHandle(inst, hszTopic);
-        DdeFreeStringHandle(inst, hszItem);
+        DdeFreeStringHandle(inst, hszService); DdeFreeStringHandle(inst, hszTopic);
+        DdeFreeStringHandle(inst, hszItem); DdeUninitialize(inst);
     }
 }
