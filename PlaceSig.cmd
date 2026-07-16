@@ -59,7 +59,7 @@ using System; using System.IO; using System.Runtime.InteropServices; using Syste
 using System.Windows.Forms; using System.Drawing; using System.Threading; using System.Reflection;
 class Program
 {
-    			// IMPORTANT ALTER THESE TO YOUR OWN FILE LOCATIONS and choices BEFORE BUILD
+    			// IMPORTANT NOTE:   ALTER THESE TO YOUR OWN FILE LOCATIONS and choices BEFORE BUILD
 
     public const string TOOL_PATH   = @"C:\Program Files\SumatraPDF\sumatrapdf-tool.exe";
     public const string PNG_PATH = @"C:\Users\ your path to \your\signature.png";
