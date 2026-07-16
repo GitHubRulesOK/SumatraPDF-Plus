@@ -59,15 +59,18 @@ using System; using System.IO; using System.Runtime.InteropServices; using Syste
 using System.Windows.Forms; using System.Drawing; using System.Threading; using System.Reflection;
 class Program
 {
-    			// IMPORTANT ALTER THESE TO YOUR OWN FILE LOCATIONS BEFORE BUILD
+    			// IMPORTANT ALTER THESE TO YOUR OWN FILE LOCATIONS and choices BEFORE BUILD
 
     public const string TOOL_PATH   = @"C:\Program Files\SumatraPDF\sumatrapdf-tool.exe";
     public const string PNG_PATH = @"C:\Users\ your path to \your\signature.png";
     public const string PFX_PATH = @"C:\Users\ your path to \MySelfCert.pfx";
     public const string VIEWER_PATH = @"C:\Program Files\SumatraPDF\SumatraPDF.exe";
+
+    public static string LOCATION = "";   // add text between the "" (Optional) The CPU host name or physical location of the signing. Such as "PDF on Planet Earth."
+    public static string REASON = "I agree this X is My Mark.";     // (Optional) The reason for PDF eSigning, such as ( I agree … 
     public static string TEMP_PATH = Environment.GetEnvironmentVariable("TMP") ?? Path.GetTempPath();
 
-    public static string PFX_PASSWORD = "password"; // This is dummy entry do not store your password here
+    public static string PFX_PASSWORD = "password";    // This is a dummy entry DO NOT store your password here
 
     [STAThread]
     static void Main(string[] args)
@@ -92,7 +95,7 @@ public class SignatureForm : Form
     private Panel dragBar; private Label title; private Panel picPanel; private PictureBox picSignature;
     private PictureBox picSignBox; ComboBox cmbAction; private TextBox txtImage; private Button btnGetImg;
     private TextBox txtCert; private Button btnGetCert; private TextBox txtPwd; private CheckBox chkShowPwd;
-    private TextBox txtXpt; private TextBox txtYpt; private TextBox txtW; private TextBox txtH;
+    private TextBox txtXpt; private TextBox txtYpt; private TextBox txtW; private TextBox txtH; private Label lblMsg;
     private TextBox txtOutput; private Button btnGetOut; private CheckBox chkOpen; private Button btnHelp;
     static bool useDDE = false; private bool armed = false; static bool useImg = false;
     private string inputPdf; private int pageNum;
@@ -158,12 +161,12 @@ Label lblAction = new Label(); lblAction.Text = "Action:"; lblAction.Left = 8; l
 cmbAction = new ComboBox(); cmbAction.Left = 75; cmbAction.Top = 135; cmbAction.Width = 375; cmbAction.DropDownStyle = ComboBoxStyle.DropDownList;
 // Options
 cmbAction.Items.Add("Select an Action from drop down");
-cmbAction.Items.Add("Click PDF to Text Sign in Sign Box");
-cmbAction.Items.Add("Click PDF to Use image in Sign Box");
-cmbAction.Items.Add("Add Image (Set Pos x,y,W,H & click Image)");
-cmbAction.Items.Add("Add Image (USEs W & H Click PDF to Place)");
+cmbAction.Items.Add("Click PDF to Text Sign in SignBox (slow)");
+cmbAction.Items.Add("Click PDF to Use Image in SignBox (slow)");
+cmbAction.Items.Add("Add Image (SET Pos x,y,W,H & click Image)");
+cmbAction.Items.Add("Add Image (Click PDF to Place USEs W & H )");
 cmbAction.Items.Add("Add Box (Set Pos x,y,W,H below & click SIGN>)");
-cmbAction.Items.Add("Add Box (USEs W & H Click PDF to set Pos x,y)");
+cmbAction.Items.Add("Add Box (Click PDF to set Pos x,y USEs W & H )");
 cmbAction.Items.Add("todo");
 cmbAction.Items.Add("todo");
 cmbAction.SelectedIndex = 0; this.Controls.Add(lblAction); this.Controls.Add(cmbAction); cmbAction.SelectedIndexChanged += cmbAction_SelectedIndexChanged;
@@ -199,7 +202,7 @@ cmbAction.SelectedIndex = 0; this.Controls.Add(lblAction); this.Controls.Add(cmb
         this.Controls.Add(lblPos); this.Controls.Add(txtXpt); this.Controls.Add(txtYpt);
         this.Controls.Add(lblW); this.Controls.Add(txtW); this.Controls.Add(lblH); this.Controls.Add(txtH);
 
-        y += 35; Label lblMsg = new Label(); lblMsg.Text = "Default = infile-WithBox.PDF you can overwrite / change here.";
+        y += 35; lblMsg = new Label(); lblMsg.Text = "";
         lblMsg.Left = 8; lblMsg.Top = y + 3; lblMsg.Width = 440; this.Controls.Add(lblMsg);
  
         // OUTPUT PDF
@@ -337,13 +340,14 @@ private void useSignBox()
     string outPath = txtOutput.Text.Trim();
     if (!outPath.EndsWith("-WithBox.pdf", StringComparison.OrdinalIgnoreCase)) txtOutput.Text = outPath.Replace(".pdf", "-WithBox.pdf");
     if (string.Equals(inputPdf, txtOutput.Text, StringComparison.OrdinalIgnoreCase)) { outPath = inputPdf.Replace(".pdf", "-WithBox.pdf"); txtOutput.Text = outPath; }
+    lblMsg.Text = "Default = infile-WithBox.PDF you can overwrite / change here.";
     picSignBox.BackColor = Color.Lime;
     if (!useDDE) { ArmMsg("Check X,Y & click on SignBox to place on PDF"); picSignBox.Click += PutSignBox; }
     else { ArmMsg("Check W,H Click on PDF in view to place SignBox"); ddeXYChangedCallback = PutSignBox; }
 }
 private void PutSignBox(object sender, EventArgs e)
 {
-    TryOpenOutputFile(pageNum);  // Try output file on same page BEFORE script and Reset UX
+// DONT    TryOpenOutputFile(pageNum);  // Try output file on same page BEFORE script and Reset UX
     unArm(); picSignBox.BackColor = this.BackColor; picSignBox.Click -= PutSignBox; // Remove temporary handler
     RunBoxScript();
     TryOpenOutputFile(pageNum);  // Try result file AFTER script
@@ -394,13 +398,14 @@ if (!File.Exists(txtImage.Text)) {
     string outPath = txtOutput.Text.Trim();
     if (!outPath.EndsWith("-WithImg.pdf", StringComparison.OrdinalIgnoreCase)) txtOutput.Text = outPath.Replace(".pdf", "-WithImg.pdf");
     if (string.Equals(inputPdf, txtOutput.Text, StringComparison.OrdinalIgnoreCase)) { outPath = inputPdf.Replace(".pdf", "-WithImg.pdf"); txtOutput.Text = outPath; }
+    lblMsg.Text = "Default = infile-WithImg.PDF you can overwrite / change here.";
     picSignature.Cursor = Cursors.Cross; //Hand SizeAll UpArrow
     if (!useDDE) { ArmMsg("Check x,y,W,H & click on Image to place on PDF"); picSignature.Click += PutImage; }
     else { ArmMsg("Check W & H and click on PDF in view to place Image"); ddeXYChangedCallback = PutImage; }
 }
 private void PutImage(object sender, EventArgs e)
 {
-    TryOpenOutputFile(pageNum);  // Try output file on same page BEFORE script and Reset UX
+// DONT     TryOpenOutputFile(pageNum);  // Try output file on same page BEFORE script and Reset UX
     unArm(); picSignature.Cursor = Cursors.Default; picSignature.Click -= PutImage; // Remove temporary handler
     RunImageScript();
     TryOpenOutputFile(pageNum);  // Try result file AFTER script
@@ -464,30 +469,31 @@ if (!File.Exists(txtCert.Text)) { MessageBox.Show("PFX file not found."); return
 */
     if (outPath.EndsWith("-Signed.pdf", StringComparison.OrdinalIgnoreCase)) { outPath = outPath.Substring(0, outPath.Length - "-Signed.pdf".Length) + ".pdf"; }
     txtOutput.Text = outPath.Replace(".pdf", "-Signed.pdf");
-
-    if (!useImg) { ArmMsg("Click on a Signature Box in PDF to place with TEXT"); ddeXYChangedCallback = GetBox; }
-    else { ArmMsg("Click on a Signature Box in PDF to place with Image"); ddeXYChangedCallback = GetBox; }
+    lblMsg.Text = "Default = infile-Signed.PDF you can overwrite / change here.";
+    if (!useImg) { ArmMsg("Click on a SignBox in PDF to place with TEXT"); ddeXYChangedCallback = GetBox; }
+    else { ArmMsg("Click on a SignBox in PDF to place with Image"); ddeXYChangedCallback = GetBox; }
 }
 private void GetBox(object sender, EventArgs e)
 {
-    TryOpenOutputFile(pageNum);  // Try output file on same page BEFORE script and Reset UX
+// DONT     TryOpenOutputFile(pageNum);  // Try output file on same page BEFORE script and Reset UX
     unArm(); RunEsignScript();
-    TryOpenOutputFile(pageNum);  // Try result file AFTER script
     ddeXYChangedCallback = null; // Clear callback so future blur doesn’t reuse it accidentally
+    TryOpenOutputFile(pageNum);  // Try result file AFTER script
 }
 private void RunEsignScript()
 {
     string scriptFile = Path.Combine(Program.TEMP_PATH , "Esign.js"); string inPdfEsc = inputPdf.Replace("\\", "\\\\");
     string pfxEsc = txtCert.Text.Replace("\\", "\\\\"); string outPdfEsc = txtOutput.Text.Replace("\\", "\\\\");
     string imgObj; if (useImg) { string imgEsc = txtImage.Text.Replace("\\", "\\\\"); imgObj = "new mupdf.Image(\"" + imgEsc + "\")";} else { imgObj = "null"; }
+    string Reason = string.IsNullOrWhiteSpace(Program.REASON) ? "null" : "\"" + Program.REASON + "\"";
+    string Location = string.IsNullOrWhiteSpace(Program.LOCATION) ? "null" : "\"" + Program.LOCATION + "\"";
     string js =
         "var clickX=\"" + txtXpt.Text + "\";var clickY=\"" + txtYpt.Text + "\"; var d=mupdf.Document.openDocument(\"" + inPdfEsc + "\");\n" +
         "var p=d.loadPage(0); var widgets=p.getWidgets();var sigWidget=null; for(var i=0;i<widgets.length;i++){var w=widgets[i];\n" +
         "if(w.getFieldType()===\"signature\"){var r=w.getRect(); if(clickX>=r[0]&&clickX<=r[2]&&clickY>=r[1]&&clickY<=r[3]){sigWidget=w;break;}}}\n" +
         "if(!sigWidget)throw\"Click is outside any signature box\";\n" +
         "var signer=new PDFPKCS7Signer(\"" + pfxEsc + "\",\"" + txtPwd.Text + "\");\n" +
-        "sigWidget.sign(signer,{showLabels:true,showGraphicName:true,showTextName:true,showDate:true}," + imgObj + ",\n" +
-        "\"I testify this is my mark.\",\"Planet Earth.\");\n" +
+        "sigWidget.sign(signer,{showLabels:true,showGraphicName:true,showTextName:true,showDate:true}," + imgObj + "," + Reason + "," + Location + ");\n" +
         "d.save(\"" + outPdfEsc + "\");\n";
     File.WriteAllText(scriptFile, js);
     string result = RunHiddenCommand(Program.TOOL_PATH, "run \"" + scriptFile + "\"",Path.GetDirectoryName(Program.TOOL_PATH));
