@@ -341,8 +341,7 @@ public class ImageForm : Form
 
 public static class DdeClient
 {
-    const int APPCLASS_STANDARD = 0x00000000; const int APPCMD_CLIENTONLY = 0x00000010;
-    const int XTYP_REQUEST = 0x20B0; const int CF_UNICODETEXT = 13; const int TIMEOUT = 5000;
+    const int APPCLASS_STANDARD = 0x00000000; const int APPCMD_CLIENTONLY = 0x00000010; const int XTYP_REQUEST = 0x20B0; const int CF_UNICODETEXT = 13; const int TIMEOUT = 5000;
     delegate IntPtr DdeCallback(int uType, int uFmt, IntPtr hConv, IntPtr hsz1, IntPtr hsz2, IntPtr hData, IntPtr dwData1, IntPtr dwData2);
     [DllImport("user32.dll", CharSet = CharSet.Unicode)] static extern int DdeInitializeW(out IntPtr pidInst, DdeCallback pfnCallback, int afCmd, int ulRes);
     [DllImport("user32.dll", CharSet = CharSet.Unicode)] static extern IntPtr DdeCreateStringHandleW(IntPtr idInst, string psz, int iCodePage);
