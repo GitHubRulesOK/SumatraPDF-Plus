@@ -344,9 +344,7 @@ public class TextForm : Form
 
 public static class DdeClient
 {
-    const int APPCLASS_STANDARD = 0x00000000;
-    const int APPCMD_CLIENTONLY = 0x00000010;
-    const int XTYP_REQUEST = 0x20B0; const int CF_UNICODETEXT = 13; const int TIMEOUT = 5000;
+    const int APPCLASS_STANDARD = 0x00000000; const int APPCMD_CLIENTONLY = 0x00000010; const int XTYP_REQUEST = 0x20B0; const int CF_UNICODETEXT = 13; const int TIMEOUT = 5000;
     delegate IntPtr DdeCallback(int uType, int uFmt, IntPtr hConv, IntPtr hsz1, IntPtr hsz2, IntPtr hData, IntPtr dwData1, IntPtr dwData2);
     [DllImport("user32.dll", CharSet = CharSet.Unicode)] static extern int DdeInitializeW(out IntPtr pidInst, DdeCallback pfnCallback, int afCmd, int ulRes);
     [DllImport("user32.dll", CharSet = CharSet.Unicode)] static extern IntPtr DdeCreateStringHandleW(IntPtr idInst, string psz, int iCodePage);
@@ -357,30 +355,22 @@ public static class DdeClient
     [DllImport("user32.dll")] static extern bool DdeFreeStringHandle(IntPtr idInst, IntPtr hsz);
     [DllImport("user32.dll")] static extern bool DdeUninitialize(IntPtr idInst);
     static IntPtr DdeCallbackProc(int uType, int uFmt, IntPtr hConv, IntPtr hsz1, IntPtr hsz2, IntPtr hData, IntPtr dwData1, IntPtr dwData2) { return IntPtr.Zero; }
-
     public static string Request(string item)
     {
         IntPtr inst;
         if (DdeInitializeW(out inst, DdeCallbackProc, APPCLASS_STANDARD | APPCMD_CLIENTONLY, 0) != 0) return null;
-        IntPtr hszService = DdeCreateStringHandleW(inst, "SUMATRA", 1200);
-        IntPtr hszTopic   = DdeCreateStringHandleW(inst, "control", 1200);
-        IntPtr hszItem    = DdeCreateStringHandleW(inst, item, 1200);
-        IntPtr hConv = DdeConnect(inst, hszService, hszTopic, IntPtr.Zero);
+        IntPtr hszService = DdeCreateStringHandleW(inst, "SUMATRA", 1200); IntPtr hszTopic   = DdeCreateStringHandleW(inst, "control", 1200);
+        IntPtr hszItem    = DdeCreateStringHandleW(inst, item, 1200); IntPtr hConv = DdeConnect(inst, hszService, hszTopic, IntPtr.Zero);
         if (hConv == IntPtr.Zero) { Cleanup(inst, hszService, hszTopic, hszItem); return null; }
         int result;
         IntPtr hData = DdeClientTransaction(null, 0, hConv, hszItem, CF_UNICODETEXT, XTYP_REQUEST, TIMEOUT, out result);
         if (hData == IntPtr.Zero) { DdeDisconnect(hConv); Cleanup(inst, hszService, hszTopic, hszItem); return null; }
-        int size = DdeGetData(hData, null, 0, 0);
-        byte[] buffer = new byte[size];
-        DdeGetData(hData, buffer, size, 0);
-        string reply = Encoding.Unicode.GetString(buffer).TrimEnd('\0');
-        DdeDisconnect(hConv); Cleanup(inst, hszService, hszTopic, hszItem);
+        int size = DdeGetData(hData, null, 0, 0); byte[] buffer = new byte[size]; DdeGetData(hData, buffer, size, 0);
+        string reply = Encoding.Unicode.GetString(buffer).TrimEnd('\0'); DdeDisconnect(hConv); Cleanup(inst, hszService, hszTopic, hszItem);
         return reply;
     }
-
     static void Cleanup(IntPtr inst, IntPtr hszService, IntPtr hszTopic, IntPtr hszItem)
     {
-        DdeFreeStringHandle(inst, hszService); DdeFreeStringHandle(inst, hszTopic);
-        DdeFreeStringHandle(inst, hszItem); DdeUninitialize(inst);
+        DdeFreeStringHandle(inst, hszService); DdeFreeStringHandle(inst, hszTopic); DdeFreeStringHandle(inst, hszItem); DdeUninitialize(inst);
     }
 }
