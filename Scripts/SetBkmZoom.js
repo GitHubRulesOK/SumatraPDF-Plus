@@ -45,8 +45,16 @@ function fixZoom(it, doc, zoomArg) {
     var dest = doc.resolveLinkDestination(item.uri); if (!dest || dest.type !== "XYZ") return;
     var pageN = dest.page + 1; var zoomStr = (zoomArg === "nan") ? "nan" : zoomArg; var x = dest.x; var y = dest.y;
     var newUri = "#page=" + pageN + "&zoom=" + zoomStr + "," + x + "," + y;
-    var item2 = { b: item.b, g: item.g, r: item.r, flags: item.flags, open: item.open, title: item.title, uri: newUri };
+    var item2 = { b: item.b, g: item.g, r: item.r, flags: item.flags, open: item.open, title: cleanTitle(item.title), uri: newUri };
     it.update(item2);
+}
+
+function cleanTitle(s) {
+    if (!s) return "";
+    return s
+        .replace(/\u0000/g, "")   // remove null padding
+        .replace(/\r/g, "")       // remove embedded CR
+        .replace(/\n/g, "");      // remove embedded LF
 }
 
 main();
