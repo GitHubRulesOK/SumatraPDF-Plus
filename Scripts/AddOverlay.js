@@ -1,7 +1,7 @@
 /*
  AddOverlay.js PDF Page overlay script for a RECT (box), IMAGE, TEXT or combination(s).
 
- PDFs can be very complex so this script does not "Overwrite" the souce, but does try
+ PDFs can be very complex so this script does not "Overwrite" the source, but does try
  to use an optimised footprint via basic simple tests, thus may fail in some odd cases.
 
  TODO: Base Font are non embeded so NO Unicode etc. Adding a TTF file needs extra vars.
