@@ -54,7 +54,7 @@ var openMap = (function () {
 dump(outline, 0); }
 function dump(items, level) {
     for (var i = 0; i < items.length; i++) {
-        var it = items[i]; var title = '"' + (it.title || "").replace(/\u0000|\r|\n/g, "") + '"'; //var title = (it.title || "").replace(/\u0000|\r|\n/g, "");
+        var it = items[i]; var title = '"' + (it.title || "").replace(/\u0000|\r|\n/g, "") + '"'; 
         var pageOut = (it.uri && doc.resolveLinkDestination(it.uri) || it).page + 1;
         var openFlag = ""; if (it.title in openMap && openMap[it.title]) { openFlag = "open "; }
         var out = pad(level + "", 3) + pad(openFlag,5) + pad(pageOut + "",6) + ' ' + pad(it.uri,40) + ' ' + title ;
