@@ -1,6 +1,6 @@
 // List-BM.js - MuPDF 1.28 / SumatraPDF 3.7 run JS bookmark extractor
 //
-// To automatically export a bookmark file from current pdf in view add an externaal viwer command similar to this for the X key
+// To automatically export a bookmark file from current pdf in view add an external viewer command similar to this for the X key
 // Note it is not set to avoid a simple flash of the black console running so currently no confirmation it worked!
 //
 // ExternalViewers [
