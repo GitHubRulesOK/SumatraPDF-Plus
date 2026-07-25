@@ -51,14 +51,6 @@ var line = readline();
 // ---------- helpers ----------
 function fmt(n) { if (typeof n !== "number" || isNaN(n)) return "null"; return Math.round(n * 1000) / 1000; }  // 3 decimal places
 
-function cleanTitle(s) {
-    if (!s) return "";
-    return s
-        .replace(/\u0000/g, "")   // remove null padding
-        .replace(/\r/g, "")       // remove embedded CR
-        .replace(/\n/g, "");      // remove embedded LF
-}
-
 function buildOpenMap(document) {
     var it = document.outlineIterator(); var map = {};
     while (true) {
@@ -92,11 +84,11 @@ function formatDestination(doc, item) {
 
 function dump(items, level) {
     for (var i = 0; i < items.length; i++) {
-        var it = items[i]; var rawTitle = it.title || ""; var title = cleanTitle(rawTitle);
+        var it = items[i]; var title = '"' + (it.title || "").replace(/\u0000|\r|\n/g, "") + '"'
         var destStr = formatDestination(doc, it); var parts = destStr.split(" ");
         var pageOut = parts[0]; var destOut  = parts.slice(1).join(" "); var openFlag = "";
         if (rawTitle in openMap && openMap[rawTitle]) { openFlag = "open "; }
-        var out = level + ' "' + title + '" ' + pageOut + ' ' + openFlag + destOut;
+        var out = level + ' ' + title + ' ' + pageOut + ' ' + openFlag + destOut;
         if (conOut) print(out); if (!noOutfile) txtOut.write(out + "\n");
         if (it.down && it.down.length > 0) { dump(it.down, level + 1); }
     }
