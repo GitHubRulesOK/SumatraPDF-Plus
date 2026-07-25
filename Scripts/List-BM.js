@@ -1,7 +1,8 @@
 // List-BM.js - MuPDF 1.28 / SumatraPDF 3.7 run JS bookmark extractor
 //
 // To automatically export a bookmark file from current pdf in view add an external viewer command similar to this for the X key
-// Note it is not set to avoid a simple flash of the black console running so currently no confirmation it worked!
+// Note it is set to pause to avoid a simple flash of the black console running so currently press enter to exit obe seen it worked!
+// To see the full list in the console add -c between js and file like `.....List-BM.js -c "%1"`
 //
 // ExternalViewers [
 //  [
@@ -43,6 +44,9 @@ if (!outline || outline.length === 0) { out = " No outline in document: " + infi
 }
 // DONE
 if (!noOutfile) { txtOut.save(outfile); print(" Saved " + outfile); }
+print("Press enter to exit ...");
+var line = readline(); 
+
 // ---------- helpers ----------
 function fmt(n) { if (typeof n !== "number" || isNaN(n)) return "null"; return Math.round(n * 1000) / 1000; }  // 3 decimal places
 
