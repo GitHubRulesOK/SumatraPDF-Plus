@@ -8,6 +8,7 @@
 //  [
 //    CommandLine = "C:\Program Files\SumatraPDF\sumatrapdf-tool.exe" run "C:\Users\ path to your \Scripts\List-BM.js "%1"
 //    Name = e&Xport filename-BM.txt
+//    Key = x
 //    Filter = *.pdf
 //  ]
 // ]
