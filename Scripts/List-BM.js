@@ -87,7 +87,7 @@ function dump(items, level) {
         var it = items[i]; var title = '"' + (it.title || "").replace(/\u0000|\r|\n/g, "") + '"'
         var destStr = formatDestination(doc, it); var parts = destStr.split(" ");
         var pageOut = parts[0]; var destOut  = parts.slice(1).join(" "); var openFlag = "";
-        if (rawTitle in openMap && openMap[rawTitle]) { openFlag = "open "; }
+        if (title in openMap && openMap[title]) { openFlag = "open "; }
         var out = level + ' ' + title + ' ' + pageOut + ' ' + openFlag + destOut;
         if (conOut) print(out); if (!noOutfile) txtOut.write(out + "\n");
         if (it.down && it.down.length > 0) { dump(it.down, level + 1); }
