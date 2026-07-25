@@ -1,4 +1,4 @@
-MuPDF Bookmarking (outline items) at its core is based on a very old turn of the century Adobe Browser Plug-in system of:   
+MuPDF Book marking (outline items) at its core is based on a very old turn of the century Adobe Browser Plug-in system of:   
 
 >/*
 	The URI encoding format broadly follows that described in
@@ -13,7 +13,7 @@ This means more than a hand full of "view=" /Fit's and a couple of others. More 
 A PDF Outline is more deeply integrated into the file structures than the tips seen in the sidebar.
 Thus the ONE MuPDF run example is only how to transfer a full tree TO a document without one, but ONLY saves as "incremental".  
 https://github.com/ArtifexSoftware/mupdf/blob/master/docs/examples/copy-outline.js
-The traditional approach to minimise coruption, is export a whole tree and edit as plain text, 
+The traditional approach to minimise corruption, is export a whole tree and edit as plain text, 
 then delete the old tree and update with new in the hope that it minimises co-lateral damage.
 
 Thus the scripts here stick to one basic export/import format and if you want the others you will need to expand on these. A simple example might be:
@@ -40,11 +40,11 @@ As with all document editing, if your source is irreplaceable, make a backup fir
  to make them suitable for re- Load-BM So don’t be surprised if it emits warnings - the result is "Best Endeavour".
 
 **List-BMF.js**
-Uses the MuPDF Run URI format to list the outline tree. It is potentially different to other exporters. But is more akin to how browsers use PDF GoTo URLs.
+Uses the MuPDF Run URI format to list the outline tree. It is potentially different to other exporters. But is more akin to how browsers use PDF Go To URLs.
 Note that some URI formats do not specifically use a Page Number for some Named Destinations, but page numbers are listed when possible.
 Another known limitation (in this version) is "open" is only shown for top level entries not lower levels.
 
-**Load-BM.js** is the main workhorse that will autoload a listing and attempt to add to an existing PDF. The concept is: from "a.pdf" first 
+**Load-BM.js** is the main workhorse that will auto-load a listing and attempt to add to an existing PDF. The concept is: from "a.pdf" first 
 `run List-BM.js "a.pdf"` which will generate "a-BM.txt" that can be edited in notepad. Then `run Load-BM.js "a.pdf"` will rebuild as "a-BM.pdf"
 This is as simple as any other export/edit/import bookmark list, such as PDFtk or Coherent cpdf but may have some differences.
 
@@ -54,4 +54,3 @@ It was intended mainly to set a fixed zoom to null (-z=0%) or enforce a zoom val
 **SetBMview.js** is the more powerful version that converts view= formats to zoom= format. That can be run prior to List-BM for alter zoom in bulk.
 
 Wipe outline tree was included in some previous scripts. But as part of import would only be needed here in Load-BM.js.
-
