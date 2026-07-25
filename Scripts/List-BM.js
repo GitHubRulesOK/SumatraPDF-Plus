@@ -1,6 +1,13 @@
 // List-BM.js - MuPDF 1.28 / SumatraPDF 3.7 run JS bookmark extractor
 //
-//
+// To automatically export a bookmark file from current pdf in view add an externaal viwer command similar to this for the X key
+// ExternalViewers [
+//  [
+//    CommandLine = "C:\Program Files\SumatraPDF\sumatrapdf-tool.exe" run "C:\Users\ path to your \Scripts\List-BM.js "%1"
+//    Name = e&Xport filename-BM.txt
+//    Filter = *.pdf
+//  ]
+// ]
 //
 // BLOCK WScript double-click
 if (typeof WScript !== "undefined") { WScript.Echo("Run using: \"SumatraPDF[-tool].exe\" run " + WScript.ScriptName + " [-c] [-d | -p] [-n | -o=\"out.txt\"] \"infile.pdf\""); WScript.Quit(); }
