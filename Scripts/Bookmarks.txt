@@ -1,0 +1,57 @@
+MuPDF Bookmarking (outline items) at its core is based on a very old turn of the century Adobe Browser Plug-in system of:   
+
+>/*
+	The URI encoding format broadly follows that described in
+	"Parameters for Opening PDF files" from the Adobe Acrobat SDK,
+	version 8.1, which can, at the time of writing, be found here:
+
+	https://web.archive.org/web/20170921000830/http://www.adobe.com/content/dam/Adobe/en/devnet/acrobat/pdfs/pdf_open_parameters.pdf
+*/
+
+This means more than a hand full of "view=" /Fit's and a couple of others. More complex than most users need which is simply the /XYZ.
+
+A PDF Outline is more deeply integrated into the file structures than the tips seen in the sidebar.
+Thus the ONE MuPDF run example is only how to transfer a full tree TO a document without one, but ONLY saves as "incremental".  
+https://github.com/ArtifexSoftware/mupdf/blob/master/docs/examples/copy-outline.js
+The traditional approach to minimise coruption, is export a whole tree and edit as plain text, 
+then delete the old tree and update with new in the hope that it minimises co-lateral damage.
+
+Thus the scripts here stick to one basic export/import format and if you want the others you will need to expand on these. A simple example might be:
+
+Level "Title" Page <open> "[Description]"
+
+0 "Cover" 1 "[1/XYZ 0 841 null]"
+0 "Chapter 1" 2 open "[2/XYZ 100 741 null]"
+1 "Section 1.1" 2 "[2/XYZ 100 641 2]"
+1 "Section 1.2" 3 "[3/XYZ 100 200 1]"
+0 "Chapter 2" 4 open "[4/XYZ 100 741 0.5]"
+
+These are PDF based co-ordinates where the Y value is up from the bottom and zoom is a factor of 100% e.g. 0.5 = 50% (2=200%) and null=NO zoom %
+
+These will be translated in the script as if, to or from, Adobe URL fragments #page=##&zoom=##(in %),##(FromLeft),##(FromTop)
+
+The scripts so far allow for export in two formats (Y = PDF or Y = DOC) and import in one format (Y = PDF). So beware: Y as per PDF is the default.
+It should be easy to flip the importer to the opposite mode, but that’s a "TO-DO".
+
+Bookmarks are a visible part of the Document Structure; therefore, editing them can affect other parts of the PDF core.
+As with all document editing, if your source is irreplaceable, make a backup first before changing it.
+
+**List-BM.js** is the tool used to report/export a current list, and it includes a small amount of cleaning for poor or broken results
+ to make them suitable for re- Load-BM So don’t be surprised if it emits warnings - the result is "Best Endeavour".
+
+**List-BMF.js**
+Uses the MuPDF Run URI format to list the outline tree. It is potentially different to other exporters. But is more akin to how browsers use PDF GoTo URLs.
+Note that some URI formats do not specifically use a Page Number for some Named Destinations, but page numbers are listed when possible.
+Another known limitation (in this version) is "open" is only shown for top level entries not lower levels.
+
+**Load-BM.js** is the main workhorse that will autoload a listing and attempt to add to an existing PDF. The concept is: from "a.pdf" first 
+`run List-BM.js "a.pdf"` which will generate "a-BM.txt" that can be edited in notepad. Then `run Load-BM.js "a.pdf"` will rebuild as "a-BM.pdf"
+This is as simple as any other export/edit/import bookmark list, such as PDFtk or Coherent cpdf but may have some differences.
+
+**SetBMzoom.js** only changes the zoom value in /XYZ bookmarks so does not change all the outlines or other structures. 
+It was intended mainly to set a fixed zoom to null (-z=0%) or enforce a zoom value of preference on high dpi screens e.g. -z=150%.
+
+**SetBMview.js** is the more powerful version that converts view= formats to zoom= format. That can be run prior to List-BM for alter zoom in bulk.
+
+Wipe outline tree was included in some previous scripts. But as part of import would only be needed here in Load-BM.js.
+
