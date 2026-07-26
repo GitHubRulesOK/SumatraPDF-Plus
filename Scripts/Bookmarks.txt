@@ -42,10 +42,9 @@ As with all document editing, if your source is irreplaceable, make a backup fir
 **List-BMF.js**
 Uses the MuPDF Run URI format to list the outline tree. It is potentially different to other exporters. But is more akin to how browsers use PDF Go To URLs.
 Note that some URI formats do not specifically use a Page Number for some Named Destinations, but page numbers are listed when possible.
-Another known limitation (in this version) is "open" is only shown for top level entries not lower levels.
+- A known limitation (in this version) is "open" is not shown, as is not how expected. So use other scripts for that Viewer data. Simplest is showBMv.js that shows all the **expanded** visible `v` markers.
 
-**Load-BM.js** is the main workhorse that will auto-load a listing and attempt to add to an existing PDF. The concept is: from "a.pdf" first 
-`run List-BM.js "a.pdf"` which will generate "a-BM.txt" that can be edited in notepad. Then `run Load-BM.js "a.pdf"` will rebuild as "a-BM.pdf"
+**Load-BM.js** is the main workhorse that will auto-load a listing and attempt to add to an existing PDF. The concept is: from "a.pdf" first `run List-BM.js "a.pdf"` which will generate "a-BM.txt" that can be edited in notepad. Then `run Load-BM.js "a.pdf"` will rebuild as "a-BM.pdf"
 This is as simple as any other export/edit/import bookmark list, such as PDFtk or Coherent cpdf but may have some differences.
 
 **SetBMzoom.js** only changes the zoom value in /XYZ bookmarks so does not change all the outlines or other structures. 
