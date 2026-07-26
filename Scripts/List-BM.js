@@ -71,10 +71,13 @@ function formatDestination(doc, item) {
                 var pageIndex = dest.page; var pageObj   = doc.loadPage(pageIndex);
                 var bbox = pageObj.getBounds(); var pageHeight = bbox[3] - bbox[1];
                 var page = pageIndex + 1; var type = dest.type || "XYZ";
-                if (/^Fit$/.test(type)) { return page + ' "[' + page + '/' + type + ']"'; } // FIT-style destinations (no co-ords)
-                var x    = fmt(dest.x);  // was var y = fmt(pageHeight - dest.y);
-                var y = (mode === "pdfMode") ? fmt(pageHeight - dest.y) : fmt(dest.y); // Default should be pdfMode else docMode
-                var z = fmt(fmt(dest.zoom) / 100); return page + ' "[' + page + '/' + type + ' ' + x + ' ' + y + ' ' + z + ']"';
+                var x = fmt(dest.x); var y = (mode === "pdfMode") ? fmt(pageHeight - dest.y) : fmt(dest.y); var z = fmt(fmt(dest.zoom) / 100);
+                var out = page + ' "[' + page + '/' + type; // Build output based on type
+                if (type === "FitB" || type === "Fit") { }
+                else if (type === "FitBV" || type === "FitV") { out += ' ' + x; } 
+                else if (type === "FitBH" || type === "FitH") { out += ' ' + y; } 
+                else if (type === "XYZ") { out += ' ' + x + ' ' + y + ' ' + z; }
+                out += ']"'; return out;
             }
         } catch (e) {}
     }
