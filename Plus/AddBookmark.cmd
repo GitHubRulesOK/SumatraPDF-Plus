@@ -3,6 +3,7 @@
 Do not delete the above two lines since they are needed to prepare this script.
 
 Updated from v'26-01-21--01 
+- now requires a page number be given on the command line or in SumatraPDF as %p
 - improved export & import logic
 - improved download link for cpdf.exe dependency
 
@@ -18,13 +19,12 @@ C:\Users\Your name\AppData\Local\SumatraPDF\Plus\Add-Bookmarks.cmd
 
 Only on first run it may need internet access to download most recent cpdf.exe
 
-To RUN either drag and drop a PDF file on this CMD or in SumatraPDF Advanced options add it to 
-
+To RUN  in SumatraPDF Advanced options add it to ExternalViewers 
 
 ExternalViewers [
 	[
-		CommandLine = "C:\Users\ PUT your user name here \AppData\Local\SumatraPDF\plus\Add-Bookmarks.cmd" "%1" 
-		Name = Import all &Bookmarks for this PDF as filename-BM.txt
+		CommandLine = "C:\Users\ PUT your user name here \AppData\Local\SumatraPDF\plus\Add-Bookmarks.cmd" "%1" %p
+		Name = Add (&+) a Bookmarks for this PDF page
 		Filter = *.pdf
 		Key = +
 	]
