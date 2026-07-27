@@ -1,67 +1,97 @@
-@Mode 60,17 & Color 9F & Title SumatraPDF addin Add Bookmark [via cpdf] v'24-11-04--02
-@echo off & SetLocal EnableDelayedExpansion & pushd %~dp0 & goto MAIN
-Do not delete the above two lines since they are needed to prepare this script.
-
-ToDo 
-Add more description about how to use ?
-
-This file is based on placed in a Plus folder where SumatraPDF-settings.txt is
-for example
-C:\Users\Your name\AppData\Local\SumatraPDF\SumatraPDF-settings.txt
-
-C:\Users\Your name\AppData\Local\SumatraPDF\Plus\AddBookmark.cmd
-
-Only on first run it needs internet access to download recent cpdf.exe
-
-:MAIN
+@Mode 60,17 & Color 9F & Title SumatraPDF addin Add Bookmark [via cpdf]
+@echo off
+setlocal EnableDelayedExpansion
+pushd %~dp0
+:: =====
+::  MAIN
+:: =====
 set /a "test=0+%2"
 if "!test!" == "" goto help
 if not exist "%~dpn1.pdf" goto help
-
 set "cpdf=%~dp0cpdf\cpdf.exe"
-if not exist "%cpdf%" goto :dependencies
-
-rem clean-up any failed run
-if exist "%temp%\bookmarks-out.txt" del /q "%temp%\bookmarks-out.txt"
-
-rem export existing bookmarks to append to (is this needed apart from ensure -utf8 -out?)
-"%cpdf%" -list-bookmarks -utf8 "%~dpn1.pdf" 2>nul 1>"%temp%\bookmarks-out.txt"
-
-REM important to allow for UTF input we switch cp to 65001
-For /f "tokens=2 delims=:" %%G in ('chcp') Do set _codepage=%%G
+if not exist "%cpdf%" goto dependencies
+:: clean-up
+del /q "%temp%\bookmark-list.txt" 2>nul
+del /q "%temp%\prefixed.txt" 2>nul
+del /q "%temp%\sorted.txt" 2>nul
+:: export existing bookmarks
+"%cpdf%" -list-bookmarks -utf8 "%~dpn1.pdf" > "%temp%\bookmark-list.txt"
+:: switch to UTF‑8
+for /f "tokens=2 delims=:" %%G in ('chcp') do set "_codepage=%%G"
 chcp 65001 > nul
-
-REM page is a given as %2
-REM echo Target Top of
-REM set /p "BkPge=Page ?"
-
-echo Top Level=0
-set /p "BkLvl=Level ?"
-echo description
-rem e.g. 可以添加或编辑书签吗
-set /p "BkTxt=Text ?"
-set "BkAct=FitH 842"
-
-echo %BkLvl% "%BkTxt%" %2 "[%2 /%BkAct%]">>"%temp%\bookmarks-out.txt"
-
-
-REM Combine
+:: ==========
+::  ADD Entry
+:: ==========
+echo Adding Bookmark Entry for page !test!
+echo For Top most level use =0
+set /p "BkLvl=Level ?="
+echo Bookmark Text to add
+set /p "BkTxt=Text ?="
+set "BkAct=XYZ 0 0 null"
+:: append new bookmark
+echo %BkLvl% "%BkTxt%" %2 "[%2/%BkAct%]" >> "%temp%\bookmark-list.txt"
+:: =====
+::  SORT
+:: =====
+for /f "usebackq delims=" %%L in ("%temp%\bookmark-list.txt") do (
+  set "line=%%L"
+  for /f "tokens=1 delims=[" %%A in ("%%L") do set "left=%%A"
+  set "left=!left:~0,-1!"
+  set "left=!left:open=!"
+  set page="
+  for %%W in (!left!) do set "page=000000%%W"
+  set "page=!page:~-6!"
+  echo !page!  %%L >> "%temp%\sortme.txt"
+)
+sort "%temp%\sortme.txt" /O "%temp%\sorted.txt"
+del /q "%temp%\bookmark-list.txt" & if exist "%temp%\bookmark-list.txt" echo cannot delete  "temp\bookmark-list.txt" & pause & exit /b
+del /q "%temp%\sortme.txt" >nul & if exist "%temp%\sortme.txt" echo cannot delete "temp\sortme.txt" & pause & exit /b
+for /f "usebackq tokens=1,* delims= " %%A in ("%temp%\sorted.txt") do (echo %%B) >> "%temp%\bookmark-list.txt"
+if not exist "%temp%\bookmark-list.txt" echo cannot find sorted "temp\bookmark-list.txt" & pause & exit /b
 copy "%~dpn1.pdf" "%~dpn1-bak.pdf" >nul
-"%cpdf%" -add-bookmarks "%temp%\bookmarks-out.txt" "%~dpn1-bak.pdf" -o "%~dpn1.pdf"
 
-:eof
-REM clean-up
+:: ===
+:import
+:: ===
+"%cpdf%" -add-bookmarks "%temp%\bookmark-list.txt" "%~dpn1-bak.pdf" -o "%~dpn1.pdf"
+if errorlevel 1 goto error
+
+:: ===
+:cleanup
+:: ===
 chcp %_codepage% >nul
-del /q "%temp%\bookmarks-out.txt"
+del /q "%temp%\bookmark-list.txt"
+pause
 exit /b
 
+:: ===
 :dependencies
+:: ===
 md cpdf
 cd cpdf
-curl -O https://raw.githubusercontent.com/coherentgraphics/cpdf-binaries/master/Windows32bit/cpdf.exe
+curl -LO https://raw.githubusercontent.com/coherentgraphics/cpdf-binaries/master/Windows32bit/cpdf.exe
 cd ..
-pause &exit /b
+pause
+exit /b
 
+:: ===
+:error
+:: ===
+echo.
+echo CPDF reported a problem possibly with the bookmark order.
+echo The bookmark file may be manualy edited in Notepad.
+echo.
+choice /c EA /m "Press E to Edit in NotePad or A to Abort this run"
+if errorlevel 2 goto cleanup
+if errorlevel 1 %SystemRoot%\notepad.exe "%temp%\bookmark-list.txt"
+echo.
+echo Re-parsing corrected bookmark file...
+echo.
+goto import
+exit /b
+
+:: ===
 :help
-echo needs input filename.pdf # (# = page you gave page # = !test!)
+:: ===
+echo needs input filename.pdf # (# = page your input page # = !test!)
 pause
