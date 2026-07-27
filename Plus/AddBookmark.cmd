@@ -14,7 +14,6 @@ This file is based on placed in a Plus folder below where SumatraPDF-settings.tx
 
 for example
 C:\Users\Your name\AppData\Local\SumatraPDF\SumatraPDF-settings.txt
-
 C:\Users\Your name\AppData\Local\SumatraPDF\Plus\Add-Bookmarks.cmd
 
 Only on first run it may need internet access to download most recent cpdf.exe
