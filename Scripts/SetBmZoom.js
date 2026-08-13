@@ -2,6 +2,8 @@
 // It has only been tested on a few problem files so ensure you keep your source files.
 // It does not garbage collect old indirect obj as that could affect other objects.
 //
+// This script is NOT needed if you use recent 3.7.21096 or later see Newest related advanced setting IgnoreDestinationZoom = true
+//
 // BLOCK WScript double-click
 if (typeof WScript !== "undefined") { WScript.Echo("Run using: \"SumatraPDF[-tool].exe\" run " + WScript.ScriptName + " -o=\"out.pdf\" -z=##% \"infile.pdf\""); WScript.Quit(); }
 print("\n Running " + scriptPath);
