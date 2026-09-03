@@ -14,7 +14,7 @@
 //		Name = Crop Current Page
 //		Filter = *.pdf
 //		Key = Shift + C
-//		ToolbarSvgIcon = <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor" stroke-linecap="round"><path stroke="none" d="M0 0h24v24H0z"/><path d="M2 19V4a2 2 0 0 1 2-2h15M22 5v15a2 2 0 0 1-2 2h-15M3 3l1.5 1.5M19.5 19.5l1.5 1.5 M4.5 4.5h13a2 2 0 0 1 2 2v13M4.5 4.5v13a2 2 0 0 0 2 2h13"/></svg>
+//		ToolbarSvgIcon = <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor" stroke-linecap="round"><path stroke="none" d="M0 0h24v24H0z"/><path d="M2 19V4a2 2 0 0 1 2-2h15M22 5v15a2 2 0 0 1-2 2h-15 M4 4l1.25 1.25M18.75 18.75l1.25 1.25M5 7h10a2 2 0 0 1 2 2v10M7 5v10a2 2 0 0 0 2 2h10"/></svg>
 //	]
 // ]
 // 
@@ -22,7 +22,7 @@
 //
 // BLOCK WScript double-click
 if (typeof WScript !== "undefined") { WScript.Echo( "Run using: \"SumatraPDF[-tool].exe\" run " + WScript.ScriptName +  " [options] \"infile.pdf\"" ); WScript.Quit(); }
-print("\n Running " + scriptPath);
+print("\n Running       : " + scriptPath);
 var infile = null;
 var outfile = null;
 var pageArg = null;
@@ -44,8 +44,8 @@ for (var i = 0; i < scriptArgs.length; i++) {
 }
 // Validate CLI
 if (infile === null) { print( " Usage: \"SumatraPDF[-tool].exe\" run " + scriptPath + " [-o=\"out.pdf\"] \"infile.pdf\"" ); quit(); }
-print(" Input : " + infile);
-if (outfile !== null) print(" Output: " + outfile);
+print(" Input         : " + infile);
+if (outfile !== null) print(" Output        : " + outfile);
 
 // Open document
 var doc = mupdf.Document.openDocument(infile);
@@ -100,10 +100,11 @@ function saveDocument(filename) {
 
 function showStatus() {
     print("");
-    print(" Input : " + infile);
-    print(" Pages : " + pageCount);
-    print(" Page  : " + (pageNumber + 1));
-    print(" Page box: " + page.getBounds());
+    print(" Input   : " + infile);
+    print(" Output  : " + outfile);
+    print(" Pages   : " + pageCount);
+    print(" Page    : " + (pageNumber + 1));
+    print(" Page Box: " + page.getBounds());
     print("");
     print(" Remember to 'quit' without FURTHER changes or 'save' then quit.");
 }
