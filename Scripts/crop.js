@@ -1,11 +1,24 @@
-// version 1.1 TODO: add a 32 GB guard and track the box relative to the original page.
+// version 1.2 TODO: add a 32 GB guard and track the box relative to the original page.
+//
 // Note: it very simply alters the Page CropBox relative to the previous one.
+// That means you can make a page visually larger by using -x and -y (minus) values
+// So crop -10 -10 615 862 (595x842 +20) will be A4 plus 10 mm margins on all sides
 //
-// SumatraPDF RUN crop.js options
-// modified for sending filename and -p=page via ExternalViewers
-// e.g. "path to\SumatraPDF[-tool].exe" run "path to this \crop.js" -p=%p -o="%1-cropped.pdf" "%1"
+// Can be runs standalone such as SumatraPDF RUN crop.js options
+// You can add SumatraPDF as the real time viewer if you use a cmd file to monitor for the output and run sumatrapdf -reuse-instance "%1-cropped.pdf"
+// Here modified for sending filename and -p=page via ExternalViewers e.g.
 //
-// Interactivity (REPL) is part work in progress but needs / should as PoC ask for crop as xL yT wR dB = Xleft Ytop Width Height
+// ExternalViewers [
+//	[
+//		CommandLine = "path to\sumatrapdf-tool.exe" run "path to this \crop.js" -p=%p -o="%1-cropped.pdf" "%1"
+//		Name = Crop Current Page
+//		Filter = *.pdf
+//		Key = Shift + C
+//		ToolbarSvgIcon = <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor" stroke-linecap="round"><path stroke="none" d="M0 0h24v24H0z"/><path d="M2 19V4a2 2 0 0 1 2-2h15M22 5v15a2 2 0 0 1-2 2h-15M3 3l1.5 1.5M19.5 19.5l1.5 1.5 M4.5 4.5h13a2 2 0 0 1 2 2v13M4.5 4.5v13a2 2 0 0 0 2 2h13"/></svg>
+//	]
+// ]
+// 
+// Interactivity (REPL) is part work in progress but as a PoC asks for relative crop as xL yT wR dB = Xleft Ytop Width Height
 //
 // BLOCK WScript double-click
 if (typeof WScript !== "undefined") { WScript.Echo( "Run using: \"SumatraPDF[-tool].exe\" run " + WScript.ScriptName +  " [options] \"infile.pdf\"" ); WScript.Quit(); }
@@ -146,5 +159,5 @@ while (true) {
     print("Unknown command: " + command);
 }
 
-// TODO: needs usual end game, this will be unseen as the console is closed
+// TODO: needs usual end game, this will be unseen as the console is closed by quit or exit
 print("\n Done.");
