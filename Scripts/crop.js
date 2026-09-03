@@ -1,7 +1,11 @@
-// version 1.0
+// version 1.1 TODO: add a 32 GB guard and track the box relative to the original page.
+// Note: it very simply alters the Page CropBox relative to the previous one.
+//
 // SumatraPDF RUN crop.js options
-// modified for sending filename and -p=page e.g. SumatraPDF[-tool].exe run -p=2 folder\fred.pdf
-// interactive is part work in progress but needs / should ask for crop as UXL UYT LXR LYB = Xleft Ytop Xright Ybottom
+// modified for sending filename and -p=page via ExternalViewers
+// e.g. "path to\SumatraPDF[-tool].exe" run "path to this \crop.js" -p=%p -o="%1-cropped.pdf" "%1"
+//
+// Interactivity (REPL) is part work in progress but needs / should as PoC ask for crop as xL yT wR dB = Xleft Ytop Width Height
 //
 // BLOCK WScript double-click
 if (typeof WScript !== "undefined") { WScript.Echo( "Run using: \"SumatraPDF[-tool].exe\" run " + WScript.ScriptName +  " [options] \"infile.pdf\"" ); WScript.Quit(); }
@@ -35,10 +39,13 @@ var doc = mupdf.Document.openDocument(infile);
 var pageCount = doc.countPages();
 var pageNumber = 0;
 var page = doc.loadPage(pageNumber);
-print(" Pages : " + pageCount);
-print(" Page  : " + (pageNumber + 1));
+print(" Pages         : " + pageCount);
+print(" Current Page  : " + (pageNumber + 1));
+var originalMedia = page.getBounds(); // save the source as a seperate var so we can reset
+print(" Original Media: " +  originalMedia.join(", "));
+print(" Page bounds   : " + page.getBounds()); // this is the starting page size that will be cropped but bounds changes
 print("");
-print(" Waiting for command (HINT: crop ## ## ## ## ?)");
+print(" Waiting for command (HINT: crop x y w h as points ?)");
 print(" Type 'help' for commands.");
 print("");
 
@@ -52,9 +59,23 @@ function selectPage(n) {
     print(" Page selected: " + n);
 }
 
-function setCrop(x0, y0, x1, y1) {
+function xsetCrop(x0, y0, x1, y1) {
     var box = [ Number(x0), Number(y0), Number(x1), Number(y1) ];
     page.setPageBox("CropBox", box); print( " CropBox = [" + box.join(", ") + "]" );
+}
+
+function setCrop(x0, y0, x1, y1) {
+    page = doc.loadPage(pageNumber);
+    print(" Boundary Box: " + page.getBounds());
+    var box = [
+        Number(x0),
+        Number(y0),
+        Number(x1),
+        Number(y1)
+    ];
+    page.setPageBox("CropBox", box);
+    print(" CropBox = [" + box.join(", ") + "]");
+    print(" UNSAVED NOW IS: " + page.getBounds());
 }
 
 function saveDocument(filename) {
@@ -69,7 +90,9 @@ function showStatus() {
     print(" Input : " + infile);
     print(" Pages : " + pageCount);
     print(" Page  : " + (pageNumber + 1));
+    print(" Page box: " + page.getBounds());
     print("");
+    print(" Remember to 'quit' without FURTHER changes or 'save' then quit.");
 }
 
 // -----
@@ -90,10 +113,10 @@ while (true) {
         break;
     if (command === "help") {
         print("");
-        print("Commands: (NOTE use lower case)");
+        print("Commands: (NOTE needs either Quit/Exit OR save progress and then Quit or Exit)");
         print("  page #           = Change to Page Number for action (1-base so starting with 1).");
-        print("  crop X0 Y0 X1 Y1 = Set NEW CropBox on selected page.");
-        print("  save FILENAME    = Save the document with a new given name.");
+        print("  crop X Y W H     = Set NEW CropBox on selected page using RELATIVE points.");
+        print("  save [FILENAME]  = Save the document [with a new given name if not already given].");
         print("  status           = Show current document / page details.");
         print("");
         print("  quit or exit     = Abort OR Exit script.");
@@ -123,4 +146,5 @@ while (true) {
     print("Unknown command: " + command);
 }
 
+// TODO: needs usual end game, this will be unseen as the console is closed
 print("\n Done.");
