@@ -12,7 +12,9 @@ NOTES:
 This Hybrid file is a companion to SumatraDDE.hta's it compiles a pair of support files but only
 SumatraHTA.exe was used by Measure.hta. That has now been replaced by a new one exe soloution.
 
-The console version SumatraGET.exe is more for testing / cmd use. and now the prefered output
+The console version SumatraGET.exe is more for testing / cmd use. Thus now the prefered output.
+A typical query may be "SumatraGET.exe [GetFileState()][GetMousePos]" this works well for PDF,
+however the latest way ePub data is output may not be as per expectations thus page numbers no use.
 
 */
 using System;
