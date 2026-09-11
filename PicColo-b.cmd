@@ -1,4 +1,5 @@
-/*&cls&@echo off&Title "%~dpnx0" & REM SEE // USER CUSTOMISATION * BELOW if you wish to make changes before running this file
+/*&cls&@echo off&Title "%~dpnx0" & REM SEE // COLOUR SWATCHES near end of file if you wish to make changes before running this file
+REM ALSO you need to define the // ================== // USER CUSTOMISATION // ================== to point to your SumatraPDF.exe
 
 cd /d "%~dp0" & echo Compiling "%~dpn0.exe"
 set "CSC=%SystemRoot%\Microsoft.NET\Framework\v4.0.30319\csc.exe"
@@ -27,10 +28,10 @@ NOTES:
 
  You may use this concept many other ways, but this is simply a demonstration for Windows 7+!
 
-Simply bind the compiled exe to a shortcut in SumatraPDF settings. Like this:
+Simply bind the compiled exe to a shortcut in SumatraPDF settings. Like this: you can change the name for several sets 
 ExternalViewers [
 	[
-		CommandLine = C:\path to your version\Brush.exe
+		CommandLine = C:\path to your version\Brushes1.exe
 		Name = User Ink Toolbar
 		Key = b
 		ToolbarSvgIcon = <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"> STILL TO DO </svg>
@@ -64,6 +65,21 @@ namespace PicColoB
     // Main Form
     public class MainForm : Form
     {
+// ==================
+// USER CUSTOMISATION
+// ==================
+// Path to the SumatraPDF.exe to control.
+//
+// Examples:
+// My 32bit relative folder : @"x32\SumatraPDF.exe";
+// others may be 
+// @"C:\Tools\SumatraPDF\SumatraPDF.exe";
+// @"D:\Portable\SumatraPDF.exe";
+// Set default to 
+// @"C:\Program Files\SumatraPDF\SumatraPDF.exe";
+
+private const string SumatraExe = @"C:\Program Files\SumatraPDF\SumatraPDF.exe";
+
         private WebBrowser browser;
         public MainForm()
         {
@@ -85,8 +101,8 @@ namespace PicColoB
         public void SetInk(string colour, int width)
         {
             if (width < 1) width = 1; if (width > 30) width = 30;
-// todo add as variable
-            string exe = System.IO.Path.Combine(Application.StartupPath, "x32", "SumatraPDF.exe");
+            string exe = SumatraExe;
+            if (!System.IO.Path.IsPathRooted(exe)) {exe = System.IO.Path.Combine(Application.StartupPath,exe); }
             // Explicitly terminate/reset the previous command before initiating a new Ink command.
             string command = "[CmdNone][CmdCreateAnnotInk " + colour + " Borderwidth " +  width.ToString() + "]";
             string arguments = " -dde \"" + command + "\"";
