@@ -37,7 +37,7 @@ ExternalViewers [
 		Filter = *.pdf
 		Key = b
 		ToolbarText = B1
-		ToolbarSvgIcon = <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"> STILL TO DO </svg>
+		ToolbarSvgIcon = <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"><rect x="0" y="0" width="8" height="8" fill="red"/><rect x="8" y="0" width="8" height="8" fill="#10FF10"/><rect x="16" y="0" width="8" height="8" fill="#4040FF"/><rect x="0" y="8" width="8" height="8" fill="cyan"/><rect x="8" y="8" width="8" height="8" fill="magenta"/><rect x="16" y="8" width="8" height="8" fill="#FFee00"/><rect x="0" y="16" width="8" height="8" fill="Black"/><rect x="8" y="16" width="8" height="8" fill="#FFFFFF"/><rect x="16" y="16" width="8" height="8" fill="#808080"/></svg>
 	]
 ]
 
