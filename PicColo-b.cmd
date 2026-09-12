@@ -28,12 +28,15 @@ NOTES:
 
  You may use this concept many other ways, but this is simply a demonstration for Windows 7+!
 
-Simply bind the compiled exe to a shortcut in SumatraPDF settings. Like this: you can change the name for several sets 
+Simply bind the compiled exe to a shortcut in SumatraPDF settings.
+Like this: you can change the name for several sets so for example save rename to Brushes1.exe
 ExternalViewers [
 	[
-		CommandLine = C:\path to your version\Brushes1.exe
+		CommandLine = "C:\path to your version\Brushes1.exe"
 		Name = User Ink Toolbar
+		Filter = *.pdf
 		Key = b
+		ToolbarText = B1
 		ToolbarSvgIcon = <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"> STILL TO DO </svg>
 	]
 ]
