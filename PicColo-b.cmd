@@ -33,7 +33,7 @@ Like this: you can change the name for several sets so for example save rename t
 ExternalViewers [
 	[
 		CommandLine = "C:\path to your version\Brushes1.exe"
-		Name = User Ink Toolbar
+		Name = PicColo B (Pick a Brush colour)
 		Filter = *.pdf
 		Key = b
 		ToolbarText = B1
