@@ -3,7 +3,7 @@ MuPDF Book marking (outline items) at its core is based on a very old turn of th
 >/*
 	The URI encoding format broadly follows that described in
 	"Parameters for Opening PDF files" from the Adobe Acrobat SDK,
-	version 8.1, which can, at the time of writing, be found here:
+	version 8.1, which may, at the time of writing, be found here:
 
 	https://web.archive.org/web/20170921000830/http://www.adobe.com/content/dam/Adobe/en/devnet/acrobat/pdfs/pdf_open_parameters.pdf
 */
