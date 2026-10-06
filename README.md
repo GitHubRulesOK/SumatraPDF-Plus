@@ -1,13 +1,12 @@
 # SumatraPDF-Plus
 Scripts to HotFix user requested enhancements to SumatraPDF (see below)  
 It is my personal compendium so decide which bits you do not require and delete accordingly.
+Many scripts may not behave the same due to 3.7 Official has vast improvements, but some may even still be needed for 3.0 etc. 
 
-Be aware due to the unusual uses some scripts employ they may raise "False Positives" in 
-Anti-Virus scanners, you can read the contents as Open Source plain text before download 
-And normally if you download a script as .txt you can then rename to a run time extension.
+Be aware due to the unusual uses some scripts employ they may raise "False Positives" in Anti-Virus scanners.
+You can read most of the contents as Open Source plain text before download.
 
-Intended structure is this "Top Level" folder with SumatraPDF.exe and friends (A portable version of 3.6.1 or 3.7 pre-release is recommended)
-Many scripts may not behave the same due to 3.7 Official has vast improvements but some may even be needed for 3.0 etc. 
+The intended structure was this "Top Level" folder with SumatraPDF.exe and friends (**A portable version** of 3.6.1 or **3.7 pre-release** is recommended)
 Then a middle level of scripts and a lower level of folders with dependencies.
 
 ![Folders.png](https://github.com/GitHubRulesOK/SumatraPDF-Plus/blob/master/Images/Folders.png)  
