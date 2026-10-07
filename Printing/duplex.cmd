@@ -2,8 +2,9 @@
 REM EDIT the following to where your copy of sumatrapdf portable or installed is located, simplest is same folder
 cd /d "%~dp0"
 set "sumatrapdf=%~dp0SumatraPDF.exe"
-REM Ensure we have a recent UNIVERSAL official only version
-if not exist "%SumatraPDF%" curl https://www.sumatrapdfreader.org/dl/prerel/22653/SumatraPDF-prerel-32.exe -Lo SumatraPDF.exe
+REM Ensure we have a recent UNIVERSAL official only version and remove the version number 
+if not exist "%SumatraPDF%" curl https://www.sumatrapdfreader.org/dl/rel/3.6.1/SumatraPDF-3.6.1.exe -Lo SumatraPDF.exe
+REM should also respond to https://files.sumatrapdfreader.org/software/sumatrapdf/rel/3.6.1/SumatraPDF-3.6.1.exe
 for %%I in ("SumatraPDF.exe") do if %%~zI LSS 12000000 echo download is too small (under 12 Mb) &pause&exit /B
 if not exist "%~1" echo you did not drop on me a file or specify a filename to print &pause&exit /B
 
