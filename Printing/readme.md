@@ -2,7 +2,7 @@ A 2015 user wanted a simple RELIABLE print command for SumatraPDF. Basically a
 Duplex printing script for a simplex printer (where you have turn the paper over to print on other side !)
 For more info see https://github.com/sumatrapdfreader/sumatrapdf/issues/295#issuecomment-2744690669
 
-The attached script has been brought up to date (2026 level) by saying 2000 pages but in the past, there have been lower or greater limits like 999-9999 so chose what you might need as a maximum. 2000 pages allows for a 1000 sheet hopper.
+The attached Duplex.CMD script has been brought up to date (2026 level) by saying 2000 pages but in the past, there have been lower or greater limits like 999-9999 so chose what you might need as a maximum. 2000 pages allows for a 1000 sheet hopper.
 
 IMPORTANT pages MUST BE FACE DOWN WITH 1 at top of stack to be used FIRST (NATURAL ORDER)
 to print 1 to 5 of 9 pages then the number of pages does not matter it will be all as quick as all others
