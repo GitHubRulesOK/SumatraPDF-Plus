@@ -1,4 +1,4 @@
-This folder contains SumatraPDF Browser Plugins
+This folder contains SumatraPDF Browser Plugins NOTE these still work with SumatraPDF 3.X including 3.7+
 
 The Filename should simply be npPdfViewer.dll and registered in the corrrect folder with SumatraPDF installed DLLS
 
