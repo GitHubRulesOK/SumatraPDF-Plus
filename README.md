@@ -13,7 +13,7 @@ Then a middle level of scripts and a lower level of folders with dependencies.
 ![Folders.png](https://github.com/GitHubRulesOK/SumatraPDF-Plus/blob/master/Images/Folders.png)  
 
 Some simply interact with Windows Functions like open the current file in Edge (Perhaps for "Dual" file review or Read Aloud with online natural Voices no longer needed as in the past to add inking as that is now included in SumatraPDF 3.7)  
-You can assign it to a single "Key", so here it opens the file on the left when I press the `T` key.
+You can assign it to a single "Key", so here it opens the file (by DEFAULT) on the left when I press the `T` key.
 ```
 ExternalViewers [
 	[
@@ -24,6 +24,8 @@ ExternalViewers [
 	]
 ]
 ```
+To force Edge to the right you have to consider adding the MSEdge commands with a new profile folder.
+
 ![Edge-It.png Image](https://github.com/GitHubRulesOK/SumatraPDF-Plus/blob/master/Images/Edge-It.png)
 
 Purpose 
