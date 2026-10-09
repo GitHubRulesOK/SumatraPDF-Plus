@@ -24,7 +24,11 @@ ExternalViewers [
 	]
 ]
 ```
-To force Edge to the right you have to consider adding the MSEdge commands with a new profile folder.
+To force Edge to the right you have to consider adding the MSEdge commands with a new profile folder (only slow for the first run).
+that could be something like this example:
+```
+CommandLine = c:\windows\system32\cmd.exe /r start=msedge --app="https://example.com" --user-data-dir="%temp%\temp" --window-position=750,0 --window-size=750,200
+```
 
 ![Edge-It.png Image](https://github.com/GitHubRulesOK/SumatraPDF-Plus/blob/master/Images/Edge-It.png)
 
