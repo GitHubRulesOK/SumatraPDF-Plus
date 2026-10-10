@@ -35,7 +35,7 @@ See PiCs2PDF.PDF here https://github.com/GitHubRulesOK/MyNotes/tree/master/C%23
 
 StripJB2
 ---
-Is a temporary fix until SumatraPDF is updated to 1.28 which supports such bad PDF's !
+Was a temporary fix until SumatraPDF gots updated to 1.28 which supports such bad PDF's ! Kept for use with older versions, that don't have the fix internally.
 
 TTS-sampler
 ---
