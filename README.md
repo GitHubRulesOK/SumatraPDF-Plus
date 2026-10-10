@@ -12,7 +12,7 @@ Then a middle level of scripts and a lower level of folders with dependencies.
 
 ![Folders.png](https://github.com/GitHubRulesOK/SumatraPDF-Plus/blob/master/Images/Folders.png)  
 
-Some simply interact with Windows Functions like open the current file in Edge (Perhaps for "Dual" file review or Read Aloud with online natural Voices no longer needed as in the past to add inking as that is now included in SumatraPDF 3.7)  
+Some simply interact with Windows Functions like open the current file in Edge (Perhaps for "Dual" file review or Read Aloud with online natural Voices. However most web interaction is now included in SumatraPDF 3.7 such as add PDF "inking", or Read Aloud)  
 You can assign it to a single "Key", so here it opens the file (by DEFAULT) on the left when I press the `T` key.
 ```
 ExternalViewers [
