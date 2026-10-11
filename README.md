@@ -60,7 +60,7 @@ Slowly migrated some updated "Addins" from https://github.com/GitHubRulesOK/MyNo
 2025 /2026 
 Multiple additions and updates. This folder has those related to SumatraPDF.exe command line or its settings.txt file, the plus folder contains those generally called internally.  
 
-PicColo###.hta
+PicColo###.hta (was replaced by an exe. However that was in turn replaced by internal functions, thus these are due to be downrated).
 ---
 A range of small coloured instruments :-)
 Some preset the settings colors and some act on selections.  
