@@ -1,4 +1,5 @@
-# command-line-version-dde-client [Still works in 2026 with SumatraPDF 3.7]
+# command-line-version-dde-client  
+[Still works in 2026 with SumatraPDF 3.7]
 Automatically exported from code.google.com/p/command-line-version-dde-client
 
 ##  Introduction ##
