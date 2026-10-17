@@ -1,5 +1,6 @@
 # command-line-version-dde-client  
-## [Still works in 2026 with SumatraPDF 3.7]
+## [Still works in 2026 with SumatraPDF 3.7]  
+## see https://www.sumatrapdfreader.org/docs/DDE-Commands
 Automatically exported from code.google.com/p/command-line-version-dde-client
 
 ##  Introduction ##
@@ -92,9 +93,9 @@ Links:
 ---------
 
 
-[DEAD as at 2026] http://code.google.com/p/sumatrapdf/wiki/DDEcommands  
+[DEAD old link] http://code.google.com/p/sumatrapdf/wiki/DDEcommands  
 [DEAD as at 2026] https://partners.adobe.com/asn/acrobat/sdk/reg/Documentation/Core_API/CoreAPIReference.pdf  
-[RECENT status] https://github.com/AdobeDocs/acrobat-pdfl-sdk/blob/main/src/pages/guides/interapp/iac-devapp-dde-support.md  
+[REPLACEMENT see] https://github.com/AdobeDocs/acrobat-pdfl-sdk/blob/main/src/pages/guides/interapp/iac-devapp-dde-support.md  
 
 [Source Discussion] https://sourceforge.net/p/npp-plugins/discussion/672146/thread/ef53cbf2/?limit=25#64b3  
 http://sourceforge.net/projects/npp-plugins/forums/forum/672146/topic/3914253  
