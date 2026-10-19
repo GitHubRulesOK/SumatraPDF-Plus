@@ -2,7 +2,7 @@
 Additional Scripts or standalone user compiled applications to HotFix or provide user requested enhancements to SumatraPDF (see below).  
 
 It is my personal compendium so decide which bits you do not require and delete accordingly.
-Many scripts may not behave the same due to 3.7 Official has vast improvements, but some may even still be needed for 2.3 or later when calling external apps via menu entries was introduced. 
+Many scripts may not behave the same due to 3.7 Official has vast improvements, but some may even still be needed for 2.3 (2013) or later when calling external apps via menu entries was introduced. 
 
 2026 with 3.7+ we can even run customisation scripting many other ways including command line or embedded Web pages. 
 
