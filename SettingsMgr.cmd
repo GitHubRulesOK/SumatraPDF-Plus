@@ -8,7 +8,6 @@ is SessionSaverDialog which asks for a Folder to be used for -appdata collection
 
 The idea is to allow saving the current set of open tabs for edit and reuse.
 
-
 It should be run from advanced settings entry pointing to same folder as SumatraPDF-settings.txt  
 
 ExternalViewers [
@@ -41,20 +40,18 @@ const bool ShowExtension = false;
 
     FileStamp(string targetFolder)
     {
-        folder = AppDomain.CurrentDomain.BaseDirectory;
 
-// etended to alow for a remote folder on command line
-folder = string.IsNullOrWhiteSpace(targetFolder)
-    ? AppDomain.CurrentDomain.BaseDirectory
-    : Environment.ExpandEnvironmentVariables(targetFolder);
+    folder = Path.GetDirectoryName(Application.ExecutablePath);
 
-folder = Path.GetFullPath(folder);
+    if (!string.IsNullOrWhiteSpace(targetFolder))
+        folder = Environment.ExpandEnvironmentVariables(targetFolder.Trim().Trim('"'));
 
-if (!Directory.Exists(folder))
-{
-    throw new DirectoryNotFoundException(
-        "The specified folder does not exist:\n\n" + folder);
-}
+    folder = Path.GetFullPath(folder);
+
+    if (!Directory.Exists(folder))
+        throw new DirectoryNotFoundException(
+            "The specified folder does not exist:\n\n" + folder);
+    // Continue
 
         Text = "SumatraPDF Settings Backup";
         StartPosition = FormStartPosition.CenterScreen;
@@ -324,7 +321,7 @@ static void Main(string[] args)
     Application.EnableVisualStyles();
     Application.SetCompatibleTextRenderingDefault(false);
 
-    string targetFolder = args.Length > 0 ? args[0] : null;
+    string targetFolder = null;
 
     try
     {
