@@ -2,7 +2,7 @@
 C:\Windows\Microsoft.NET\Framework\v4.0.30319\csc  /target:winexe /platform:x86 "%~0"  
 exit /b
 
-After running in windows. This SessionMgr.CMD file becomes SessionMgr.exe
+After running in windows. This SettingsMgr.CMD file becomes SettingsMgr.exe
 It is one of 3 methods this one saves files with a date for mixed usage the other
 is SessionSaverDialog which asks for a Folder to be used for -appdata collections.
 
@@ -13,7 +13,7 @@ It should be run from advanced settings entry pointing to same folder as Sumatra
 
 ExternalViewers [
 	[
-		CommandLine = C:\Users\ path to folder \SumatraPDF\SessionMgr.exe
+		CommandLine = C:\Users\ path to folder \SumatraPDF\SettingsMgr.exe
 		Name = Session &Manager
 		Key = s
 	]
