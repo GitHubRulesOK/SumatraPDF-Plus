@@ -314,8 +314,9 @@ void DeleteSelected(object sender, EventArgs e)
         "Confirm Delete",
         MessageBoxButtons.YesNo,
         MessageBoxIcon.Warning);
-    if (answer != DialogResult.Yes) try
-    {
+        if (answer != DialogResult.Yes) return;
+        try
+        {
         if (!File.Exists(selected))
         {
             statusLabel.Text = "Selected file no longer exists.";
