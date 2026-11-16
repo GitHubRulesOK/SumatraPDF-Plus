@@ -39,12 +39,9 @@ using System.Collections.Generic;
 public class SettingsManager : Form
 {
     string folder;
-
     const string Original = "SumatraPDF-settings.txt";
     const string Prefix = "SumatraPDF-settings-";
     const string Suffix = ".txt";
-
-    const bool ShowExtension = false;
     const int CornerRadius = 16;
 
     Button closeButton;
@@ -65,8 +62,6 @@ public class SettingsManager : Form
             string name = Path.GetFileNameWithoutExtension(fileName);
             if (name.StartsWith(Prefix, StringComparison.OrdinalIgnoreCase))
                 name = name.Substring(Prefix.Length);
-            // produces warning so simplify
-            // DisplayName = ShowExtension ? name + Suffix : name;
             DisplayName = name;
         }
 
@@ -298,6 +293,7 @@ public class SettingsManager : Form
         backups.EndUpdate();
         if (backups.Items.Count > 0) backups.SelectedIndex = 0;
         restoreButton.Enabled = backups.Items.Count > 0;
+        deleteButton.Enabled = backups.Items.Count > 0;
         if (backups.Items.Count == 0) statusLabel.Text = "No saved settings found.";
         else
             statusLabel.Text = backups.Items.Count + " saved settings found.";
