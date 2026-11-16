@@ -2,20 +2,24 @@
 C:\Windows\Microsoft.NET\Framework\v4.0.30319\csc /nologo /target:winexe /platform:x86 "%~0"
 exit /b
 
-After running in windows. This SettingsMgr.CMD file becomes SettingsMgr.exe
-It is one of 2 methods this one saves files with a date for mixed usage the other
-is SessionSaverDialog which asks for a Folder to be used for -appdata collections.
+After running this CMD file in Windows, it becomes SettingsMgr.exe.
 
-The idea is to allow saving the current set of open tabs for edit and reuse.
-so add a description to save a named (and dated) settings file or restore one you named before.
+The manager allows you to save the current SumatraPDF settings as a named, dated backup, restore a previously saved version, or delete an unwanted backup.
 
-It should be run from advanced settings entry pointing to same folder as SumatraPDF-settings.txt 
-So check this is usually including your own user name for an installed copy so edit (twice) to suit.
-NOTE you must also point it at the settings foldername
+It should be run from a SumatraPDF Advanced Settings entry.
 
+Important configuration:
+
+Edit the example below to use your own Windows account name.
+The first quoted parameter is the executable path.
+The second quoted parameter is the folder containing SumatraPDF-settings.txt.
+Both paths should be edited to suit your installation.
+SumatraPDF passes the currently viewed document filename to external viewers. Consequently, the manager must use the explicitly supplied second parameter for its settings folder, rather than interpreting the first received argument as that folder.
+
+For an installed copy, the settings folder is usually under your own user profile in AppData\Local\SumatraPDF.
 ExternalViewers [
 	[
-		CommandLine = "C:\Users\Account Name\AppData\Local\SumatraPDF\SettingsMgr.exe" "C:\Users\Account Name\AppData\Local\SumatraPDF\SettingsMgr.exe"
+		CommandLine = "C:\Users\Account Name\AppData\Local\SumatraPDF\SettingsMgr.exe" "C:\Users\Account Name\AppData\Local\SumatraPDF"
 		Name = &Settings Manager
 		Key = s
 		ToolbarSvgIcon = <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none"><path d="M0 0h24v24H0z"/><path stroke="currentColor" d="M9.5 3.5a2.5 2.5 0 0 1 5 0 2.5 2.5 0 0 0 3.5 2 1 1 0 0 1 2.5 4.5 2.5 2.5 0 0 0 0 4 1 1 0 0 1-2.5 4.5 2.5 2.5 0 0 0-3.5 2 1 1 0 0 1-5 0 2.5 2.5 0 0 0-3.5-2A1 1 0 0 1 3.5 14a2.5 2.5 0 0 0 0-4A1 1 0 0 1 6 5.5a2.5 2.5 0 0 0 3.5-2M9 12a3 3 0 0 1 6 0 3 3 0 0 1-6 0"/></svg>
