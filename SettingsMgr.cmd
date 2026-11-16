@@ -2,17 +2,17 @@
 C:\Windows\Microsoft.NET\Framework\v4.0.30319\csc /nologo /target:winexe /platform:x86 "%~0"
 exit /b
 
-After running this CMD file in Windows, it becomes SettingsMgr.exe.
+After running this SettingsMgr.CMD file in Windows, it becomes SettingsMgr.exe.
 
 The manager allows you to save the current SumatraPDF settings as a named, dated backup, restore a previously saved version, or delete an unwanted backup.
 
-It should be run from a SumatraPDF Advanced Settings entry.
+It should be run from a SumatraPDF Advanced Settings ExternalViewers entry.
 
 Important configuration:
 
 Edit the example below to use your own Windows account name.
 The first quoted parameter is the executable path.
-The second quoted parameter is the folder containing SumatraPDF-settings.txt.
+The second quoted parameter is the folder containing the target SumatraPDF-settings.txt.
 Both paths should be edited to suit your installation.
 SumatraPDF passes the currently viewed document filename to external viewers. Consequently, the manager must use the explicitly supplied second parameter for its settings folder, rather than interpreting the first received argument as that folder.
 
