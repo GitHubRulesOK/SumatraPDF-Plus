@@ -15,7 +15,7 @@ So check this is usually including your user name for an installed copy so edit 
 ExternalViewers [
 	[
 		CommandLine = "C:\Users\WDAGUtilityAccount\AppData\Local\SumatraPDF\SettingsMgr.exe"
-		Name = Settings &Manager
+		Name = &Settings Manager
 		Key = s
         ToolbarSvgIcon = <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none"><path d="M0 0h24v24H0z"/><path stroke="currentColor" d="M9.5 3.5a2.5 2.5 0 0 1 5 0 2.5 2.5 0 0 0 3.5 2 1 1 0 0 1 2.5 4.5 2.5 2.5 0 0 0 0 4 1 1 0 0 1-2.5 4.5 2.5 2.5 0 0 0-3.5 2 1 1 0 0 1-5 0 2.5 2.5 0 0 0-3.5-2A1 1 0 0 1 3.5 14a2.5 2.5 0 0 0 0-4A1 1 0 0 1 6 5.5a2.5 2.5 0 0 0 3.5-2M9 12a3 3 0 0 1 6 0 3 3 0 0 1-6 0"/></svg>
 	]
