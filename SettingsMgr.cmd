@@ -34,7 +34,6 @@ using System.Globalization;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Windows.Forms;
-using System.Collections.Generic;
 
 public class SettingsManager : Form
 {
