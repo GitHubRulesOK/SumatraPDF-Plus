@@ -1,28 +1,27 @@
 /*
+REM IMPORTANT do not remove the c# comment marker above (/*) even though CMD will grumble that it is not a command
 C:\Windows\Microsoft.NET\Framework\v4.0.30319\csc /nologo /target:winexe /platform:x86 "%~0"
+REM IMPORTANT We use exit cmd before the NOTE:s
 exit /b
 
 NOTE: On Windows 7, system fonts may be configured above 100%. This can make the compact form appear overcrowded.
       Adjust the compensation factor below if necessary. SEE BELOW  // User-adjustable font scale. 
 
+After running this SettingsMgr.CMD file in Windows, it generates SettingsMgr.exe.
 
-After running this SettingsMgr.CMD file in Windows, it becomes SettingsMgr.exe.
+This manager exe allows you to save the current SumatraPDF settings as a named, dated backup, or
+restore a previously saved version, or delete an unwanted backup SumatraPDF-settings.txt.
 
-The manager allows you to save the current SumatraPDF settings as a named, dated backup,
-or restore a previously saved version, or delete an unwanted backup.
-
-It should be run from a SumatraPDF Advanced Settings ExternalViewers entry.
+It should be run from a SumatraPDF Advanced Settings ExternalViewers entry. But can be run direct.
 
 Important configuration:
 
 Edit the example below to use your own Windows account name.
-The first quoted parameter is the executable path.
-The second quoted parameter is the folder containing the target SumatraPDF-settings.txt.
-Both paths should be edited to suit your installation.
-SumatraPDF passes the currently viewed document filename to external viewers.
-Consequently, the manager must use the explicitly supplied second parameter for its
-settings folder, rather than interpreting the first received argument as that folder.
+The first quoted parameter is the executable path. The second quoted parameter is the target folder containing SumatraPDF-settings.txt.
 
+SumatraPDF passes the currently viewed document filename to external viewers. Consequently, the manager must use the
+supplied second parameter for its settings folder, rather than interpreting the first received argument as that folder.
+Both paths should be edited to suit your installation.
 For an installed copy, the settings folder is usually under your own user profile in AppData\Local\SumatraPDF.
 
 Edit this into your Advance Settings and when first run use this manager to save with a description e.g. With-SettingsMgr 
@@ -36,8 +35,8 @@ ExternalViewers [
 	]
 ]
 
+Important do not remove this next line as it marks the start of the executable code
 */
-
 using System;
 using System.IO;
 using System.Globalization;
@@ -271,7 +270,6 @@ public class SettingsManager : Form
     }
 
     // Validate dated backup filenames.
-
     bool IsManagedBackup(string file)
     {
         string name = Path.GetFileName(file);
@@ -282,16 +280,9 @@ public class SettingsManager : Form
         if (remainder.Length < 16) return false;
         string datePart = remainder.Substring(0, 16);
         DateTime parsed;
-        if (!DateTime.TryParseExact(
-            datePart,
-            "yyyy-MM-dd_HH-mm",
-            CultureInfo.InvariantCulture,
-            DateTimeStyles.None,
-            out parsed))
+        if (!DateTime.TryParseExact(datePart, "yyyy-MM-dd_HH-mm", CultureInfo.InvariantCulture, DateTimeStyles.None, out parsed))
             return false;
-        if (remainder.Length > 16 &&
-            remainder[16] != '-')
-            return false;
+        if (remainder.Length > 16 && remainder[16] != '-') return false;
         return true;
     }
 
@@ -317,35 +308,32 @@ public class SettingsManager : Form
             statusLabel.Text = backups.Items.Count + " saved settings found.";
     }
 
-void DeleteSelected(object sender, EventArgs e)
-{
-    BackupItem item = backups.SelectedItem as BackupItem;
-    if (item == null) return;
-    string selected = Path.Combine(folder, item.FileName);
-    DialogResult answer = MessageBox.Show(
-        "Permanently delete this saved settings file?\n\n" +
-        item.FileName,
-        "Confirm Delete",
-        MessageBoxButtons.YesNo,
-        MessageBoxIcon.Warning);
+    void DeleteSelected(object sender, EventArgs e)
+    {
+        BackupItem item = backups.SelectedItem as BackupItem;
+        if (item == null) return;
+        string selected = Path.Combine(folder, item.FileName);
+        DialogResult answer = MessageBox.Show(
+            "Permanently delete this saved settings file?\n\n" + item.FileName,
+            "Confirm Delete", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
         if (answer != DialogResult.Yes) return;
         try
         {
-        if (!File.Exists(selected))
-        {
-            statusLabel.Text = "Selected file no longer exists.";
+            if (!File.Exists(selected))
+            {
+                statusLabel.Text = "Selected file no longer exists.";
+                RefreshBackups();
+                return;
+            }
+            File.Delete(selected);
             RefreshBackups();
-            return;
+            statusLabel.Text = "Backup deleted successfully.";
         }
-        File.Delete(selected);
-        RefreshBackups();
-        statusLabel.Text = "Backup deleted successfully.";
+        catch (Exception ex)
+        {
+            ShowError(ex);
+        }
     }
-    catch (Exception ex)
-    {
-        ShowError(ex);
-    }
-}
 
     // Store current settings.
     void StoreCurrent(object sender, EventArgs e)
@@ -422,11 +410,7 @@ void DeleteSelected(object sender, EventArgs e)
     void ShowError(Exception ex)
     {
         statusLabel.Text = "File operation failed.";
-        MessageBox.Show(
-            ex.Message,
-            "Settings Manager",
-            MessageBoxButtons.OK,
-            MessageBoxIcon.Error);
+        MessageBox.Show(ex.Message, "Settings Manager", MessageBoxButtons.OK, MessageBoxIcon.Error);
     }
 
     // Rounded window.
@@ -460,8 +444,7 @@ void DeleteSelected(object sender, EventArgs e)
         e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
         using (Pen border = new Pen(Color.FromArgb(55, 55, 55), 1))
         {
-            using (GraphicsPath path = GetRoundedPath(
-                new Rectangle(0, 0, Width - 1, Height - 1), CornerRadius))
+            using (GraphicsPath path = GetRoundedPath(new Rectangle(0, 0, Width - 1, Height - 1), CornerRadius))
             {
                 e.Graphics.DrawPath(border, path);
             }
@@ -498,11 +481,7 @@ void DeleteSelected(object sender, EventArgs e)
         }
         catch (Exception ex)
         {
-            MessageBox.Show(
-                ex.Message,
-                "Settings Manager",
-                MessageBoxButtons.OK,
-                MessageBoxIcon.Error);
+            MessageBox.Show(ex.Message, "Settings Manager", MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
     }
 }
