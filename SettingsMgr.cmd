@@ -2,9 +2,14 @@
 C:\Windows\Microsoft.NET\Framework\v4.0.30319\csc /nologo /target:winexe /platform:x86 "%~0"
 exit /b
 
+NOTE: On Windows 7, system fonts may be configured above 100%. This can make the compact form appear overcrowded.
+      Adjust the compensation factor below if necessary. SEE BELOW  // User-adjustable font scale. 
+
+
 After running this SettingsMgr.CMD file in Windows, it becomes SettingsMgr.exe.
 
-The manager allows you to save the current SumatraPDF settings as a named, dated backup, restore a previously saved version, or delete an unwanted backup.
+The manager allows you to save the current SumatraPDF settings as a named, dated backup,
+or restore a previously saved version, or delete an unwanted backup.
 
 It should be run from a SumatraPDF Advanced Settings ExternalViewers entry.
 
@@ -14,9 +19,14 @@ Edit the example below to use your own Windows account name.
 The first quoted parameter is the executable path.
 The second quoted parameter is the folder containing the target SumatraPDF-settings.txt.
 Both paths should be edited to suit your installation.
-SumatraPDF passes the currently viewed document filename to external viewers. Consequently, the manager must use the explicitly supplied second parameter for its settings folder, rather than interpreting the first received argument as that folder.
+SumatraPDF passes the currently viewed document filename to external viewers.
+Consequently, the manager must use the explicitly supplied second parameter for its
+settings folder, rather than interpreting the first received argument as that folder.
 
 For an installed copy, the settings folder is usually under your own user profile in AppData\Local\SumatraPDF.
+
+Edit this into your Advance Settings and when first run use this manager to save with a description e.g. With-SettingsMgr 
+
 ExternalViewers [
 	[
 		CommandLine = "C:\Users\Account Name\AppData\Local\SumatraPDF\SettingsMgr.exe" "C:\Users\Account Name\AppData\Local\SumatraPDF"
@@ -37,6 +47,10 @@ using System.Windows.Forms;
 
 public class SettingsManager : Form
 {
+    // User-adjustable font scale.
+    // 100F = no compensation, normal (100%)        80F  = compensates for Windows 125% fonts
+    // 66.6F = compensates for Windows 150% fonts   50F  = compensates for Windows 200% fonts
+    const float FontScale = 100F;
     string folder;
     const string Original = "SumatraPDF-settings.txt";
     const string Prefix = "SumatraPDF-settings-";
@@ -81,11 +95,16 @@ public class SettingsManager : Form
         FormBorderStyle = FormBorderStyle.None;
         StartPosition = FormStartPosition.CenterScreen;
         BackColor = Color.FromArgb(32, 32, 32); ForeColor = Color.White;
-        ClientSize = new Size(350, 300); MinimumSize = new Size(350, 300); MaximumSize = new Size(350, 300);
+        ClientSize = new Size(350, 300); // MinimumSize = new Size(350, 300); MaximumSize = new Size(350, 300);
         DoubleBuffered = true;
-        Font = new Font("Segoe UI", 9F);
+        Font = ScaledFont("Segoe UI", 9F);
         CreateUI();
         RefreshBackups();
+    }
+
+    Font ScaledFont(string family, float size, FontStyle style = FontStyle.Regular)
+    {
+        return new Font(family, size * FontScale / 100F, style);
     }
 
     void CreateUI()
@@ -95,7 +114,7 @@ public class SettingsManager : Form
         heading.ForeColor = Color.White;
         heading.Location = new Point(14, 10);
         heading.AutoSize = true;
-        heading.Font = new Font("Segoe UI", 12F, FontStyle.Regular);
+        heading.Font = ScaledFont("Segoe UI", 12F, FontStyle.Regular);
         Controls.Add(heading);
 
         closeButton = new Button();
@@ -137,7 +156,7 @@ public class SettingsManager : Form
         backups.BackColor = Color.FromArgb(42, 42, 42);
         backups.ForeColor = Color.White;
         backups.BorderStyle = BorderStyle.FixedSingle;
-        backups.Font = new Font("Segoe UI", 9F);
+        backups.Font = ScaledFont("Segoe UI", 9F);
         backups.IntegralHeight = false;
         backups.ItemHeight = 22;
         backups.DrawMode = DrawMode.OwnerDrawFixed;
