@@ -1,30 +1,49 @@
-/*
-REM IMPORTANT do not remove the c# comment marker above (/*) even though CMD will grumble that it is not a command
+/*&cls&echo off
+REM IMPORTANT DO NOT remove the c# comment marker above (/*) even though CMD will grumble that it is not a command
 C:\Windows\Microsoft.NET\Framework\v4.0.30319\csc /nologo /target:winexe /platform:x86 "%~0"
+
+Echo if no error messages show then this cmd should have built built "%~dpn0.exe"
+if exist "%~dpn0.exe" echo "%~dpn0.exe" is now present so needs copy to the SumatraPDF settings folder.
+pause
+
 REM IMPORTANT We use exit cmd before the NOTE:s
 exit /b
 
 NOTE: On Windows 7, system fonts may be configured above 100%. This can make the compact form appear overcrowded.
       Adjust the compensation factor below if necessary. SEE BELOW  // User-adjustable font scale. 
+      Designed to be built as one common Windows 7+ x32/x64 exe that can used with installed or portable SumatraPDF
+      via  externalviewers i.e. including versions 3.1 and above that support the command line (Win XP not tested)
 
 After running this SettingsMgr.CMD file in Windows, it generates SettingsMgr.exe.
 
 This manager exe allows you to save the current SumatraPDF settings as a named, dated backup, or
 restore a previously saved version, or delete an unwanted backup SumatraPDF-settings.txt.
 
-It should be run from a SumatraPDF Advanced Settings ExternalViewers entry. But can be run direct.
+PURPOSE:
+Modern SumatraPDF 3.7 can have multiple tab groups that can be "Hot Swapped" during a session, but if a user wants
+very large groups to be changed say per topic then the recommended historic way is using -appdata settings folders.
+Note they too can have "subgroups" of saved and or restored tab sets.
+
+With many such sets that can lead to a settings management problem which this file reduces by allow many settings
+in user folder with timestamps and descriptions. However note that same as launching multiple -appdata folders, this
+manager needs to close and reopen large replacement settings files to ensure as robust a similar system experience.
+
+It is intended to be launched from a SumatraPDF Advanced Settings ExternalViewers entry, but can also
+be run directly. Naturally to be run from a settings file it needs to be added to each.
 
 Important configuration:
 
 Edit the example below to use your own Windows account name.
-The first quoted parameter is the executable path. The second quoted parameter is the target folder containing SumatraPDF-settings.txt.
+The first quoted parameter is the executable path.
+The second quoted parameter is the target folder containing SumatraPDF-settings.txt.
 
-SumatraPDF passes the currently viewed document filename to external viewers. Consequently, the manager must use the
-supplied second parameter for its settings folder, rather than interpreting the first received argument as that folder.
-Both paths should be edited to suit your installation.
+SumatraPDF passes the currently viewed document filename to external viewers. Consequently, the this manager
+must use the supplied second parameter for its settings folder, rather than interpreting the first received
+argument as that folder. Both paths should be edited to suit your installation.
+
 For an installed copy, the settings folder is usually under your own user profile in AppData\Local\SumatraPDF.
 
-Edit this into your Advance Settings and when first run use this manager to save with a description e.g. With-SettingsMgr 
+Edit this into your Advance Settings and on first run use this manager to save with a description e.g. With-SettingsMgr 
 
 ExternalViewers [
 	[
@@ -37,12 +56,8 @@ ExternalViewers [
 
 Important do not remove this next line as it marks the start of the executable code
 */
-using System;
-using System.IO;
-using System.Globalization;
-using System.Drawing;
-using System.Drawing.Drawing2D;
-using System.Windows.Forms;
+using System; using System.Globalization; using System.Drawing; using System.Drawing.Drawing2D; using System.Windows.Forms;
+using System.IO; using System.Diagnostics; using System.Runtime.InteropServices; using System.Text; using System.ComponentModel;
 
 public class SettingsManager : Form
 {
@@ -50,6 +65,15 @@ public class SettingsManager : Form
     // 100F = no compensation, normal (100%)        80F  = compensates for Windows 125% fonts
     // 66.6F = compensates for Windows 150% fonts   50F  = compensates for Windows 200% fonts
     const float FontScale = 100F;
+
+    // Automatically close the SumatraPDF instance that launched this manager before Store or Restore.
+    static bool CloseParentSumatraBeforeOperation = true;
+
+    // Restart SumatraPDF after a successful Store or Restore.
+    const bool RestartSumatraAfterOperation = true;
+
+    // Retain the SumatraPDF executable location once discovered.
+    string sumatraExePath = null;
     string folder;
     const string Original = "SumatraPDF-settings.txt";
     const string Prefix = "SumatraPDF-settings-";
@@ -64,10 +88,25 @@ public class SettingsManager : Form
     Button storeButton;
     Button deleteButton;
 
+    // Windows process identification. Used to identify the parent process that launched SettingsMgr.exe.
+    const uint TH32CS_SNAPPROCESS = 0x00000002;
+    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto)] struct PROCESSENTRY32
+    {
+        public uint dwSize; public uint cntUsage; public uint th32ProcessID;
+        public IntPtr th32DefaultHeapID; public uint th32ModuleID; public uint cntThreads;
+        public uint th32ParentProcessID; public int pcPriClassBase; public uint dwFlags;
+        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 260)] public string szExeFile;
+    }
+    [DllImport("kernel32.dll", SetLastError = true)] static extern IntPtr CreateToolhelp32Snapshot(uint dwFlags, uint th32ProcessID);
+    [DllImport("kernel32.dll", CharSet = CharSet.Auto, SetLastError = true)] static extern bool Process32First(IntPtr hSnapshot, ref PROCESSENTRY32 lppe);
+    [DllImport("kernel32.dll", CharSet = CharSet.Auto, SetLastError = true)] static extern bool Process32Next(IntPtr hSnapshot, ref PROCESSENTRY32 lppe);
+    [DllImport("kernel32.dll", SetLastError = true)] static extern bool CloseHandle(IntPtr hObject);
+    [DllImport("kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true)] 
+    static extern bool QueryFullProcessImageName(IntPtr hProcess, int dwFlags, StringBuilder lpExeName, ref int lpdwSize);
+
     class BackupItem
     {
-        public string FileName;
-        public string DisplayName;
+        public string FileName; public string DisplayName;
         public BackupItem(string fileName)
         {
             FileName = fileName;
@@ -86,15 +125,12 @@ public class SettingsManager : Form
     public SettingsManager(string targetFolder)
     {
         folder = Path.GetDirectoryName(Application.ExecutablePath);
-        if (!string.IsNullOrWhiteSpace(targetFolder))
-            folder = Environment.ExpandEnvironmentVariables(targetFolder.Trim().Trim('"'));
+        if (!string.IsNullOrWhiteSpace(targetFolder)) folder = Environment.ExpandEnvironmentVariables(targetFolder.Trim().Trim('"'));
         folder = Path.GetFullPath(folder);
-        if (!Directory.Exists(folder))
-            throw new DirectoryNotFoundException("Settings folder does not exist:\n\n" + folder);
-        FormBorderStyle = FormBorderStyle.None;
-        StartPosition = FormStartPosition.CenterScreen;
+        if (!Directory.Exists(folder)) throw new DirectoryNotFoundException("Settings folder does not exist:\n\n" + folder);
+        FormBorderStyle = FormBorderStyle.None; StartPosition = FormStartPosition.CenterScreen; this.TopMost = true; 
         BackColor = Color.FromArgb(32, 32, 32); ForeColor = Color.White;
-        ClientSize = new Size(350, 300); // MinimumSize = new Size(350, 300); MaximumSize = new Size(350, 300);
+        ClientSize = new Size(350, 300); MinimumSize = new Size(350, 300); MaximumSize = new Size(350, 300);
         DoubleBuffered = true;
         Font = ScaledFont("Segoe UI", 9F);
         CreateUI();
@@ -105,6 +141,157 @@ public class SettingsManager : Form
     {
         return new Font(family, size * FontScale / 100F, style);
     }
+
+    static bool TryGetParentProcess(out int parentPid, out string parentExe, out string parentPath)
+    {
+        parentPid = 0; parentExe = null; parentPath = null;
+        uint currentPid = (uint)Process.GetCurrentProcess().Id;
+        IntPtr snapshot = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
+        if (snapshot == IntPtr.Zero || snapshot == new IntPtr(-1))return false;
+        try
+        {
+            PROCESSENTRY32 entry = new PROCESSENTRY32();
+            entry.dwSize = (uint)Marshal.SizeOf(typeof(PROCESSENTRY32));
+            uint ppid = 0;
+            if (!Process32First(snapshot, ref entry)) return false;
+            do
+            {
+                if (entry.th32ProcessID == currentPid)
+                {
+                    ppid = entry.th32ParentProcessID; break;
+                }
+            }
+            while (Process32Next(snapshot, ref entry));
+            if (ppid == 0) return false;
+            entry = new PROCESSENTRY32();
+            entry.dwSize = (uint)Marshal.SizeOf(typeof(PROCESSENTRY32));
+            if (!Process32First(snapshot, ref entry)) return false;
+            do
+            {
+                if (entry.th32ProcessID == ppid)
+                {
+                    parentPid = (int)ppid; parentExe = entry.szExeFile;
+                try
+                {
+                    using (Process parent = Process.GetProcessById(parentPid))
+                    {
+                        StringBuilder path = new StringBuilder(1024);
+                        int size = path.Capacity;
+                        if (QueryFullProcessImageName(parent.Handle, 0, path, ref size))
+                        {
+                            parentPath = path.ToString();
+                        }
+                        else
+                        {
+                            throw new Win32Exception(Marshal.GetLastWin32Error());
+                        }
+                    }
+                }
+                catch (Exception ex)
+                    {
+                    MessageBox.Show("Could not obtain parent executable path:\n\n" + ex.GetType().FullName + "\n" + ex.Message,
+                    "Parent Process Information", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    }
+                    return true;
+                }
+            } while (Process32Next(snapshot, ref entry));
+        return false;
+        }
+        finally
+        {
+            CloseHandle(snapshot);
+        }
+    }
+
+    bool AnySumatraRunning()
+    {
+        Process[] processes = Process.GetProcessesByName("SumatraPDF");
+        try
+        {
+            return processes.Length > 0;
+        }
+        finally
+        {
+            foreach (Process p in processes) p.Dispose();
+        }
+    }
+
+bool PrepareForFileOperation()
+{
+    // Optional manual-control mode.
+    if (!CloseParentSumatraBeforeOperation)
+    {
+        if (AnySumatraRunning())
+        {
+            MessageBox.Show(
+                "Automatic closure is disabled.\n\n" + "Close SumatraPDF manually before continuing.",
+                "Settings Manager", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            return false;
+        }
+        return true;
+    }
+    int parentPid; string parentExe; string parentPath;
+    bool foundParent = TryGetParentProcess(out parentPid, out parentExe, out parentPath);
+    if (foundParent &&
+        string.Equals(Path.GetFileName(parentExe),
+            "SumatraPDF.exe", StringComparison.OrdinalIgnoreCase) &&
+        !string.IsNullOrWhiteSpace(parentPath))
+    {
+        sumatraExePath = parentPath;
+    }
+    // If launched directly, never guess which SumatraPDF instance should be closed.
+    if (!foundParent || !string.Equals(Path.GetFileName(parentExe), "SumatraPDF.exe", StringComparison.OrdinalIgnoreCase))
+    {
+        if (AnySumatraRunning())
+        {
+            MessageBox.Show(
+                "A SumatraPDF instance is running, but its relationship\n" + "to this manager cannot be established.\n\n" +
+                "Close the relevant SumatraPDF instance manually and try again.",
+                "Settings Manager", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            return false;
+        }
+        return true;
+    }
+    try
+    {
+        using (Process parent =  Process.GetProcessById(parentPid))
+        {
+            if (!string.Equals(parent.ProcessName, "SumatraPDF", StringComparison.OrdinalIgnoreCase)) return false;
+            // Deliberately NO /T and NO /F.
+            ProcessStartInfo psi = new ProcessStartInfo();
+            psi.FileName = "taskkill.exe";
+            psi.Arguments = "/PID " + parentPid.ToString(CultureInfo.InvariantCulture);
+            psi.UseShellExecute = false;
+            psi.CreateNoWindow = true;
+            psi.WindowStyle = ProcessWindowStyle.Hidden;
+            using (Process killer = Process.Start(psi))
+            {
+                if (killer == null || !killer.WaitForExit(10000))
+                {
+                    statusLabel.Text = "Could not complete SumatraPDF shutdown.";
+                    return false;
+                }
+                if (killer.ExitCode != 0)
+                {
+                    statusLabel.Text = "SumatraPDF shutdown request failed.";
+                    return false;
+                }
+            }
+            // Wait for SumatraPDF to actually finish.
+            if (!parent.WaitForExit(5000))
+            {
+                MessageBox.Show("SumatraPDF has not finished closing.\n\n" + "No file operation was performed.",
+                    "Settings Manager", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return false;
+            }
+        }
+        return true;
+    }
+    catch (Exception ex)
+    {
+        ShowError(ex); return false;
+    }
+}
 
     void CreateUI()
     {
@@ -350,6 +537,12 @@ public class SettingsManager : Form
                 MessageBoxIcon.Warning);
             return;
         }
+        DialogResult answer = MessageBox.Show(
+            "Store the current SumatraPDF settings?\n\n" + "The SumatraPDF instance that launched this manager " +
+            "will be closed first so its latest settings can be written to disk.",
+            "Confirm Store", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+        if (answer != DialogResult.Yes) return;
+        if (!PrepareForFileOperation()) return;
         try
         {
             string reminder = CleanDescription(descriptionBox.Text);
@@ -358,6 +551,7 @@ public class SettingsManager : Form
             File.Copy(source, destination);
             RefreshBackups();
             statusLabel.Text = "Saved: " + Path.GetFileName(destination);
+            RestartSumatra();
         }
         catch (Exception ex)
         {
@@ -372,23 +566,22 @@ public class SettingsManager : Form
         if (item == null) return;
         string selected = Path.Combine(folder, item.FileName);
         string target = Path.Combine(folder, Original);
-        DialogResult answer = MessageBox.Show(
-            "Restore this settings file?\n\n" +
-            item.FileName +
-            "\n\nThe current settings will first be backed up.",
-            "Confirm Restore",
-            MessageBoxButtons.YesNo,
-            MessageBoxIcon.Question);
-        if (answer != DialogResult.Yes)
+        if (!File.Exists(selected))
+        {
+            statusLabel.Text = "Selected file no longer exists.";
+            RefreshBackups();
             return;
+        }
+        DialogResult answer = MessageBox.Show(
+            "Restore this settings file?\n\n" + item.FileName +
+            "\n\nAny active SumatraPDF instance will be closed first. " +
+            "\nSo current settings can be backed up before restore.",
+            "Confirm Restore", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+        if (answer != DialogResult.Yes) return;
+        // Close SumatraPDF and allow its settings to be written.
+        if (!PrepareForFileOperation()) return;
         try
         {
-            if (!File.Exists(selected))
-            {
-                statusLabel.Text = "Selected file no longer exists.";
-                RefreshBackups();
-                return;
-            }
             // Automatically preserve current settings.
             if (File.Exists(target))
             {
@@ -399,12 +592,32 @@ public class SettingsManager : Form
             File.Copy(selected, target, true);
             RefreshBackups();
             statusLabel.Text = "Settings restored successfully.";
+            RestartSumatra();
         }
         catch (Exception ex)
         {
             ShowError(ex);
         }
     }
+
+// Restart SumatraPDF using its previously discovered executable path.
+void RestartSumatra()
+{
+    if (!RestartSumatraAfterOperation || string.IsNullOrWhiteSpace(sumatraExePath)) return;
+    try
+    {
+        ProcessStartInfo psi = new ProcessStartInfo();
+        psi.FileName = sumatraExePath;
+        psi.UseShellExecute = true;
+        Process.Start(psi);
+        Close();
+    }
+    catch (Exception ex)
+    {
+        MessageBox.Show("Settings operation succeeded, but SumatraPDF could not be restarted:\n\n" + ex.Message,
+            "Settings Manager", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+    }
+}
 
     // Error handling.
     void ShowError(Exception ex)
