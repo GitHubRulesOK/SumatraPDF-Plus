@@ -56,8 +56,8 @@ ExternalViewers [
 
 Important do not remove this next line as it marks the start of the executable code
 */
-using System; using System.Globalization; using System.Drawing; using System.Drawing.Drawing2D; using System.Windows.Forms;
-using System.IO; using System.Diagnostics; using System.Runtime.InteropServices; using System.Text; using System.ComponentModel;
+using System; using System.IO; using System.ComponentModel; using System.Diagnostics; using System.Drawing; using System.Drawing.Drawing2D;
+using System.Runtime.InteropServices; using System.Globalization; using System.Text; using System.Threading; using System.Windows.Forms; 
 
 public class SettingsManager : Form
 {
@@ -682,19 +682,30 @@ void RestartSumatra()
     [STAThread]
     static void Main(string[] args)
     {
-        Application.EnableVisualStyles();
-        Application.SetCompatibleTextRenderingDefault(false);
-        string targetFolder = null;
-        // Optional fixed storage folder:
-        // targetFolder = @"C:\Users\User\AppData\Local\SumatraPDF";
-        if (args.Length > 0) targetFolder = args[0];
-        try
+        bool createdNew;
+        using (Mutex singleInstance = new Mutex(true, @"Local\SumatraPDFPlus.SettingsManager", out createdNew))
         {
-            Application.Run(new SettingsManager(targetFolder));
-        }
-        catch (Exception ex)
-        {
-            MessageBox.Show(ex.Message, "Settings Manager", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            if (!createdNew)
+            {
+                MessageBox.Show("Settings Manager is already running.", "Settings Manager", MessageBoxButtons.OK, MessageBoxIcon.Warning,
+                                MessageBoxDefaultButton.Button1, (MessageBoxOptions)0x00040000);
+                return;
+            }
+            Application.EnableVisualStyles();
+            Application.SetCompatibleTextRenderingDefault(false);
+            string targetFolder = null;
+            // Optional fixed storage folder:
+            // targetFolder = @"C:\Users\User\AppData\Local\SumatraPDF";
+            if (args.Length > 0) targetFolder = args[0];
+            try
+            {
+                Application.Run(new SettingsManager(targetFolder));
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Settings Manager", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
     }
 }
+
