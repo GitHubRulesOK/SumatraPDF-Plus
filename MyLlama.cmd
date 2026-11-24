@@ -12,7 +12,12 @@ On first use, it downloads the required model and runtime files. Subsequent runs
 Getting started
 ----------------
 1. Choose a prompt
-Place prompt instructions in the prompts folder as ordinary .txt files.
+Place prompt instructions in the prompts subfolder as ordinary .txt files. Note the structure will be 
+this file in a folder then subfolders alongside this file 
+of |
+   |-\prompts
+   |-\models
+and -\runtime
 
 For example, TransLite2fr.txt instructs Gemma to translate supplied text into French so copy, paste and save with notepad something like this
  as Prompts\TransLite2fr.txt from between the two ---- lines
