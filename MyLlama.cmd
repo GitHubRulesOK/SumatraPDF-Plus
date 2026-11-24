@@ -1,6 +1,6 @@
 REM <# NOTE: DO NOT remove this REM line. It tells PowerShell to skip the CMD section and find its own code later in this file.
 
-@echo off & mode con: cols=33 lines=6 & cls & echo Llama Running ... & setlocal & goto MAIN
+@echo off & mode con: cols=50 lines=6 & cls & echo Llama Starting ... & setlocal & goto MAIN
 NOTE: The guidance below is optional. You can delete everything between here and :MAIN once you understand how to use this file.
 
 MyLlama - Local AI Document Processing (Like Google translate and MORE offline) NOT just translate
