@@ -3,8 +3,8 @@ REM <# NOTE: DO NOT remove this REM line. It tells PowerShell to skip the CMD se
 @echo off & mode con: cols=33 lines=6 & cls & echo Llama Running ... & setlocal & goto MAIN
 NOTE: The guidance below is optional. You can delete everything between here and :MAIN once you understand how to use this file.
 
-			MyLlama - Local AI Document Processing (Like Google translate offline)
-			----------------------------------------------
+MyLlama - Local AI Document Processing (Like Google translate and MORE offline) NOT just translate
+-------
 
 THIS is a single-file CMD launcher that runs a local Llama.cpp server and uses PowerShell to send plain-text documents and AI prompts to Gemma.
 On first use, it downloads the required model and runtime files. Subsequent runs reuse those downloads. All data is local = no uploads.
