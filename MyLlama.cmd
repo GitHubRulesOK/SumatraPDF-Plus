@@ -3,7 +3,7 @@ REM <# NOTE: DO NOT remove this REM line. It tells PowerShell to skip the CMD se
 @echo off & mode con: cols=33 lines=6 & cls & echo Llama Running ... & setlocal & goto MAIN
 NOTE: The guidance below is optional. You can delete everything between here and :MAIN once you understand how to use this file.
 
-			MyLlama - Local AI Document Processing
+			MyLlama - Local AI Document Processing (Like Google translate offline)
 			----------------------------------------------
 
 THIS is a single-file CMD launcher that runs a local Llama.cpp server and uses PowerShell to send plain-text documents and AI prompts to Gemma.
@@ -29,8 +29,8 @@ TEXT TO TRANSLATE:
 ----
 
 Creating your own prompts
+There is online guidance at https://ollama.com/library/translategemma
 Create another .txt file in prompts for a different task or language.
-
 For example:
 TransLite2en.txt - Any to English translation
 Summarise.txt - Document summaries
@@ -48,7 +48,7 @@ Changing the local AI model
 --------------------------------
 The initial configuration uses the lightweight Gemma 3 1B model.
 More powerful GGUF models can be used by placing them in models and changing the MODEL reference in THIS.cmd.
-
+Suggestion is to try the translate gemma 4B model at https://huggingface.co/42ailab/TranslateGemma-4B-GGUF
 
 For SumatraPDF users the newest NG and 3.7 pre-release have local AI support but is not as simple as call this file (no subscription key needed)
 Call with legacy ExternalViewers by Icon or use as Selection Handler by add a selection command something like this
