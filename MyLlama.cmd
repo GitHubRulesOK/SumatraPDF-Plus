@@ -14,8 +14,8 @@ Getting started
 1. Choose a prompt
 Place prompt instructions in the prompts folder as ordinary .txt files.
 
-For example, TransLite2fr.txt instructs Gemma to translate supplied text into French so copy past and save with notepad something like this
- as Prompts\TransLite2fr.txt
+For example, TransLite2fr.txt instructs Gemma to translate supplied text into French so copy, paste and save with notepad something like this
+ as Prompts\TransLite2fr.txt from between the two ---- lines
 ----
 You are a translator.
 Translate ALL the text supplied below after "TEXT TO TRANSLATE:" into French.
