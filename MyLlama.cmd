@@ -7,7 +7,7 @@ NOTE: The guidance below is optional. You can delete everything between here and
 			----------------------------------------------
 
 THIS is a single-file CMD launcher that runs a local Llama.cpp server and uses PowerShell to send plain-text documents and AI prompts to Gemma.
-On first use, it downloads the required model and runtime files. Subsequent runs reuse those downloads.
+On first use, it downloads the required model and runtime files. Subsequent runs reuse those downloads. All data is local = no uploads.
 
 Getting started
 ----------------
