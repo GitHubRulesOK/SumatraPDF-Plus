@@ -129,7 +129,7 @@ echo ERROR: Llama server executable missing or download failed.
 pause & exit /b
 
 :usage
-echo Usage: "%~dp0" "prompt" "incoming text filename"
+echo Usage: "%~0" "prompt" "incoming text filename"
 pause & exit /b
 
 REM it is important we keep a fallback CMD EXIT before the hybrid PS marker
