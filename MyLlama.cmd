@@ -7,16 +7,17 @@ MyLlama - Local AI Document Processing (Like Google translate and MORE offline) 
 -------
 
 THIS is a single-file CMD launcher that runs a local Llama.cpp server and uses PowerShell to send plain-text documents and AI prompts to Gemma.
-On first use, it downloads the required model and runtime files. Subsequent runs reuse those downloads. All data is local = no uploads.
+On first use, it downloads the required model and runtime files. Subsequent runs re-use those downloads. All data is local = no uploads.
 
 Getting started
 ----------------
 1. Choose a prompt
-Place prompt instructions in the prompts subfolder as ordinary .txt files. Note the structure will be 
-this file in a folder then subfolders alongside this file 
-of |
+Place prompt instructions in the prompts subfolder as ordinary .txt files.
+
+ Note the structure will be this file in a folder then subfolders alongside this file 
+of |-\models
+   |-\output
    |-\prompts
-   |-\models
 and -\runtime
 
 For example, TransLite2fr.txt instructs Gemma to translate supplied text into French so copy, paste and save with notepad something like this
@@ -56,7 +57,7 @@ More powerful GGUF models can be used by placing them in models and changing the
 Suggestion is to try the translate gemma 4B model at https://huggingface.co/42ailab/TranslateGemma-4B-GGUF
 
 For SumatraPDF users the newest NG and 3.7 pre-release have local AI support but is not as simple as call this file (no subscription key needed)
-Call with legacy ExternalViewers by Icon or use as Selection Handler by add a selection command something like this
+Call with legacy ExternalViewers by Icon or use as Selection Handler by add a selection command something like this using your own base folder.
 
 SelectionHandlers [
 	[
@@ -69,7 +70,7 @@ SelectionHandlers [
 ]
 
 
-at the end of processing return the output to SumatraPDF so for example lower down where it says
+At the end of processing you can return the output to SumatraPDF so for example lower down where it says
 :DONE
 pause
 exit /b
@@ -78,49 +79,63 @@ change that pause line to
 start "" SumatraPDF -reuse-instance "%OUTPUT%"
 
 
-
 :MAIN
-if "%~1"=="" goto usage
-if "%~2"=="" goto usage
+if "%~1"=="" goto Usage
+if "%~2"=="" goto Usage
 set "OUTPUT=%~dp0output\%~n2.%~1.txt"
 set "prompt=%~dp0prompts\%~1.txt"
-if not exist "%prompt%" echo prompt file "%~dp0prompts\%~1.txt" not found & pause &  exit /b 1
+if not exist "%prompt%" echo prompt file "%~dp0prompts\%~1.txt" not found & pause & exit /b 1
 set "incoming=%~2"
-if not exist "%incoming%" echo incoming text file not found & pause &  exit /b 1
+if not exist "%incoming%" echo incoming text file not found & pause & exit /b 1
+
 set "MODEL=%~dp0models\gemma-3-1b-it-Q4_K_M.gguf"
 if not exist "%MODEL%" (
     md "%~dp0models" 2>nul
     curl.exe -fL -o "%MODEL%" "https://huggingface.co/ggml-org/gemma-3-1b-it-GGUF/resolve/main/gemma-3-1b-it-Q4_K_M.gguf"
 )
-if not exist "%MODEL%"  echo ERROR: Model "%MODEL%" not downloaded &  pause &  exit /b 1
+if not exist "%MODEL%"  echo ERROR: Model "%MODEL%" not downloaded & pause & exit /b 1
 
+REM Check for existing server
+set "LLAMA=%~dp0runtime\llama-server.exe"
 set "SERVER=http://127.0.0.1:9931"
-REM Check existing server
 curl.exe -fsS "%SERVER%/health" >nul 2>&1
 if not errorlevel 1 goto READY
 
+REM we have to test prior dependencies are available first or lauching Llama will fail
+REM you can delete this section if you know the dependency is already present
+:CHECKMSVC
+REM Check local MSVC runtime dependency first
+if exist "%~dp0runtime\VCRUNTIME140_1.dll" goto CHECKLLAMA
+REM Ensure runtime folder exists for subsequent downloads
+if not exist "%~dp0runtime" md "%~dp0runtime"
+REM Check Windows MSVC runtime dependency
+if exist "%WINDIR%\System32\VCRUNTIME140_1.dll" goto CHECKLLAMA
+echo MSVC runtime missing. Downloading...
+curl.exe -fL -o "%~dp0runtime\64bitDependencies.zip" https://github.com/GitHubRulesOK/SumatraPDF-Plus/raw/refs/heads/master/Plus/MuPDF/64bitDependencies.zip
+if errorlevel 1 echo ERROR: Download failed. & pause & exit /b 1
+tar -xf "%~dp0runtime\64bitDependencies.zip" -C "%~dp0runtime"
+if errorlevel 1 echo ERROR: MSVC runtime installation failed. & pause & exit /b 1
+goto CHECKMSVC
+
+:CHECKLLAMA
 REM Download server executable if missing
-set "LLAMA=%~dp0runtime\llama-server.exe"
+REM you can delete this section if you know the ".\runtime\llama-server.exe" is already present
 if not exist "%LLAMA%" (
     md "%~dp0runtime" 2>nul
     curl.exe -fL -o "%~dp0runtime\llama-b12644-bin-win-cpu-x64.zip" "https://github.com/ggml-org/llama.cpp/releases/download/b12644/llama-b12644-bin-win-cpu-x64.zip"
-    if errorlevel 1 goto LLAMAERROR
+    if errorlevel 1 echo ERROR: Llama server executable download failed. & pause & exit /b 1
     tar -xf "%~dp0runtime\llama-b12644-bin-win-cpu-x64.zip" -C "%~dp0runtime"
+    if not exist "%LLAMA%" echo ERROR: Llama server executable missing. & pause & exit /b 1
 )
-if not exist "%LLAMA%" goto LLAMAERROR
 
 REM Start server
 start "Llama Server" /min "%LLAMA%" --model "%MODEL%" --host 127.0.0.1 --port 9931
-
 REM Wait for server readiness
 for /L %%i in (1,1,60) do (
     curl.exe -fsS "%SERVER%/health" >nul 2>&1 && goto READY
     timeout /t 2 /nobreak >nul
 )
-
-echo ERROR: Llama server failed to start.
-pause
-exit /b 1
+echo ERROR: Llama server failed to start. & pause & exit /b 1
 
 :READY
 powershell.exe -NoLogo -NoProfile -ExecutionPolicy Bypass -Command "& ([scriptblock]::Create((Get-Content -Raw -LiteralPath '%~f0').Substring((Get-Content -Raw -LiteralPath '%~f0').LastIndexOf('#PS#')+5))) '%~1' '%~2' '%OUTPUT%' '%~dp0' "
@@ -129,11 +144,7 @@ powershell.exe -NoLogo -NoProfile -ExecutionPolicy Bypass -Command "& ([scriptbl
 pause
 exit /b
 
-:LLAMAERROR
-echo ERROR: Llama server executable missing or download failed.
-pause & exit /b
-
-:usage
+:Usage
 echo Usage: "%~0" "prompt" "incoming text filename"
 pause & exit /b
 
